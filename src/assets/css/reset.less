@@ -1,0 +1,61 @@
+@charset "UTF-8";
+// =================================
+// 对浏览器默认、第三方UI库等的覆盖样式
+// =================================
+html, body, div, table, tbody, section {
+  scrollbar-color: rgba(155, 155, 155, .3) transparent;
+}
+body {
+  color: var(--ant-colorText);
+  background-color: var(--ant-colorBgLayout);
+}
+// 相邻按钮
+.ant-btn + .ant-btn {
+  margin-left: 10px;
+}
+// 相邻超链接
+a + a {
+  margin-left: 10px;
+}
+a:active { opacity: .7; }
+.ant-menu {
+  background: transparent !important;
+  backdrop-filter: blur(20px) saturate(180%);
+}
+// 隐藏左侧菜单边缘线条
+.ant-menu-inline {
+  border-inline-end-color: transparent !important;
+}
+// 隐藏顶部菜单栏底部灰色线条
+.ant-menu-horizontal {
+  border-bottom-color: transparent !important;
+}
+// 去除 tabs 栏底部线条
+.ant-tabs-card >.ant-tabs-nav .ant-tabs-tab {
+  border-bottom: none;
+}
+// 解决 ant-design-vue div.aria-hidden 报错
+div[aria-hidden=true] { display: none !important; }
+// 顶部菜单间隔太大，从 16px 缩小为 10px
+.ant-menu-horizontal .ant-menu-item {
+  padding-inline: 10px;
+}
+// 调整横向菜单底部的高亮条宽度
+.ant-menu-light.ant-menu-horizontal >.ant-menu-item::after {
+  left: 5px;
+  right: 5px;
+}
+// 菜单项鼠标移入后，图标放大
+.ant-menu-item .anticon, .ant-menu-submenu-title .anticon {
+  transition: all .3s !important;
+}
+.ant-menu-item-active, .ant-menu-submenu-title {
+  &:hover {
+    .anticon {
+      transform: scale(1.2);
+    }
+  }
+}
+.ant-image-preview-mask {
+  backdrop-filter: saturate(180%) blur(20px);
+}

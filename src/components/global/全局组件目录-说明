@@ -1,0 +1,10 @@
+该目录下的组件自动扫描导入，无需手动引入
+
+命名规则
+组件名使用驼峰命名法 XxxXxx 格式，如下：
+1. /global/组件名/index.vue
+或
+2. /global/组件名.vue
+
+v-model规则
+为了与 ant-design-vue 的组件使用方式一致，使用 v-model:value   update:value 模式实现双向绑定

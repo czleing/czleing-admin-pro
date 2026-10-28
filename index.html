@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>首页</title>
+    <style>
+      .loading  {
+        width: 100px;
+        aspect-ratio: 1;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px;
+        box-sizing: border-box;
+        display: grid;
+        background: #fff;
+        filter: blur(5px) contrast(10) hue-rotate(300deg);
+        mix-blend-mode: darken;
+      }
+      .loading:before, .loading:after  {
+        content: "";
+        grid-area: 1/1;
+        width: 40px;
+        height: 40px;
+        background: #ffff00;
+        animation: loading 2s infinite;
+      }
+      .loading:after  {
+        animation-delay: -1s;
+      }
+      @keyframes loading  {
+        0% { transform: translate(0, 0); }
+        25% { transform: translate(100%, 0); }
+        50% { transform: translate(100%, 100%); }
+        75% { transform: translate(0, 100%); }
+        100% { transform: translate(0, 0); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="loading"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

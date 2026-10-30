@@ -3,11 +3,16 @@ import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'node:url'
-import { theme } from 'ant-design-vue'
+// import { theme } from 'ant-design-vue'
 import AutoImport from 'unplugin-auto-import/vite'
 
-const { defaultAlgorithm, defaultSeed } = theme
-const mapToken = defaultAlgorithm(defaultSeed)
+// const { defaultAlgorithm, defaultSeed } = theme
+// // ant-design-vue 的 token 值可能为数字，Less 的 modifyVars 仅接受字符串，统一转成字符串
+// const mapToken: Record<string, string> = Object.fromEntries(
+//   Object.entries(defaultAlgorithm(defaultSeed)).map(
+//     ([key, value]) => [key, String(value)] as const,
+//   ),
+// )
 
 // 配置项参考：https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
@@ -20,7 +25,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       // 自动导入 api：ref/reactive 无需 import
       AutoImport({
         imports: ['vue', 'vue-router', 'vue-i18n'],
-        dirs: ['src/utils/index.{js,ts}', 'src/enum', 'src/api/index.{js,ts}'],
+        dirs: ['src/utils/index.ts', 'src/enum', 'src/api/index.ts'],
         dts: 'src/types/auto-import.d.ts',
       }),
       // 自动导入 template 组件 <a-button> <a-table>
@@ -108,13 +113,13 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
-    css: {
-      preprocessorOptions: {
-        less: {
-          // 在 vue、less 中使用主题色： color: @colorPrimary;
-          modifyVars: mapToken,
-        },
-      },
-    },
+    // css: {
+    //   preprocessorOptions: {
+    //     less: {
+    //       // 在 vue、less 中使用主题色： color: @colorPrimary;
+    //       modifyVars: mapToken,
+    //     },
+    //   },
+    // },
   }
 })

@@ -57,7 +57,7 @@ onMounted(() => {
 })
 async function getTreeData(): Promise<void> {
   const result = await crudRequest<CrudRecord[]>(
-    props.config.method ?? 'get',
+    props.config.method ?? 'post',
     props.config.url,
     props.config.params ?? {}
   )

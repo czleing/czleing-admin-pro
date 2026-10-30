@@ -114,7 +114,7 @@ export default defineComponent({
     async function getDataSource(params: Record<string, unknown>): Promise<OptionItem[] | undefined> {
       if (!remote) return undefined
       const result = await crudRequest<OptionItem[]>(
-        remote.method ?? 'get',
+        remote.method ?? 'post',
         remote.url,
         params
       )

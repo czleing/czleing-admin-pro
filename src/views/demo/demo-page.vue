@@ -25,7 +25,7 @@
       // export: ''
     }"
     :api-method-config="{
-      // 预设功能接口请求方式设置，默认遵循 RESTful 规范，如：/system/user/add => POST
+      // 预设功能接口请求方式设置，默认post
       // add: '',
       // ...
     }"

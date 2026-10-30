@@ -1,16 +1,29 @@
 {
+  // 本配置仅覆盖 vite.config.ts：它运行在 Node 环境，与浏览器端源码分属两套检查配置
   "compilerOptions": {
+    // 编译目标语法版本
     "target": "ESNext",
+    // 模块系统，Vite 配置文件使用 ES Module
     "module": "ESNext",
+    // 模块解析策略：Bundler 模式
     "moduleResolution": "Bundler",
+    // Node 环境无浏览器 DOM，只需 ES API 类型库
     "lib": ["ESNext"],
+    // 跳过 node_modules 内 .d.ts 的类型检查
     "skipLibCheck": true,
+    // 开启全部严格检查
     "strict": true,
+    // 允许 CommonJS 模块与 ES Module 互操作
     "esModuleInterop": true,
+    // 允许 import xx from 'cjs包' 的默认导入写法
     "allowSyntheticDefaultImports": true,
+    // 强制文件名大小写敏感
     "forceConsistentCasingInFileNames": true,
+    // 允许直接 import .json 文件
     "resolveJsonModule": true,
+    // 只加载 Node 全局类型声明（process、Buffer 等），依赖 devDependencies 中的 @types/node
     "types": ["node"],
+    // 只做类型检查，不输出编译产物
     "noEmit": true
   },
   "include": ["vite.config.ts"]

@@ -121,7 +121,7 @@ const cPage = ref<CrudPageExpose<UserRow>>()
 |---|---:|---|---|
 | url | String | 获取树数据的接口地址 | 必填 |
 | params | Object | 额外请求参数 | {} |
-| method | String | 请求方法（post\|get） | get |
+| method | String | 请求方法（post\|get） | post |
 | replaceField | Object | 字段替换：{ key, children, title } | { key:'id', children:'children', title:'title' } |
 | searchField | String | 选中节点用于列表查询的字段名（默认 orgId） | "orgId" |
 | ... | - | 其他属性可以根据需要自由扩展 | - |
@@ -411,7 +411,7 @@ fields: [
     // useRefresh: false,
     remote: {
       url: '/system/user/selectUser',
-      // method: 'get', // 默认 get
+      // method: 'get',
       params: {
         // type: 1,
         // type: '{formData.radio1:required}'

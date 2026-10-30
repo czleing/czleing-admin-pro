@@ -60,9 +60,9 @@ src/
 ├── index.vue              # 页面入口
 ├── components/            # 本模块私有组件（超过 2 个才建目录）
 ├── langs/                 # 本模块专属多语言（需要时才建）
-│   ├── en.js
-│   ├── zh-cn.js
-│   └── zh-hk.js
+│   ├── en.ts
+│   ├── zh-cn.ts
+│   └── zh-hk.ts
 ├── modal/                 # 弹窗组件
 ├── enum/                  # 本模块枚举
 └── types.ts               # 本模块专属类型（需要时才建）
@@ -83,6 +83,7 @@ src/
 ### 3.1 SFC 结构顺序（强制）
 
 ```vue
+<!-- 这里写明当前文件功能描述与用途 -->
 <script setup lang="ts">
 // 1. import（按：vue / 第三方库 / @/ 别名 / 相对路径 分组，所有 import 都不需要空行分隔）
 // 2. 类型定义（本组件专属 interface / type）
@@ -210,45 +211,18 @@ export interface UserInfo {
 
 ```
 src/api/
-├── index.js           # axios 实例 + 拦截器
-├── user.js            # 用户模块接口
-├── role.js            # 角色模块接口
+├── index.ts           # axios 实例 + 拦截器
+├── user.ts            # 用户模块接口
+├── role.ts            # 角色模块接口
 └── ...
 ```
 
-### 5.3 接口定义模板
-
-```ts
-// src/api/user.ts
-import request from './index';
-import type { ApiResponse } from '@/types/api';
-
-export interface UserListParams {
-  page: number;
-  pageSize: number;
-  keyword?: string;
-}
-
-export interface UserListResult {
-  total: number;
-  list: UserInfo[];
-}
-
-/**
- * 分页查询用户列表
- * @param params 查询参数
- */
-export const getUserList = (params: UserListParams): Promise<ApiResponse<UserListResult>> => {
-  return request.get('/user/list', { params });
-}
-```
-
-### 5.4 铁律
+### 5.3 API请求使用风格
 
 1. 接口方法必须写 JSDoc 注释（参数、返回值、业务含义）
-2. 请求路径以 `/` 开头，使用 RESTful 风格：GET 查询 / POST 新增 / PUT 修改 / DELETE 删除
-3. 禁止在组件中直接写 `request.get('/xxx')`，必须封装成具名函数
-4. 请求拦截器统一处理 token、错误码跳 401、全局 loading
+2. 不强制使用 RESTful 风格，应视后端而定
+3. 允许组件中直接写 `api.post('/xxx')`，无需封装成具名函数
+4. 请求拦截器统一处理 token、401 重授权/登录、业务异常提示
 
 ---
 
@@ -329,12 +303,12 @@ src/router/
 
 ```
 src/locales/langs/
-├── en.js
-├── zh-cn.js
-└── zh-hk.js
+├── en.ts
+├── zh-cn.ts
+└── zh-hk.ts
 ```
 
-业务模块如需专属国际化，放模块同级 `langs/` 目录。
+业务模块国际化文件，放模块同级 `langs/` 目录，系统自动扫描。
 
 ### 8.2 铁律
 
@@ -414,8 +388,7 @@ export function useAsync<T, P extends unknown[] = []>(
 1. 单个 `.vue` 文件 ≤ **500 行**（template + script + style 合计），超过必须拆分
 2. 函数 ≤ **50 行**，超过拆分为子函数
 3. 一个函数只做一件事，单一职责
-4. 注释写"为什么"，不写"做什么"。写清楚的代码不需要注释
-5. 组件、hook、页面等文件首行必须写注释，说明文件功能、用途、用法示例
+4. 组件、hook、页面等文件首行必须写注释，说明文件功能、用途、用法示例
 
 ---
 
@@ -445,7 +418,6 @@ export function useAsync<T, P extends unknown[] = []>(
 3. **自检清单**：
    - [ ] 有没有用 `any`？
    - [ ] 有没有裸 `<style>` 没加 scoped？
-   - [ ] 有没有在组件里直接写 axios 而不是走 api/？
    - [ ] 有没有在模板里写复杂表达式？
    - [ ] 有没有忘了写类型？
 

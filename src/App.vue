@@ -1,8 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { theme } from 'ant-design-vue'
 import zhCN from 'ant-design-vue/es/locale/zh_CN'
 import zhHK from 'ant-design-vue/es/locale/zh_HK'
 import enUs from 'ant-design-vue/es/locale/en_US'
+import type { Locale } from 'ant-design-vue/es/locale'
 import { useSettingStore } from '@/stores/setting-store'
 import { useCheckUpdate } from './hooks/useCheckUpdate'
 import dayjs from 'dayjs'
@@ -24,12 +25,12 @@ watch(
 )
 
 /** ant-design-vue 语言动态切换的 mapping */
-const localeMap = {
+const localeMap: Record<string, Locale> = {
   'en': enUs,
   'zh-cn': zhCN,
   'zh-hk': zhHK
 }
-const locale = computed(() => localeMap[settingStore.locale] ?? zhCN)
+const locale = computed<Locale>(() => localeMap[settingStore.locale] ?? zhCN)
 // 动态主题
 const currTheme = computed(() => {
   return {
@@ -53,6 +54,3 @@ useCheckUpdate()
     <RouterView />
   </a-config-provider>
 </template>
-
-<style>
-</style>

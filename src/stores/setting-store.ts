@@ -5,6 +5,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { SizeType } from 'ant-design-vue/es/config-provider/context'
 
 /** 主题色 token */
 export interface ThemeToken {
@@ -119,7 +120,7 @@ export const useSettingStore = defineStore('setting', () => {
   /** 当前语言 zh-cn, zh-hk, en */
   const locale = ref('zh-cn')
   /** 当前组件尺寸 */
-  const componentSize = ref('middle')
+  const componentSize = ref<SizeType>('middle')
   /** 菜单布局方式，top: 全部显示在顶部，left: 全部显示在左侧，top-left: 顶部一级菜单，左侧子菜单 */
   const menuLayout = ref('top-left')
   /** 左侧菜单宽度 px */

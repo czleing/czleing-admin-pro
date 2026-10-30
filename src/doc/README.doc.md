@@ -3,14 +3,14 @@
 ### 1、基础底座说明
 - 框架使用了自动导入插件，vue、vue-router、vue-i18n、utils、Enum 内部 API 在开发中无需 import, 可直接用
 - ant-design-vue 组件及图标在 vue template 中会自动导入，无需 import，在 script setup 中则需要手动导入，如：Modal, message...
-- ant-design-vue 内部的 less 变量已注入到全局 less 环境，.less文件、《style lang="less" scoped》 中可直接使用
-- antdv 的 less 变量为编译时变量，不会因页面上主题切换而变化，因主题而变化的变量需要换为 css 变量(运行时变量)，变量参考: src/layout/index.vue
+- 框架已将部分 ant-design-vue token 变量实时注入到了全局 css 变量中，规则及详情参考: src/layout/index.vue
 - 图标使用 ant-design 图标，不够用时根据自己喜好引入第三方图标库即可
 - CPage 组件及相关子组件只为简化 CRUD 开发，本项目基础模块都是通过该组件实现，但非必选，不适用时使用传统模式开发即可
-- CRUD（CPage 及 c-table、c-form、c-filter、c-tools 等）TS 配置类型统一收敛在 `src/components/crud/types`，类型化的用法与说明见 [CPage 使用文档](./README.cpage.md)
+- `src/views/demo/demo-page.vue` 是 CPage 组件的全配置示例页面，也是后续使用 CPage 组件的参考文档，包含了 CPage 组件的所有使用方法
 
 ### 2、接口请求
-- 遵循 RESTful 规范，一接口一封装模式，统一管理在 `src/api` 目录下, 按模块分类管理
+- 统一管理在 `src/api` 目录下, 按模块分类管理，请求统一封装在 `src/api/index` 中，各模块基于该模块进行请求
+- CRUD CPage组件预设功能默认根据路由生成，与路由不一致时，只需配置接口地址，请求方式默认全部 POST，设置了可覆盖默认值，无需在 `src/api` 下新建接口文件
 
 #### 响应
 - 框架对 axios 的二次封装，简化了获取响应数据步骤，对全局异常统一拦截处理，使业务不需要关注全局异常处理
@@ -346,12 +346,12 @@ function onXxxChange (e) {
 </script>
 ```
 ### 9、表单联动
-#### 在表单配置中，大部分属性支持函数动态取值，属性从静态到动态只需将值换成函数，静态属性立刻动起来，无需引入新的属性、新的概念、新的配置即可实现复杂的表单联动，简洁就是王道
-```javascript
+#### 在表单配置中，大部分属性支持函数动态取值，属性从静态到动态只需将值换成函数，即可实现复杂的表单联动
+```ts
 /**
  * 新增、修改、详情弹窗配置
  */
-const modalConfig = computed(() => ({
+const modalConfig = computed<ModalConfig>(() => ({
   // ... 省略其他配置
   // 表单配置 Object || ({ isAdd, isEdit, isView, detail }) => Object
   formConfig: ({ isAdd, isEdit, isView, detail }) => ({

@@ -20,7 +20,7 @@ export function useRecordAudio() {
     } catch (e) {
       console.error('无法获取麦克风权限')
       error.value = (e as Error).message
-      throw new Error((e as Error).message)
+      throw new Error((e as Error).message, { cause: e })
     }
     let mimeType = 'audio/webm'
     if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4'

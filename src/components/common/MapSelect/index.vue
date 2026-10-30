@@ -5,7 +5,7 @@
   <div class="map-select">
     <div>
       <a-popover>
-        <template slot="content">
+        <template #content>
           <template v-if="confirmLoacation && confirmLoacation.length">
             <div>经纬度：[{{ confirmLoacation.join(', ') }}]</div>
             <div>详细地址：{{ confirmAddress || '-' }}</div>
@@ -40,7 +40,7 @@
             id="searchInput"
           />
         </div>
-        <div id="mapContainer" class="radius5" style="height:500px;"></div>
+        <div id="mapContainer" class="radius5" style="height:500px;" />
         <div class="tc mt10">
           当前经纬度：{{ location }}
         </div>
@@ -48,10 +48,12 @@
           当前地址：{{ address }}
         </div>
       </div>
-      <span slot="footer">
-        <a-button @click="close">取 消</a-button>
-        <a-button v-if="!disabled && !readOnly" type="primary" @click="submit">确 定</a-button>
-      </span>
+      <template #footer>
+        <span>
+          <a-button @click="close">取 消</a-button>
+          <a-button v-if="!disabled && !readOnly" type="primary" @click="submit">确 定</a-button>
+        </span>
+      </template>
     </a-modal>
   </div>
 </template>

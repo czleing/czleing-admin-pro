@@ -1,7 +1,15 @@
 <!-- 弹窗组件，分居中弹窗和侧边抽屉弹窗 -->
 <template>
   <div class="modal">
-    <a-modal v-if="currMode === 'modal'" :title="currTitle" :open="visible" :width="currWidth" v-bind="$attrs" @cancel="close" @ok="onOkHandle">
+    <a-modal
+      v-if="currMode === 'modal'"
+      :title="currTitle"
+      :open="visible"
+      :width="currWidth"
+      v-bind="$attrs"
+      @cancel="close"
+      @ok="onOkHandle"
+    >
       <slot :visible="visible" />
       <!-- a-modal 自带有确定、取消按钮，此处使用自定义 -->
       <template v-if="$attrs.footer !== null" #footer>
@@ -13,7 +21,14 @@
         </slot>
       </template>
     </a-modal>
-    <a-drawer v-if="currMode === 'drawer'" :title="currTitle" :open="visible" :width="currWidth" v-bind="$attrs" @close="close">
+    <a-drawer
+      v-if="currMode === 'drawer'"
+      :title="currTitle"
+      :open="visible"
+      :width="currWidth"
+      v-bind="$attrs"
+      @close="close"
+    >
       <div class="">
         <slot :visible="visible" />
       </div>
@@ -73,8 +88,8 @@ const currConfirmText = ref(props.confirmText)
 const currCancelText = ref(props.cancelText)
 const currShowConfirm = ref(props.showConfirm)
 const currShowCancel = ref(props.showCancel)
-let onConfirm: Function | null = null
-let onCancel: Function | null = null
+let customOnConfirm: Function | null = null
+let customOnCancel: Function | null = null
 let extraData: unknown = null
 
 watch(
@@ -103,16 +118,16 @@ function open (options: ModalOpenOptions) {
   currWidth.value = ((options?.width ?? props.width) + 'px').replace('pxpx', 'px')
   currShowConfirm.value = options?.showConfirm ?? props.showConfirm
   currShowCancel.value = options?.showCancel ?? props.showCancel
-  onConfirm = (options?.onConfirm ?? props.onConfirm) as Function | null
-  onCancel = (options?.onCancel ?? props.onCancel) as Function | null
+  customOnConfirm = (options?.onConfirm ?? props.onConfirm) as Function | null
+  customOnCancel = (options?.onCancel ?? props.onCancel) as Function | null
   extraData = options?.extraData
   visible.value = true
 }
 /** 关闭 */
 async function close () {
   loadingRequest(closeLoading, async () => {
-    if (onCancel && typeof onCancel === 'function' && visible.value) {
-      await onCancel()
+    if (customOnCancel && typeof customOnCancel === 'function' && visible.value) {
+      await customOnCancel()
     }
     await nextTick()
     visible.value = false
@@ -123,8 +138,8 @@ async function close () {
 /** 点击确认按钮 */
 function onOkHandle () {
   loadingRequest(confirmLoading, async () => {
-    if (onConfirm && typeof onConfirm === 'function') {
-      await onConfirm(close, extraData)
+    if (customOnConfirm && typeof customOnConfirm === 'function') {
+      await customOnConfirm(close, extraData)
     }
     emits('confirm', close)
   })

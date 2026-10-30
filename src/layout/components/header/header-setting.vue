@@ -19,12 +19,11 @@
                   {{ $t(item.name) }}
                 </a-select-option>
               </a-select>
-              <div class="flex-x x-middle gap5">
+              <div class="flex-x x-middle gap5" v-if="!settingStore.theme.isDiy">
                 <a-tooltip
-                  v-if="!settingStore.theme.isDiy"
                   placement="top"
-                  v-for="(kv, index) in currColors"
-                  :key="index"
+                  v-for="kv in currColors"
+                  :key="kv[0]"
                 >
                   <template #title>
                     <span>{{ kv[0] }}: {{ kv[1] }}</span>
@@ -36,14 +35,14 @@
           </Field>
           <div v-if="settingStore.theme.isDiy">
             <div class="theme-diy flex-y pl15">
-              <label v-for="[key, value] in Object.entries(settingStore.theme.token)" class="theme-diy__item flex-x-between gap10">
+              <label v-for="[key, value] in Object.entries(settingStore.theme.token)" :key="key" class="theme-diy__item flex-x-between gap10">
                 <div class="label">
                   <span>{{ $t(`frame.${key}`) }}</span>
                   <span v-if="key === 'colorInfo'" class="em09 ml text-primary pointer" @click.prevent="settingStore.theme.token[key] = settingStore.theme.token.colorPrimary">
                     {{ $t('frame.usePrimaryColor') }}
                   </span>
                 </div>
-                <input type="color" :value="settingStore.theme.token[key]" class="value" @input="e => handleColorInput(e, key)" />
+                <input type="color" :value="settingStore.theme.token[key]" class="value" @input="e => handleColorInput(e, key)">
               </label>
             </div>
           </div>
@@ -51,7 +50,7 @@
             <a-segmented :value="mode" :options="modeOptions">
               <template #label="{ value, payload = {} }">
                 <div class="flex-x x-middle gap5" @click="onModeChange($event, value)">
-                  <div v-if="payload.icon" class="flex-y-center" v-html="payload.icon"></div>
+                  <div v-if="payload.icon" class="flex-y-center" v-html="payload.icon" />
                   <span>{{ payload.label }}</span>
                 </div>
               </template>
@@ -75,7 +74,7 @@
                   class="check-icon pointer"
                   :class="{ 'is-checked': settingStore.bgImage === item.src }"
                   @click="settingStore.bgImage = item.src"
-                />
+                >
                 <div v-else class="check-icon border pointer" :class="{'is-checked': bgIsDiy}" @click="settingStore.bgImage = ''">
                   <div class="flex-y-center" style="height: 50px;">
                     <span class="text-primary">{{ $t('frame.bgDiy') }}</span>
@@ -174,7 +173,7 @@
                 :value="lang.value"
               >
                 <div class="flex-x x-middle">
-                  <img v-if="lang.image" :src="lang.image" class="radius3" style="height: 16px;" >
+                  <img v-if="lang.image" :src="lang.image" class="radius3" style="height: 16px;">
                   <span class="ml8">{{ lang.label }}</span>
                 </div>
               </a-select-option>
@@ -325,7 +324,7 @@ const handleColorInput = (e, key) => {
   }, 2000)
 }
 const onModeChange = async (e, newMode) => {
-  if (newMode === mode.value) return;
+  if (newMode === mode.value) return
   mode.value = newMode
   const isAuto = newMode === 'auto'
   settingStore.useAutoMode = isAuto
@@ -334,16 +333,16 @@ const onModeChange = async (e, newMode) => {
   } else {
     settingStore.destroyWatchSysMode()
   }
-  if (isAuto && settingStore.getSystemMode() === settingStore.mode) return;
-  else if (newMode === settingStore.mode) return;
+  if (isAuto && settingStore.getSystemMode() === settingStore.mode) return
+  else if (newMode === settingStore.mode) return
   await sleep(300)
   // 开始执行过渡动画
-  const x = e.clientX, y = e.clientY;
+  const x = e.clientX, y = e.clientY
   const changeFn = () => {
     if (isAuto) {
       settingStore.setModeAuto()
     } else if (newMode === 'light') {
-      settingStore.setLight();
+      settingStore.setLight()
     } else if (newMode === 'dark') {
       settingStore.setDark()
     }

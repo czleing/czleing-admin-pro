@@ -2,21 +2,21 @@
 <template>
   <a-tooltip placement="top" :title="$t('frame.themeMode')">
     <div class="mode-switch pointer" @click="changeMode">
-      <div class="stars"></div>
-      <div class="sun-moon"></div>
-      <div class="cloud"></div>
+      <div class="stars" />
+      <div class="sun-moon" />
+      <div class="cloud" />
     </div>
   </a-tooltip>
 </template>
 <script setup>
-import useViewTransition from '@/hooks/useViewTransition';
+import useViewTransition from '@/hooks/useViewTransition'
 import { useSettingStore } from '@/stores/setting-store'
 
 const settingStore = useSettingStore()
 const { startViewTransition } = useViewTransition()
 
 async function changeMode (e) {
-  const x = e.clientX, y = e.clientY;
+  const x = e.clientX, y = e.clientY
   startViewTransition({
     changeFn: settingStore.toggleMode, // 修改UI
     x, y,

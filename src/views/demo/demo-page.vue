@@ -461,7 +461,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
             permission: 'system:user:opt',
             confirm: true,
             confirmContent: `确认锁定[${record.nickName}]吗？`,
-            async callback ({}) {
+            async callback () {
               // await axios.post('', { userId: record.userId })
               message.success(`[${record.nickName}]已锁定`)
             }
@@ -550,7 +550,7 @@ const modalConfig = computed<ModalConfig>(() => ({
             label: '密码',
             fieldName: 'password',
             type: EControlType.eInput,
-            rules: { pattern: /^[\d\w!@#$%\^&*()]{8,16}$/, message: '密码格式错误，应8-16位数字、字母、!@#$%^&*()特殊符号' },
+            rules: { pattern: /^[\d\w!@#$%^&*()]{8,16}$/, message: '密码格式错误，应8-16位数字、字母、!@#$%^&*()特殊符号' },
             none: isView, // 详情时不展示该字段
             props: {
               type: 'password',

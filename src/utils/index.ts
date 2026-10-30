@@ -283,7 +283,7 @@ export function stringStar(
   mark = '*',
   markLen?: number
 ): string | number {
-  let str: string = typeof value === 'number' ? value.toString() : value
+  const str: string = typeof value === 'number' ? value.toString() : value
   if (typeof str !== 'string') return value
   if (str.length < startLen + endLen) return str
   const len = markLen ?? str.length - startLen - endLen

@@ -78,7 +78,7 @@
               title: '温馨提示',
               content: '确认要清空所有日志？',
               async onOk () {
-                await axios.post(`/system/operlog/clean`)
+                await axios.post('/system/operlog/clean')
                 message.success('清空成功！')
                 cPage.value.refresh()
               }

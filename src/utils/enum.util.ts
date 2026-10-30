@@ -94,7 +94,7 @@ export function init<T extends Record<string, EnumItem>>(
   const keys = Object.keys(enumObj).filter((key) => (enumObj[key] as unknown as EnumItem).isEnum)
   const _list: EnumItem[] = keys.map((key) => ({ ...(enumObj[key] as unknown as EnumItem) }))
   // 为了简化大部分使用情况，用 ID 覆盖原本的对象，要获取对象请用 _objectOf 方法
-  for (let i in keys) {
+  for (const i in keys) {
     ;(enumObj as unknown as Record<string, unknown>)[keys[i]] = _list[i].id
   }
   const result = enumObj as unknown as EnumObject<T>

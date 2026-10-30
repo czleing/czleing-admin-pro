@@ -252,9 +252,9 @@ const modalConfig = computed(() => ({
 
 function getButtonType (type) {
   switch(type) {
-    case 'M': return 'text';
-    case 'C': return 'link';
-    case 'F': return 'primary';
+    case 'M': return 'text'
+    case 'C': return 'link'
+    case 'F': return 'primary'
   }
 }
 

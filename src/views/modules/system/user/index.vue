@@ -112,7 +112,7 @@ const modalConfig = computed(() => ({
         rules: [
           { min: 5, max: 20, message: '密码长度 5 至 20 之间', trigger: 'change' },
           {
-            pattern: new RegExp(/^[\w!@#\$%\^&\*\(\)]*$/),
+            pattern: new RegExp(/^[\w!@#$%^&*()]*$/),
             message: '只能包含数字、大小写字母、下划线及“!@#$%^&*()”特殊字符'
           }
         ]

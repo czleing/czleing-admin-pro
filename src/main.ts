@@ -4,7 +4,7 @@ import components from '@/components/index'
 import i18n from '@/locales/index'
 import router from '@/router'
 import { createPinia } from 'pinia'
-import { createPersistedState } from 'pinia-plugin-persistedstate';
+import { createPersistedState } from 'pinia-plugin-persistedstate'
 import App from './App.vue'
 import directives from './directives'
 

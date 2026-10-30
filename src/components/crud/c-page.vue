@@ -8,7 +8,7 @@
         <LeftOutlined class="em06" v-show="isTreeShow" />
         <RightOutlined class="em06" v-show="!isTreeShow" />
       </div>
-      <div v-show="isTreeShow" ref="resizerRef" class="c-page__tree__dragger"></div>
+      <div v-show="isTreeShow" ref="resizerRef" class="c-page__tree__dragger" />
     </div>
     <div class="c-page__page">
       <slot name="header" />

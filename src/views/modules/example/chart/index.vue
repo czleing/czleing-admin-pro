@@ -2,15 +2,32 @@
 <template>
   <div class="">
     <div class="lh2">
-      所有图表都使用通用的组件渲染，只需丢一份数据给他，告诉他哪个字段作为x轴，哪个字段作为y轴，自动渲染出图形。<br/>
-      隐藏通用逻辑，但提供常用配置及增量配置覆盖选项。<br/>
-      通用组件封装了加载中、空数据、自动调整大小、工具箱等功能。<br/>
+      所有图表都使用通用的组件渲染，只需丢一份数据给他，告诉他哪个字段作为x轴，哪个字段作为y轴，自动渲染出图形。<br>
+      隐藏通用逻辑，但提供常用配置及增量配置覆盖选项。<br>
+      通用组件封装了加载中、空数据、自动调整大小、工具箱等功能。<br>
     </div>
     <h2 class="mt10">一个组件 LineBarChart 搞定各类线柱图</h2>
     <h3 class="mt20">基础柱图</h3>
     <div class="border radius10 pa10 flex-x gap10">
-      <LineBarChart title="最大最小值" :data="mockData" :min-value="200" :max-value="1000" height="200px" :colors="[token.colorPrimary]" :error-color="token.colorError" />
-      <LineBarChart title="目标值" :data="mockData" :y-fields="['sales']" :target-value="3000" units="万" height="200px" :colors="[token.colorPrimary]" :error-color="token.colorError" />
+      <LineBarChart
+        title="最大最小值"
+        :data="mockData"
+        :min-value="200"
+        :max-value="1000"
+        height="200px"
+        :colors="[token.colorPrimary]"
+        :error-color="token.colorError"
+      />
+      <LineBarChart
+        title="目标值"
+        :data="mockData"
+        :y-fields="['sales']"
+        :target-value="3000"
+        units="万"
+        height="200px"
+        :colors="[token.colorPrimary]"
+        :error-color="token.colorError"
+      />
     </div>
     <h3 class="mt20">混合线柱图</h3>
     <div class="border radius10 pa10 flex-x gap10">
@@ -65,7 +82,15 @@
     </div>
     <h2 class="mt30">一个组件 PieChart 搞定各类饼图</h2>
     <div class="border radius10 pa10 flex-x gap10">
-      <PieChart title="手机xx占比" :data="mockData" name-field="x" value-field="sales" :borderRadius="0" :innerRadius="0" height="200px" />
+      <PieChart
+        title="手机xx占比"
+        :data="mockData"
+        name-field="x"
+        value-field="sales"
+        :borderRadius="0"
+        :innerRadius="0"
+        height="200px"
+      />
       <PieChart
         title="手机xx占比(环形)"
         :data="mockData"

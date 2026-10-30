@@ -1,7 +1,7 @@
 <!-- 菜单栏头部LOGO组件 -->
 <template>
   <div class="header-logo flex-x x-middle">
-    <img :src="settingStore.isDark ? info.logoWhite : info.logo" class="header-logo__img" />
+    <img :src="settingStore.isDark ? info.logoWhite : info.logo" class="header-logo__img">
     <span
       class="header-logo__title nowrap ml10 bold em12"
       :class="{

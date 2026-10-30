@@ -1,7 +1,7 @@
 <!-- 表格操作按钮组件 -->
 <template>
   <div class="c-table-action" @click.stop>
-    <template v-for="action in showActions">
+    <template v-for="action in showActions" :key="action.name">
       <CTableActionItem :action="action" :record="record" />
     </template>
     <template v-if="moreActions && moreActions.length > 0">

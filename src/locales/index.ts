@@ -20,12 +20,12 @@ export const langOptions = Object.entries(commonLangs)
 function getI18nConfig() {
   const messages: any = {}
   Object.entries(commonLangs).forEach(([path, module]) => {
-    const match = path.match(/^.*\/([^\/]*)\.(js|ts)$/)
+    const match = path.match(/^.*\/([^/]*)\.(js|ts)$/)
     const lang = match?.[1] ?? path
     ;(messages as any)[lang] = (module as { default: unknown }).default
   })
   Object.entries(moduleLangs).forEach(([path, module]) => {
-    const match = path.match(/^.*\/([^\/]*)\.(js|ts)$/)
+    const match = path.match(/^.*\/([^/]*)\.(js|ts)$/)
     const lang = match?.[1] ?? path
     const existing = (messages as any)[lang] || {}
     ;(messages as any)[lang] = mergeWith({}, existing, (module as { default: unknown }).default)

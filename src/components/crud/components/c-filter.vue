@@ -17,10 +17,14 @@
             <CComponent v-model:value="formData[field.fieldName]" :field="field" />
           </a-form-item>
         </a-col>
-        <a-col v-bind="config.buttonsCol ?? { flex: '1 1 auto' }" class="flex-x" :class="{
-          'x-center': config.buttonsAlign === 'center',
-          'x-end': config.buttonsAlign === 'right',
-        }">
+        <a-col
+          v-bind="config.buttonsCol ?? { flex: '1 1 auto' }"
+          class="flex-x"
+          :class="{
+            'x-center': config.buttonsAlign === 'center',
+            'x-end': config.buttonsAlign === 'right',
+          }"
+        >
           <a-form-item>
             <a-space>
               <a-button type="primary" :loading="loading" :disabled="loading" :icon="h(SearchOutlined)" html-type="submit">{{ $t('crud.search') }}</a-button>

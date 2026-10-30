@@ -22,7 +22,7 @@
 
 <script setup>
 import { langOptions } from '@/locales/index'
-import { useSettingStore } from '@/stores/setting-store';
+import { useSettingStore } from '@/stores/setting-store'
 
 const settingStore = useSettingStore()
 const currLang = computed(() => langOptions.find(item => item.value === settingStore.locale))

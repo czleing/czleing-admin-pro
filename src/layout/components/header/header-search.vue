@@ -1,5 +1,5 @@
 <!-- 搜索菜单按钮，点击弹出搜索框 -->
- <template>
+<template>
   <div @click="open">
     <a-tooltip placement="bottom" :title="$t('frame.search')">
       <SearchOutlined class="font18 pointer" />
@@ -29,7 +29,7 @@
           <template #title="{ path, title, meta }">
             <div class="flex-x x-middle gap8 pl5 lh2_5">
               <a-icon v-if="meta?.icon" :type="meta.icon" />
-              <div v-if="title" class="" v-html="title.split(searchValue).join(`<span class='text-danger bold'>${searchValue}</span>`)"></div>
+              <div v-if="title" class="" v-html="title.split(searchValue).join(`<span class='text-danger bold'>${searchValue}</span>`)" />
               <span class="text-gray em09">{{ path }}</span>
             </div>
           </template>
@@ -51,13 +51,13 @@
       </div>
     </div>
   </div>
- </template>
+</template>
  <script setup>
-  import { useCacheStore } from '@/stores/cache-store';
-  import { useMenuStore } from '@/stores/menu-store';
-  import { useTabsStore } from '@/stores/tabs-store';
-  import { CloseOutlined, SearchOutlined } from '@ant-design/icons-vue';
-  import { useDebounceFn } from '@vueuse/core';
+  import { useCacheStore } from '@/stores/cache-store'
+  import { useMenuStore } from '@/stores/menu-store'
+  import { useTabsStore } from '@/stores/tabs-store'
+  import { CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
+  import { useDebounceFn } from '@vueuse/core'
 
   defineOptions({ inheritAttrs: false })
   const tabsStore = useTabsStore()
@@ -89,7 +89,7 @@
     return datas.reduce((result, node) => {
       const newNode = { ...node, title: node.meta?.title }
       let nodeIsPush = false
-      const searchStr = newNode.path + '_' + newNode.title ?? ''
+      const searchStr = newNode.path + '_' + (newNode.title ?? '')
       if (searchStr.toLowerCase().includes(_searchValue.toLowerCase()) && newNode.meta?.hidden !== true && newNode.meta?.hiddenTab !== true) {
         result.push(newNode)
         nodeIsPush = true

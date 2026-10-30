@@ -59,7 +59,7 @@
               <template #content>
                 <div style="width:500px;">
                   <div class="bold">文本识别：</div>
-                  <a-textarea v-model:value="textContent" :rows="8" :placeholder="`请输入内容，如：\n1,2,3\n4,5,6\n`" class="mt10"></a-textarea>
+                  <a-textarea v-model:value="textContent" :rows="8" :placeholder="`请输入内容，如：\n1,2,3\n4,5,6\n`" class="mt10" />
                   <div class="mt10 flex-x-between">
                     <div>* 每行不同列之间用 <a-tag>|</a-tag><a-tag>,</a-tag><a-tag>，</a-tag> 或空格、制表符间隔，回车结束</div>
                     <a-button type="primary" :loading="textOcring" @click="textOcrHandle">识别</a-button>

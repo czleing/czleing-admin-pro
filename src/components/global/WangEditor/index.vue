@@ -53,7 +53,7 @@ const editorConfig = {
     uploadImage: {
       server: import.meta.env.VUE_APP_BASE_API + '/oss/upload',
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: 'Bearer ' + token,
       },
       fieldName: 'file',
       // 由于后端返回的结构与默认的不一致，需要自定义插入图片

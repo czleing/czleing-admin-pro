@@ -1,7 +1,7 @@
 <template>
   <div class="exception">
     <div class="exception__img">
-      <img :src="config[type]?.img" />
+      <img :src="config[type]?.img">
     </div>
     <div class="exception__content">
       <h1>{{ config[type]?.title }}</h1>

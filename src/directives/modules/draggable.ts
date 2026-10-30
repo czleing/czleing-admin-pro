@@ -46,8 +46,8 @@ function bindingDrag(el: HTMLElement, binding: { arg?: string; value?: Draggable
     const maxY = window.innerHeight - bounding.top - bounding.height
     dragElement.onmousedown = null
     dragElement.onmousedown = (e: MouseEvent) => {
-      let moveX = Number(moveElement.getAttribute('data-move-x') || 0)
-      let moveY = Number(moveElement.getAttribute('data-move-y') || 0)
+      const moveX = Number(moveElement.getAttribute('data-move-x') || 0)
+      const moveY = Number(moveElement.getAttribute('data-move-y') || 0)
       const startX = e.pageX
       const startY = e.pageY
       document.onmousemove = null

@@ -9,7 +9,7 @@
     >
       <template #table_dictType="{ text, record, index, column }">
         <a href="javascript:;" @click="openDictData(text, record)">{{ text }}</a>
-        <a href="javascript:;" v-copy="text" class="ml10"><CopyOutlined/></a>
+        <a href="javascript:;" v-copy="text" class="ml10"><CopyOutlined /></a>
       </template>
     </CPage>
     <CModal ref="cModal">

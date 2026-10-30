@@ -1,9 +1,17 @@
 <!-- 线、柱图组件 -->
 <template>
   <div class="lineBarChart overflow-hidden flex-y gap5" :style="`width: 100%; height: ${height}`">
-    <VChart v-show="data?.length" :loading="loading" :option="currOption" :loading-options="loadingOptions" class="flex-auto" autoresize @click="onChartClick" />
+    <VChart
+      v-show="data?.length"
+      :loading="loading"
+      :option="currOption"
+      :loading-options="loadingOptions"
+      class="flex-auto"
+      autoresize
+      @click="onChartClick"
+    />
     <!-- 工具箱 -->
-    <div class='tools flex-x x-middle gap10 em09'>
+    <div class="tools flex-x x-middle gap10 em09">
       <span v-if="!!onRefresh" class="pointer" @click="onRefresh">
         <ReloadOutlined />
         {{ $t('common.refresh') }}
@@ -26,17 +34,17 @@
 </template>
 
 <script setup lang="ts">
-  import dayjs from 'dayjs';
+  import dayjs from 'dayjs'
   import { use } from 'echarts/core'
-  import { BarChart, LineChart } from 'echarts/charts';
-  import { GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent } from 'echarts/components';
+  import { BarChart, LineChart } from 'echarts/charts'
+  import { GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent } from 'echarts/components'
   import { CanvasRenderer } from 'echarts/renderers'
-  import { merge } from 'lodash-es';
-  import { ref, watchEffect, type PropType } from 'vue';
-  import VChart, { THEME_KEY } from 'vue-echarts';
+  import { merge } from 'lodash-es'
+  import { ref, watchEffect, type PropType } from 'vue'
+  import VChart, { THEME_KEY } from 'vue-echarts'
   import { Empty } from 'ant-design-vue'
-  import { useSettingStore } from '@/stores/setting-store';
-  import { InfoCircleFilled, ReloadOutlined } from '@ant-design/icons-vue';
+  import { useSettingStore } from '@/stores/setting-store'
+  import { InfoCircleFilled, ReloadOutlined } from '@ant-design/icons-vue'
   // import useThemeToken from '@/hooks/useThemeToken';
 
   use([LineChart, BarChart, CanvasRenderer, GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent])
@@ -125,7 +133,7 @@
     onItemClick: { type: Function as PropType<(params: unknown) => void> },
     /** 点击刷新按钮执行 */
     onRefresh: { type: Function as PropType<() => void> },
-  });
+  })
 
   const getDataZoomDef = (length: number) => [
     {
@@ -138,14 +146,14 @@
       right: 5,
       minSpan: 5,
     },
-  ];
+  ]
 
-  const showLabel = ref(props.defaultShowLabel);
+  const showLabel = ref(props.defaultShowLabel)
   const currOption = shallowRef()
-  const settingStore = useSettingStore();
-  provide(THEME_KEY, settingStore.mode);
-  const isLight = computed(() => settingStore.mode === 'light');
-  const isEmpty = computed(() => !props.data?.length);
+  const settingStore = useSettingStore()
+  provide(THEME_KEY, settingStore.mode)
+  const isLight = computed(() => settingStore.mode === 'light')
+  const isEmpty = computed(() => !props.data?.length)
   
   function onChartClick (params: any) {
     if (props.onItemClick) {
@@ -163,18 +171,18 @@
         axisLabel: {
           color: isLight.value ? 'black' : 'white',
           formatter: (value: number | string) => {
-            value = Number(value).toFixed(digit);
-            return `${value}`;
+            value = Number(value).toFixed(digit)
+            return `${value}`
           },
         },
         scale: true, // true：刻度范围根据数据自动缩放，false：默认从 0 到最大，很难看出变化趋势
         min: function (value: any) {
           const min = Math.min(
             ...[props.minValue, props.maxValue, value.min, props.targetValue].filter(n => n || n === 0),
-          );
+          )
           let minNum = min >= 0 ? min * 0.9 : min * 1.1
           minNum = minNum >= 0 && minNum < 10 ? 0 : minNum
-          return Number(minNum).toFixed(digit);
+          return Number(minNum).toFixed(digit)
         },
         // max: function (value: any) { // 不再统一设置，改为通过 option 自定义，通过手动计算设置最大值还存在一些兼容问题，如：双Y轴时，另外一个Y轴被影响
         //   const max = Math.max(...[maxValue, value.max, targetValue].filter(v => v !== undefined))
@@ -203,18 +211,18 @@
         min: function (value: any) {
           let min = Math.min(
             ...[props.maxValue, value.min, props.targetValue].filter((v) => v !== undefined),
-          );
-          min = min * 0.9;
-          if (min < 1) min = 0;
-          return min.toFixed(digit);
+          )
+          min = min * 0.9
+          if (min < 1) min = 0
+          return min.toFixed(digit)
         },
         max: function (value: any) {
           let max = Math.max(
             ...[props.maxValue, value.max, props.targetValue].filter((v) => v !== undefined),
-          );
-          max = max * 1.1;
-          if (max > 100) max = 100;
-          return max.toFixed(digit);
+          )
+          max = max * 1.1
+          if (max > 100) max = 100
+          return max.toFixed(digit)
         },
         scale: true, // true：刻度范围根据数据自动缩放，false：默认从 0 到最大，很难看出变化趋势
         nameTextStyle: {
@@ -229,24 +237,24 @@
           },
         },
       },
-    }[type];
-  };
+    }[type]
+  }
 
   watchEffect(() => {
-    const dayReplaceStr = dayjs().format('YYYY-MM-DD ');
-    const yearReplaceStr = dayjs().format('YYYY-');
+    const dayReplaceStr = dayjs().format('YYYY-MM-DD ')
+    const yearReplaceStr = dayjs().format('YYYY-')
     // 获取X轴数据
     const xData = props.data?.map((item) =>
       String(item[props.xField]).replace(dayReplaceStr, '').replace(yearReplaceStr, ''),
-    );
+    )
 
     // 生成 series
     const series = props.yFields.map((yField, index) => {
-      const type = props.types?.[index] ?? 'bar';
-      const yAxisIndex: number = props.yAxisIndexs?.[index] ?? (props.yAxisTypes?.length === 2 ? index % 2 : 0);
-      const isRate = props.yAxisTypes[yAxisIndex] === 'percent';
+      const type = props.types?.[index] ?? 'bar'
+      const yAxisIndex: number = props.yAxisIndexs?.[index] ?? (props.yAxisTypes?.length === 2 ? index % 2 : 0)
+      const isRate = props.yAxisTypes[yAxisIndex] === 'percent'
       const yDatas = props.data?.map(item => item[yField]) ?? []
-      let min: number, max: number;
+      let min: number, max: number
       if (yDatas.length && showLabel.value && props.showMinMaxLabel) {
         min = Math.min(...yDatas)
         max = Math.max(...yDatas)
@@ -272,15 +280,15 @@
         barMaxWidth: 40,
         itemStyle: {
           color: ({ value }: { value: number | string }) => {
-            if (props.maxValue && value > props.maxValue) return props.errorColor;
-            if (props.minValue && value < props.minValue) return props.errorColor;
+            if (props.maxValue && value > props.maxValue) return props.errorColor
+            if (props.minValue && value < props.minValue) return props.errorColor
             if (props.targetFields && props.targetValue) {
               if (props.targetFields.includes(yField) && Number(value) < Number(props.targetValue))
-                return props.errorColor;
+                return props.errorColor
             } else if (props.targetValue && Number(value) < Number(props.targetValue)) {
-              return props.errorColor;
+              return props.errorColor
             }
-            return props.colors?.[index % props.colors?.length] ?? '#5470c6';
+            return props.colors?.[index % props.colors?.length] ?? '#5470c6'
           },
           borderRadius: props.useRadius ? [props.radius, props.radius, 0, 0] : undefined,
         },
@@ -305,7 +313,7 @@
                   },
                   label: {
                     color: props.errorColor,
-                    formatter: `目标值：{c}`,
+                    formatter: '目标值：{c}',
                   },
                 }
               : null,
@@ -319,7 +327,7 @@
                   },
                   label: {
                     color: 'orange',
-                    formatter: `MAX：{c}`,
+                    formatter: 'MAX：{c}',
                   },
                 }
               : null,
@@ -333,14 +341,14 @@
                   },
                   label: {
                     color: 'orange',
-                    formatter: `MIN：{c}`,
+                    formatter: 'MIN：{c}',
                   },
                 }
               : null,
           ].filter(Boolean),
         },
         data: yDatas.map(d => {
-          const value = Number(d ?? 0);
+          const value = Number(d ?? 0)
           return {
             value: isRate && props.useCalcPercent
               ? Number((value * 100).toFixed(2).replace(/(\.\d*?[1-9])0+$|\.0+$/, '$1'))
@@ -350,8 +358,8 @@
             }
           }
         }) ?? [],
-      };
-    });
+      }
+    })
 
     const newOption = {
       // width: '100%',
@@ -388,7 +396,7 @@
           confine: true,
           show: true,
           formatter: function (param: any): string {
-            return '<div>' + param.title + '</div>';
+            return '<div>' + param.title + '</div>'
           },
         },
         top: -10,
@@ -423,7 +431,7 @@
           formatter(value: string | number): string {
             return String(value)?.length > 10
               ? String(value).replace(/^(.{5}).*(.{5})$/, '$1...$2')
-              : String(value);
+              : String(value)
           },
         },
         data: xData,
@@ -438,10 +446,10 @@
         ),
       ),
       series,
-    };
-    const mergeOptoin = merge(newOption, props.option);
+    }
+    const mergeOptoin = merge(newOption, props.option)
     currOption.value = mergeOptoin
-  });
+  })
 </script>
 <style lang="less" scoped>
 .lineBarChart {

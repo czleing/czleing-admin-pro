@@ -1,6 +1,13 @@
 <!-- 代码生成-编辑配置 -->
 <template>
-  <CModal ref="cModal" title="代码生成-编辑" mode="drawer" width="1200" :mask-closable="false" :body-style="{padding: '0 15px 10px 15px'}">
+  <CModal
+    ref="cModal"
+    title="代码生成-编辑"
+    mode="drawer"
+    width="1200"
+    :mask-closable="false"
+    :body-style="{padding: '0 15px 10px 15px'}"
+  >
     <a-tabs v-model:activeKey="activeKey">
       <a-tab-pane key="1" tab="基本信息">
         <CForm

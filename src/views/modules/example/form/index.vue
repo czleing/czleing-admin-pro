@@ -38,7 +38,7 @@
       <a-button @click="openModal">居中弹出</a-button>
       <a-button @click="openDrawer">右侧抽屉弹出</a-button>
     </div>
-    <div class="mt50"></div>
+    <div class="mt50" />
     <CModal ref="modal1" title="弹窗+表单" :footer="null">
       <c-form
         :form-config="{ ...formConfig1, autoReset: true }"
@@ -73,13 +73,13 @@
 </template>
 
 <script setup lang="ts">
-import cForm from '@/components/crud/components/c-form.vue';
-import { Modal } from 'ant-design-vue';
-import dayjs from 'dayjs';
+import cForm from '@/components/crud/components/c-form.vue'
+import { Modal } from 'ant-design-vue'
+import dayjs from 'dayjs'
 import { EControlType, EMenuType } from '@/enum'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 import ProvinceCityAreaSelect from '@/components/common/ProvinceCityAreaSelect/index.vue'
-import type { CrudFormExpose, CrudModalExpose, CrudRecord, FormConfig } from '@/components/crud/types';
+import type { CrudFormExpose, CrudModalExpose, CrudRecord, FormConfig } from '@/components/crud/types'
 
 defineOptions({ name: 'FormExample' })
 

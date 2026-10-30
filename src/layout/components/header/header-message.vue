@@ -14,7 +14,8 @@
         </div>
         <div class="list-container flex-y">
           <div class="flex-auto list px10">
-            <div class="item flex-x gap10 lh1_5 pa10"
+            <div
+              class="item flex-x gap10 lh1_5 pa10"
               v-for="(item, index) in list"
               :key="item.id"
               :class="{'border-top': index > 0}"
@@ -42,7 +43,7 @@
 </template>
 
 <script setup>
-import { notification, message } from 'ant-design-vue';
+import { notification, message } from 'ant-design-vue'
 import { MessageOutlined, SmileOutlined, BellOutlined } from '@ant-design/icons-vue'
 import axios from '@/api/index'
 import { useRouter } from 'vue-router'
@@ -81,7 +82,7 @@ const handleSSEMessage = (resp) => {
     message: '收到新消息',
     description: resp?.data,
     icon: () => h(SmileOutlined, { style: 'color: #108ee9' }),
-  });
+  })
   getList()
 }
 

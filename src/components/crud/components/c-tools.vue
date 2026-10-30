@@ -8,9 +8,19 @@
           {{ config?.addBtnText ?? $t('crud.add') }}
         </a-button>
         <!-- 批量删除 -->
-        <a-button v-if="noDelete !== true" v-permission="permissionConfig.delete" type="primary" danger :icon="h(DeleteOutlined)" :disabled="selectNum === 0" @click="onDeleteHandle">{{ $t('crud.batchDelete') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}</a-button>
+        <a-button
+          v-if="noDelete !== true"
+          v-permission="permissionConfig.delete"
+          type="primary"
+          danger
+          :icon="h(DeleteOutlined)"
+          :disabled="selectNum === 0"
+          @click="onDeleteHandle"
+        >
+          {{ $t('crud.batchDelete') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}
+        </a-button>
         <!-- 自定义按钮 -->
-        <template v-for="(btn, index) in config?.otherTools">
+        <template v-for="(btn, index) in config?.otherTools" :key="index">
           <!-- 自定义按钮 -->
           <a-button
             v-if="!btn.component || btn.component === 'a-button'"

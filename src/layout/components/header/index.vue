@@ -46,7 +46,7 @@
       marginheight="0"
       scrolling="no"
       :style="settingStore.isDark ? 'filter:invert(1);' : ''"
-    ></iframe>
+    />
     <div class="flex-x x-middle gap15">
       <HeaderSearch />
       <HeaderMessage />

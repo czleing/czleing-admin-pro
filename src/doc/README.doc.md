@@ -399,5 +399,30 @@ const modalConfig = computed<ModalConfig>(() => ({
 - 查询区域/表单区域使用日期/时间范围时，字段名设计统一使用'Begin'、'End'后缀，便于代码生成及使用默认值简化配置，如：xxxBegin, xxxEnd
 - 相对独立的小模块，尽可能单独抽离成一个组件，避免一个文件代码过长过杂，同时也要避免过多的组件嵌套
 
-#### 11、全配置参考案例：[demo-page](../views/demo/demo-page.vue)
+
+#### 提交规范
+
+本项目使用 [husky](https://typicode.github.io/husky/) + [commitlint](https://commitlint.js.org/) 对 Git 提交信息进行强制校验，采用 **Angular 提交规范**，格式：
+```
+<type>(<scope 可选>): <subject>
+```
+示例：`feat(user): 新增用户导出功能`、`fix(login): 修复验证码刷新失败`
+#### type 前缀使用场景
+| 前缀 | 使用场景 | 示例 |
+| --- | --- | --- |
+| `feat` | 新功能、新特性 | `feat(dict): 支持字典项排序` |
+| `fix` | 修复 Bug | `fix(menu): 修复三级菜单缓存失效` |
+| `docs` | 仅文档变更（README、注释、使用文档） | `docs: 补充 CRUD 组件使用示例` |
+| `style` | 代码格式调整，不影响逻辑（空格、分号、缩进、lint 修复） | `style: 统一单引号风格` |
+| `refactor` | 代码重构，既不修 Bug 也不加功能 | `refactor(store): 拆分用户设置 store` |
+| `perf` | 性能优化 | `perf(table): 大列表改虚拟滚动` |
+| `test` | 新增或修改测试用例 | `test(utils): 补充日期工具用例` |
+| `build` | 构建工具、依赖变更（vite 配置、package.json 依赖） | `build: 升级 vite 至 8.x` |
+| `ci` | CI 配置与脚本变更 | `ci: 新增 lint 流水线` |
+| `chore` | 其他杂项（不影响 src 的辅助性改动，如 .gitignore） | `chore: 更新 .gitignore` |
+| `revert` | 回滚某次提交 | `revert: feat(user): 新增用户导出功能` |
+
+提交不符合规范时将被 commit-msg 钩子拒绝，请按上述前缀调整后重新提交。
+
+### 11、全配置参考案例：[demo-page](../views/demo/demo-page.vue)
 既是案例也是文档，也可以访问 [CPage 组件使用文档](./README.cpage.md)

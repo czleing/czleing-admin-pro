@@ -34,10 +34,26 @@
         </div>
       </a-card>
       <a-card class="center shadow2 flex-auto" title="修改个人信息">
-        <CForm isEdit :detail="userInfo" primaryKey="userId" :formConfig="infoFormConfig" :onSubmitHandle="onInfoSubmitHandle" confirmText="保存" :showCancel="false" confirmAlign="center" />
+        <CForm
+          isEdit
+          :detail="userInfo"
+          primaryKey="userId"
+          :formConfig="infoFormConfig"
+          :onSubmitHandle="onInfoSubmitHandle"
+          confirmText="保存"
+          :showCancel="false"
+          confirmAlign="center"
+        />
       </a-card>
       <a-card class="right shadow2" title="修改密码">
-        <CForm isAdd :formConfig="pwdFormConfig" :onSubmitHandle="onPwdSubmitHandle" confirmText="保存" :showCancel="false" confirmAlign="center" />
+        <CForm
+          isAdd
+          :formConfig="pwdFormConfig"
+          :onSubmitHandle="onPwdSubmitHandle"
+          confirmText="保存"
+          :showCancel="false"
+          confirmAlign="center"
+        />
       </a-card>
     </div>
   </div>

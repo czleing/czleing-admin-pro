@@ -6,7 +6,14 @@
       <a-icon v-if="modelValue" :type="modelValue" class="mr20" style="font-size: 18px;" />
       <a-button v-if="!disabled" @click="open">请选择</a-button>
     </div>
-    <CModal v-if="!disabled" ref="cModal" title="选择图标" width="900" :footer="null" centered>
+    <CModal
+      v-if="!disabled"
+      ref="cModal"
+      title="选择图标"
+      width="900"
+      :footer="null"
+      centered
+    >
       <div class="flex-x x-middle flex-wrap">
         <div
           class="icons-select__item"

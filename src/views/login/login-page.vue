@@ -11,9 +11,11 @@
         </div>
       </div>
       <div class="login_page__modal__form">
-        <a-config-provider :theme="{
-          algorithm: theme.defaultAlgorithm
-        }">
+        <a-config-provider
+          :theme="{
+            algorithm: theme.defaultAlgorithm
+          }"
+        >
           <LoginForm />
         </a-config-provider>
       </div>

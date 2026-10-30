@@ -54,7 +54,7 @@
               }"
               :style="{ 'overflow': isAnimating && settingStore.tabAnimate ? 'hidden' : 'auto' }"
             >
-            <!-- {{ tabsStore.cachedViews }} -->
+              <!-- {{ tabsStore.cachedViews }} -->
               <router-view v-slot="{ Component, route }">
                 <Transition :name="settingStore.tabAnimate" :css="!!settingStore.tabAnimate" @before-enter="isAnimating = true" @after-leave="isAnimating = false">
                   <keep-alive :max="20" :include="tabsStore.cachedViews">

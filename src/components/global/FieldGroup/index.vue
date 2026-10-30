@@ -1,11 +1,13 @@
 <!-- 字段分组-组件 -->
 <template>
   <div class="field-group" :class="{ 'is-expand': showContainer }">
-    <div v-if="title" class="field-group__title pointer flex-x-between"
+    <div
+      v-if="title"
+      class="field-group__title pointer flex-x-between"
       @click="toggle"
     >
       <div>
-        <span class="flag"></span>
+        <span class="flag" />
         <span class="bold">{{ title }}</span>
         <span class="ml10">{{ subTitle }}</span>
       </div>

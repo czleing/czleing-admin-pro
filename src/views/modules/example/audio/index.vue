@@ -36,10 +36,10 @@
   </div>
 </template>
 <script setup>
-import useVoiceInput from '@/hooks/useVoiceInput';
-import useSpeak from '@/hooks/useSpeak';
+import useVoiceInput from '@/hooks/useVoiceInput'
+import useSpeak from '@/hooks/useSpeak'
 import useRecordAudio from '@/hooks/useRecordAudio'
-import { AudioFilled, ExclamationCircleOutlined, PauseCircleFilled } from '@ant-design/icons-vue';
+import { AudioFilled, ExclamationCircleOutlined, PauseCircleFilled } from '@ant-design/icons-vue'
 
 /** 文字转语音 */
 const { speak, isPlaying } = useSpeak()

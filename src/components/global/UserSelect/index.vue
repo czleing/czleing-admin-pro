@@ -18,7 +18,7 @@
       :dropdownStyle="{ width: 0, overflow: 'hidden' }"
       :getPopupContainer="() => UserSelectPopupContainer"
       v-bind="$attrs"
-      @click.native="open({ value: selectedUserIds })"
+      @click="open({ value: selectedUserIds })"
       @deselect="(userId: unknown) => removeUser(userId as string | number)"
     >
       <a-select-option
@@ -26,9 +26,11 @@
         :key="item[primaryKey]"
         :value="item[primaryKey]"
         :title="item[primaryName]"
-      >{{ item[primaryName] }}</a-select-option>
+      >
+        {{ item[primaryName] }}
+      </a-select-option>
     </a-select>
-    <div ref="UserSelectPopupContainer" style="position:absolute;width:0;height:0;overflow:hidden;"></div>
+    <div ref="UserSelectPopupContainer" style="position:absolute;width:0;height:0;overflow:hidden;" />
     <!-- 选择弹窗 -->
     <!-- 渲染到body上 -->
     <Teleport to="body">

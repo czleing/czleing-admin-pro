@@ -25,43 +25,57 @@
             <template #overlay>
               <a-menu>
                 <a-menu-item @click="tabsStore.closeTab(index)">
-                  <CloseCircleFilled slot='icon' class="text-primary" />
+                  <template #icon>
+                    <CloseCircleFilled class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.closeTab') }}</span>
                 </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="tabsStore.refreshTab()" :disabled="currentTab !== tab.fullPath">
-                  <SyncOutlined slot='icon' class="text-primary" />
+                  <template #icon>
+                    <SyncOutlined class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.refreshTab') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="openInNewWindow(tab.fullPath, tab.path)">
-                  <SubnodeOutlined slot='icon' class="text-primary" />
+                  <template #icon>
+                    <SubnodeOutlined class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.openInNewWindow') }}</span>
                 </a-menu-item>
                 <a-menu-item v-if="settingStore.useTabFavorite" @click="tabsStore.toogleFavorite(index)">
                   <template v-if="tabsStore.favoriteKeys.includes(tab.fullPath)">
-                    <HeartFilled slot='icon' class="text-primary" />
+                    <HeartFilled slot="icon" class="text-primary" />
                     <span class="ml6">{{ $t('frame.removeFavorite') }}</span>
                   </template>
                   <template v-else>
-                    <HeartOutlined slot='icon' class="text-primary" />
+                    <HeartOutlined slot="icon" class="text-primary" />
                     <span class="ml6">{{ $t('frame.favorite') }}</span>
                   </template>
                 </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="tabsStore.clearLeftTabs(index)" :disabled="index === 0">
-                  <ArrowLeftOutlined slot='icon' class="text-primary" />
+                  <template #icon>
+                    <ArrowLeftOutlined class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.closeLeft') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearRightTabs(index)" :disabled="index === tabsStore.tabList.length - 1">
-                  <ArrowRightOutlined slot='icon' class="text-primary" />
+                  <template #icon>
+                    <ArrowRightOutlined class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.closeRight') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearOtherTabs(index)" :disabled="tabsStore.tabList.length === 1">
-                  <SwapOutlined slot='icon' class="text-primary" />
+                  <template #icon>
+                    <SwapOutlined class="text-primary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.closeOther') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearAllTabs()">
-                  <CloseCircleTwoTone slot='icon' :twoToneColor="token.colorPrimary" />
+                  <template #icon>
+                    <CloseCircleTwoTone :twoToneColor="token.colorPrimary" />
+                  </template>
                   <span class="ml6">{{ $t('frame.closeAll') }}</span>
                 </a-menu-item>
               </a-menu>

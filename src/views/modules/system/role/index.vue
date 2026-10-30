@@ -23,7 +23,7 @@
 
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
-import axios from '@/api/index.js'
+import axios from '@/api/index'
 import { message } from 'ant-design-vue'
 
 const { t } = useI18n()

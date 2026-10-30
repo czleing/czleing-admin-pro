@@ -27,8 +27,8 @@
 
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
-import { EControlType, EIsEnabled, EMenuType } from '@/enum/index.js'
-import { listToTree } from '@/utils/index.js'
+import { EControlType, EIsEnabled, EMenuType } from '@/enum/index'
+import { listToTree } from '@/utils/index'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 
 const cPage = ref()

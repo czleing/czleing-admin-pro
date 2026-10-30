@@ -53,8 +53,8 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth-store.js'
-import { useCacheStore } from '@/stores/cache-store.js'
+import { useAuthStore } from '@/stores/auth-store'
+import { useCacheStore } from '@/stores/cache-store'
 import { message } from 'ant-design-vue'
 
 

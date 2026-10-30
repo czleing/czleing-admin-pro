@@ -29,7 +29,7 @@
 
 <script setup>
 import LoginForm from './components/login-page-form.vue'
-import settings from '@/config/setting.js'
+import settings from '@/config/setting'
 import { theme } from 'ant-design-vue'
 
 const setting = settings.websiteInfo

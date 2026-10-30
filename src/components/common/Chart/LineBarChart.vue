@@ -4,7 +4,10 @@
     <VChart v-show="data?.length" :loading="loading" :option="currOption" :loading-options="loadingOptions" class="flex-auto" autoresize @click="onChartClick" />
     <!-- 工具箱 -->
     <div class='tools flex-x x-middle gap10 em09'>
-      <span v-if="onRefresh" class="pointer" @click="onRefresh"><ReloadOutlined /> {{ $t('common.refresh') }}</span>
+      <span v-if="!!onRefresh" class="pointer" @click="onRefresh">
+        <ReloadOutlined />
+        {{ $t('common.refresh') }}
+      </span>
       <a-checkbox v-if="!isEmpty && useShowLabel" v-model:checked="showLabel" size="small">{{ $t('common.showLabel') }}</a-checkbox>
     </div>
     <!-- 点击提示 -->
@@ -22,23 +25,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
   import dayjs from 'dayjs';
   import { use } from 'echarts/core'
   import { BarChart, LineChart } from 'echarts/charts';
   import { GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent } from 'echarts/components';
   import { CanvasRenderer } from 'echarts/renderers'
   import { merge } from 'lodash-es';
-  import { ref, watchEffect } from 'vue';
+  import { ref, watchEffect, type PropType } from 'vue';
   import VChart, { THEME_KEY } from 'vue-echarts';
   import { Empty } from 'ant-design-vue'
   import { useSettingStore } from '@/stores/setting-store';
   import { InfoCircleFilled, ReloadOutlined } from '@ant-design/icons-vue';
-  import useThemeToken from '@/hooks/useThemeToken';
+  // import useThemeToken from '@/hooks/useThemeToken';
 
   use([LineChart, BarChart, CanvasRenderer, GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent])
 
-  const { token } = useThemeToken()
+  // const { token } = useThemeToken()
   /**
    * 线形、柱形图通用组件
    * 全局统一默认配置，支持自定义配置增量覆盖
@@ -59,27 +62,27 @@
     /** 是否加载中 */
     loading: { type: Boolean, default: false },
     /** 图表数据，对象数组 */
-    data: { type: Array },
+    data: { type: Array<any> },
     /** x轴字段名 */
     xField: { type: String, default: 'x' },
     /** y轴字段名, 多个表示有多个Y轴 */
-    yFields: { type: Array, default: ['y'] },
+    yFields: { type: Array<string>, default: ['y'] },
     /** y轴字段对应的坐标轴索引 */
-    yAxisIndexs: { type: Array, default: [0] },
+    yAxisIndexs: { type: Array<number>, default: [0] },
     /** y轴类型数组，取值范围：'value', 'percent'，最多2个，配合 yAxisTypesIndexs 指定索引 */
-    yAxisTypes: { type: Array, default: ['value'] },
+    yAxisTypes: { type: Array<string>, default: ['value'] },
     /** y轴保留小数位数 */
-    yAxisDigits: { type: Array, default: [0, 0] },
+    yAxisDigits: { type: Array<number>, default: [0, 0] },
     /** 系列类型，多个系列时，分别指定类型 */
-    types: { type: Array, default: ['bar'] },
+    types: { type: Array<string>, default: ['bar'] },
     /** y轴名称或名称数组 */
-    yNames: { type: [String, Array], default: '' },
+    yNames: { type: [String, Array<string>], default: '' },
     /** 系列名称或名称数组，根据索引一一对应 */
-    seriesNames: { type: Array, default: [] },
+    seriesNames: { type: Array<string>, default: [] },
     /** 柱子颜色，多个系列时循环使用，不传则使用默认的 */
-    colors: { type: Array, default: ['#3f62c9', '#ee6666', '#61bd5e', '#fac858', '#adc6ff', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'] },
+    colors: { type: Array<string>, default: ['#3f62c9', '#ee6666', '#61bd5e', '#fac858', '#adc6ff', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'] },
     /** y轴单位, 或单位数组，根据索引一一对应 */
-    units: { type: [String, Array], default: '' },
+    units: { type: [String, Array<string>], default: '' },
     /** 增量配置，可对默认配置进行覆盖 */
     option: Object,
     /** 设置最大值，大于该值显示红色 */
@@ -119,12 +122,12 @@
     /** 可点击的提示 */
     clickTips: String,
     /** 柱子点击事件 */
-    onItemClick: Function,
+    onItemClick: { type: Function as PropType<(params: unknown) => void> },
     /** 点击刷新按钮执行 */
-    onRefresh: Function,
+    onRefresh: { type: Function as PropType<() => void> },
   });
 
-  const getDataZoomDef = (length) => [
+  const getDataZoomDef = (length: number) => [
     {
       id: 'dataZoomX',
       type: 'slider',
@@ -144,14 +147,14 @@
   const isLight = computed(() => settingStore.mode === 'light');
   const isEmpty = computed(() => !props.data?.length);
   
-  function onChartClick (params) {
+  function onChartClick (params: any) {
     if (props.onItemClick) {
       props.onItemClick(params)
     }
   }
 
   /** 多个Y轴配置，value|percent */
-  const getYAxis = (type, yName, digit) => {
+  const getYAxis = (type: string, yName: string, digit: number) => {
     return {
       value: {
         type: 'value',
@@ -159,13 +162,13 @@
         alignTicks: true,
         axisLabel: {
           color: isLight.value ? 'black' : 'white',
-          formatter: (value) => {
+          formatter: (value: number | string) => {
             value = Number(value).toFixed(digit);
             return `${value}`;
           },
         },
         scale: true, // true：刻度范围根据数据自动缩放，false：默认从 0 到最大，很难看出变化趋势
-        min: function (value) {
+        min: function (value: any) {
           const min = Math.min(
             ...[props.minValue, props.maxValue, value.min, props.targetValue].filter(n => n || n === 0),
           );
@@ -195,9 +198,9 @@
         alignTicks: true,
         axisLabel: {
           color: isLight.value ? 'black' : 'white',
-          formatter: (value) => `${Number(value).toFixed(digit)}%    `,
+          formatter: (value: number | string) => `${Number(value).toFixed(digit)}%    `,
         },
-        min: function (value) {
+        min: function (value: any) {
           let min = Math.min(
             ...[props.maxValue, value.min, props.targetValue].filter((v) => v !== undefined),
           );
@@ -205,7 +208,7 @@
           if (min < 1) min = 0;
           return min.toFixed(digit);
         },
-        max: function (value) {
+        max: function (value: any) {
           let max = Math.max(
             ...[props.maxValue, value.max, props.targetValue].filter((v) => v !== undefined),
           );
@@ -240,10 +243,10 @@
     // 生成 series
     const series = props.yFields.map((yField, index) => {
       const type = props.types?.[index] ?? 'bar';
-      const yAxisIndex = props.yAxisIndexs?.[index] ?? (props.yAxisTypes?.length === 2 ? index % 2 : 0);
+      const yAxisIndex: number = props.yAxisIndexs?.[index] ?? (props.yAxisTypes?.length === 2 ? index % 2 : 0);
       const isRate = props.yAxisTypes[yAxisIndex] === 'percent';
       const yDatas = props.data?.map(item => item[yField]) ?? []
-      let min, max;
+      let min: number, max: number;
       if (yDatas.length && showLabel.value && props.showMinMaxLabel) {
         min = Math.min(...yDatas)
         max = Math.max(...yDatas)
@@ -258,23 +261,23 @@
           show: showLabel.value,
           position: 'top',
           color: isLight.value ? 'black' : 'white',
-          rotate: xData?.length > 10 ? 35 : 0,
+          rotate: (xData?.length ?? 0) > 10 ? 35 : 0,
           // formatter: `{c}${Array.isArray(units) ? units[index] : units}`,
           overflow: 'breakAll',
         },
         tooltip: {
-          valueFormatter: (value) =>
+          valueFormatter: (value: number | string) =>
             value + (Array.isArray(props.units) ? props.units[index] : props.units),
         },
         barMaxWidth: 40,
         itemStyle: {
-          color: ({ value }) => {
+          color: ({ value }: { value: number | string }) => {
             if (props.maxValue && value > props.maxValue) return props.errorColor;
             if (props.minValue && value < props.minValue) return props.errorColor;
             if (props.targetFields && props.targetValue) {
-              if (props.targetFields.includes(yField) && value < props.targetValue)
+              if (props.targetFields.includes(yField) && Number(value) < Number(props.targetValue))
                 return props.errorColor;
-            } else if (props.targetValue && value < props.targetValue) {
+            } else if (props.targetValue && Number(value) < Number(props.targetValue)) {
               return props.errorColor;
             }
             return props.colors?.[index % props.colors?.length] ?? '#5470c6';
@@ -384,7 +387,7 @@
         tooltip: {
           confine: true,
           show: true,
-          formatter: function (param) {
+          formatter: function (param: any): string {
             return '<div>' + param.title + '</div>';
           },
         },
@@ -416,16 +419,16 @@
         },
         axisLabel: {
           color: isLight.value ? 'rgba(0, 0, 0, .8)' : 'rgba(255, 255, 255, .8)',
-          rotate: xData?.length > 10 ? 35 : 0,
-          formatter(value) {
+          rotate: (xData?.length ?? 0) > 10 ? 35 : 0,
+          formatter(value: string | number): string {
             return String(value)?.length > 10
-              ? value.replace(/^(.{5}).*(.{5})$/, '$1...$2')
-              : value;
+              ? String(value).replace(/^(.{5}).*(.{5})$/, '$1...$2')
+              : String(value);
           },
         },
         data: xData,
       },
-      dataZoom: props.useDataZoom ? getDataZoomDef(props.data?.length) : undefined,
+      dataZoom: props.useDataZoom ? getDataZoomDef(props.data?.length ?? 0) : undefined,
       color: props.colors,
       yAxis: props.yAxisTypes?.map((ya, index) =>
         getYAxis(

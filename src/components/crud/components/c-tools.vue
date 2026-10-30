@@ -4,33 +4,33 @@
     <div>
       <a-space>
         <!-- 新增 -->
-        <a-button v-if="noAdd !== true" v-hasPermi="permissionConfig.add" type="primary" :icon="h(PlusOutlined)" @click="onAddHandle">
+        <a-button v-if="noAdd !== true" v-permission="permissionConfig.add" type="primary" :icon="h(PlusOutlined)" @click="onAddHandle">
           {{ config?.addBtnText ?? $t('crud.add') }}
         </a-button>
         <!-- 批量删除 -->
-        <a-button v-if="noDelete !== true" v-hasPermi="permissionConfig.delete" type="primary" danger :icon="h(DeleteOutlined)" :disabled="selectNum === 0" @click="onDeleteHandle">{{ $t('crud.batchDelete') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}</a-button>
+        <a-button v-if="noDelete !== true" v-permission="permissionConfig.delete" type="primary" danger :icon="h(DeleteOutlined)" :disabled="selectNum === 0" @click="onDeleteHandle">{{ $t('crud.batchDelete') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}</a-button>
         <!-- 自定义按钮 -->
         <template v-for="(btn, index) in config?.otherTools">
           <!-- 自定义按钮 -->
           <a-button
             v-if="!btn.component || btn.component === 'a-button'"
             :key="index"
-            v-hasPermi="btn.permission"
-            v-bind="{ ...btn.props, disabled: getFnValue(btn.props.disabled, callbackParams), icon: undefined, onClick: undefined }"
+            v-permission="btn.permission"
+            v-bind="{ ...btn.props, disabled: getFnValue(btn.props?.disabled, callbackParams), icon: undefined, onClick: undefined }"
             @click="onToolClickHandle(btn)"
           >
-            <template #icon v-if="btn.props.icon">
-              <a-icon :type="btn.props.icon" />
+            <template #icon v-if="btn.props?.icon">
+              <a-icon :type="btn.props?.icon" />
             </template>
             {{ getFnValue(btn.name, callbackParams) }}
           </a-button>
           <!-- 自定义组件 -->
-          <component v-else :is="btn.component" v-hasPermi="btn.permission" v-bind="{ ...btn.props, disabled: getFnValue(btn.props.disabled, callbackParams) }" v-on="getFnValue(btn.on ?? {}, callbackParams)" />
+          <component v-else :is="btn.component" v-permission="btn.permission" v-bind="{ ...btn.props, disabled: getFnValue(btn.props?.disabled, callbackParams) }" v-on="getFnValue(btn.on ?? {}, callbackParams)" />
         </template>
         <!-- 导入 -->
-        <CImport v-if="hasImport" v-hasPermi="permissionConfig.import" :url="apiConfig.import" :template-url="apiConfig.importTemplate" @success="onImportSuccessHandle" />
+        <CImport v-if="hasImport" v-permission="permissionConfig.import" :url="apiConfig.import" :template-url="apiConfig.importTemplate" @success="onImportSuccessHandle" />
         <!-- 导出 -->
-        <a-button v-if="hasExport" v-hasPermi="permissionConfig.export" type="dashed" :icon="h(ExportOutlined)" @click="onExportHandle">{{ $t('crud.export') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}</a-button>
+        <a-button v-if="hasExport" v-permission="permissionConfig.export" type="dashed" :icon="h(ExportOutlined)" @click="onExportHandle">{{ $t('crud.export') }} {{ selectNum > 0 ? `(${ selectNum })` : '' }}</a-button>
         <!-- 返回 -->
         <a-button v-if="hasGoBack" :icon="h(RollbackOutlined)" @click="$router.back()">{{ config?.backBtnText ?? $t('crud.back') }}</a-button>
       </a-space>
@@ -65,10 +65,10 @@
                 <a-segmented v-model:value="useTableBorder" :options="tableBorderOptions" />
               </div>
               <div ref="listContainer" class="c-tools__menus">
-                <div v-for="column in currColumns" :key="column.dataIndex" @click.stop>
+                <div v-for="column in currColumns" :key="getColumnKey(column)" @click.stop>
                   <div class="c-tools__menus__item">
                     <div class="flex-x-between">
-                      <a-checkbox :value="column.dataIndex" class="pointer" @click.stop>{{ column.title }}</a-checkbox>
+                      <a-checkbox :value="getColumnKey(column)" class="pointer" @click.stop>{{ column.title }}</a-checkbox>
                       <div @click.stop>
                         <HolderOutlined class="draggable" />
                       </div>
@@ -84,72 +84,97 @@
   </div>
 </template>
 
-<script setup>
-import { PlusOutlined, DeleteOutlined, ExportOutlined, RollbackOutlined, SyncOutlined, FilterOutlined, SearchOutlined, HolderOutlined, BorderInnerOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons-vue'
+<script setup lang="ts" generic="Row extends CrudRecord = CrudRecord">
+import { PlusOutlined, DeleteOutlined, ExportOutlined, RollbackOutlined, SyncOutlined, FilterOutlined, SearchOutlined, HolderOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons-vue'
 import CImport from './c-import.vue'
 import { Modal } from 'ant-design-vue'
 import { h } from 'vue'
+import type { Ref } from 'vue'
 import { getFnValue } from '@/utils'
-import axios from '@/api/index.js'
-import { useSortable } from '@/hooks/useSortable.js'
+import { useSortable } from '@/hooks/useSortable'
+import { crudRequest } from '../utils/request'
+import type {
+  CrudPagination,
+  CrudRecord,
+  CrudTableColumn,
+  ResolvedApiConfig,
+  ResolvedApiMethodConfig,
+  ResolvedPermissionConfig,
+  SearchParams,
+  ToolItem,
+  ToolsConfig,
+  ToolsContext
+} from '../types'
 
-const props = defineProps({
-  /** 没有新增按钮 */
-  noAdd: Boolean,
-  /** 没有删除按钮 */
-  noDelete: Boolean,
-  /** 有返回按钮 */
-  hasGoBack: Boolean,
-  /** 有导入按钮 */
-  hasImport: Boolean,
-  /** 有导出按钮 */
-  hasExport: Boolean,
-  /** 是否显示搜索区 */
-  showSearch: Boolean,
-  /** 工具栏配置 */
-  config: Object,
-  /** 接口配置 */
-  apiConfig: Object,
-  /** 接口请求方式配置 */
-  apiMethodConfig: Object,
-  /** 权限配置 */
-  permissionConfig: Object,
-  /** 列字段配置 */
-  columns: Array,
-  /** 分页信息 */
-  pagination: Object,
-  /** 选中的要展示的列字段名数组 */
-  checkedFieldNames: Array,
-  /** 是否使用查询区切换按钮 */
-  useToggleSearch: { type: Boolean, default: true },
-  /** 是否使用全屏按鈕 */
-  useFullscreen: { type: Boolean, default: true },
-  /** 是否全屏 */
-  isFullscreen: { type: Boolean, default: false }
-})
+const props = withDefaults(
+  defineProps<{
+    /** 没有新增按钮 */
+    noAdd?: boolean
+    /** 没有删除按钮 */
+    noDelete?: boolean
+    /** 有返回按钮 */
+    hasGoBack?: boolean
+    /** 有导入按钮 */
+    hasImport?: boolean
+    /** 有导出按钮 */
+    hasExport?: boolean
+    /** 是否显示搜索区 */
+    showSearch?: boolean
+    /** 工具栏配置 */
+    config?: ToolsConfig<Row>
+    /** 接口配置 */
+    apiConfig: ResolvedApiConfig<Row>
+    /** 接口请求方式配置 */
+    apiMethodConfig: ResolvedApiMethodConfig
+    /** 权限配置 */
+    permissionConfig: ResolvedPermissionConfig
+    /** 列字段配置 */
+    columns: CrudTableColumn<Row>[]
+    /** 分页信息 */
+    pagination: CrudPagination
+    /** 选中的要展示的列字段名数组 */
+    checkedFieldNames: string[]
+    /** 是否使用查询区切换按钮 */
+    useToggleSearch?: boolean
+    /** 是否使用全屏按鈕 */
+    useFullscreen?: boolean
+    /** 是否全屏 */
+    isFullscreen?: boolean
+  }>(),
+  {
+    useToggleSearch: true,
+    useFullscreen: true,
+    isFullscreen: false
+  }
+)
 
-const selectedIds = inject('c-page.selectedIds', ref([]))
-const selectedObjs = inject('c-page.selectedObjs', ref([]))
-const searchParams = inject('c-page.searchParams', ref({}))
-const loading = inject('c-page.loading', ref(false))
-const refreshTable = inject('c-page.onRefreshHandle', undefined)
-const useTableBorder = inject('c-page.useTableBorder', ref(0))
+const selectedIds = inject<Ref<(string | number)[]>>('c-page.selectedIds', ref([]))
+const selectedObjs = inject<Ref<Row[]>>('c-page.selectedObjs', ref([]))
+const searchParams = inject<Ref<SearchParams>>('c-page.searchParams', ref({}))
+const loading = inject<Ref<boolean>>('c-page.loading', ref(false))
+const refreshTable = inject<(() => void) | undefined>('c-page.onRefreshHandle', undefined)
+const useTableBorder = inject<Ref<number>>('c-page.useTableBorder', ref(0))
 const tableBorderOptions = [
   { label: '?', value: 0, title: '默认' },
   { label: '田', value: 1, title: '网格' },
-  { label: '☰', value: 2, title: '横边框' },
+  { label: '☰', value: 2, title: '横边框' }
 ]
 const selectNum = computed(() => selectedIds.value.length)
-const callbackParams = computed(() => ({
+const callbackParams = computed<ToolsContext<Row>>(() => ({
   selectedIds: selectedIds.value,
   selectedObjs: selectedObjs.value,
-  pagination: props.pagination ?? {}
+  pagination: props.pagination
 }))
 const currColumns = computed(() => props.columns.filter(item => !item.action))
 
+/** 列字段名（列配置统一使用字符串 dataIndex） */
+function getColumnKey(column: { dataIndex?: CrudTableColumn['dataIndex'] }): string {
+  return typeof column.dataIndex === 'string' ? column.dataIndex : ''
+}
+
 // 拖拽排序
-const listContainer = ref(null)
-const { setEnabled } = useSortable(listContainer, null, {
+const listContainer = ref<HTMLElement | null>(null)
+useSortable(listContainer, undefined, {
   handle: '.draggable',
   direction: 'vertical',
   animation: 180,
@@ -158,16 +183,16 @@ const { setEnabled } = useSortable(listContainer, null, {
   }
 })
 
-function onAddHandle () {
+function onAddHandle(): void {
   emits('add')
 }
-function onDeleteHandle () {
+function onDeleteHandle(): void {
   emits('delete', selectedIds.value)
 }
-function onImportSuccessHandle () {
-  refreshTable()
+function onImportSuccessHandle(): void {
+  refreshTable?.()
 }
-function onExportHandle () {
+function onExportHandle(): void {
   if (selectNum.value > 0) { // 有勾选，按选中的导出
     Modal.confirm({
       title: '温馨提示',
@@ -176,8 +201,13 @@ function onExportHandle () {
         h('b', { class: 'text-danger mx5' }, [`${selectedIds.value.length}`]),
         '项数据记录？'
       ]),
-      async onOk () {
-        await axios[props.apiMethodConfig.export](props.apiConfig.export, { ids: selectedIds.value }, { responseType: 'blob' })
+      async onOk() {
+        await crudRequest(
+          props.apiMethodConfig.export,
+          props.apiConfig.export,
+          { ids: selectedIds.value },
+          { responseType: 'blob' }
+        )
         selectedIds.value = []
         selectedObjs.value = []
       }
@@ -186,30 +216,43 @@ function onExportHandle () {
     Modal.confirm({
       title: '温馨提示',
       content: '确定根据当前条件导出所有数据？',
-      async onOk () {
-        await axios[props.apiMethodConfig.export](props.apiConfig.export, searchParams.value, { responseType: 'blob' })
+      async onOk() {
+        await crudRequest(
+          props.apiMethodConfig.export,
+          props.apiConfig.export,
+          searchParams.value,
+          { responseType: 'blob' }
+        )
       }
     })
   }
 }
-function onToolClickHandle (btn) {
+function onToolClickHandle(btn: ToolItem<Row>): void {
   if (typeof btn.props?.onClick === 'function') {
-    btn.props?.onClick(callbackParams.value)
+    btn.props.onClick(callbackParams.value)
   }
 }
 
-const emits = defineEmits(['add', 'delete', 'refresh', 'update:checkedFieldNames', 'toggleShowSearch', 'sortColumn', 'toggleFullScreen'])
-function onToggleShowSearchHandle () {
+const emits = defineEmits<{
+  (e: 'add'): void
+  (e: 'delete', ids: (string | number)[]): void
+  (e: 'refresh'): void
+  (e: 'update:checkedFieldNames', values: string[]): void
+  (e: 'toggleShowSearch'): void
+  (e: 'sortColumn', oldIndex?: number, newIndex?: number): void
+  (e: 'toggleFullScreen'): void
+}>()
+function onToggleShowSearchHandle(): void {
   emits('toggleShowSearch')
 }
-function onToggleFullScreenHandle () {
+function onToggleFullScreenHandle(): void {
   emits('toggleFullScreen')
 }
-function onRefreshHandle () {
+function onRefreshHandle(): void {
   emits('refresh')
 }
-function onFieldsFilterChange (values) {
-  emits('update:checkedFieldNames', values)
+function onFieldsFilterChange(values: (string | number | boolean)[]): void {
+  emits('update:checkedFieldNames', values.map(String))
 }
 </script>
 

@@ -26,9 +26,9 @@
 </template>
 
 <script setup>
-import { useMenuStore } from '@/stores/menu-store.js'
+import { useMenuStore } from '@/stores/menu-store'
 import SideItem from './SideItem.vue'
-import { useSettingStore } from '@/stores/setting-store.js'
+import { useSettingStore } from '@/stores/setting-store'
 
 const menuStore = useMenuStore()
 const settingStore = useSettingStore()

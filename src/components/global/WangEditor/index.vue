@@ -22,10 +22,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import '@wangeditor/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-import { i18nChangeLanguage } from '@wangeditor/editor'
+import { i18nChangeLanguage, type IDomEditor } from '@wangeditor/editor'
 import { useAuthStore } from '@/stores/auth-store'
 import { useSettingStore } from '@/stores/setting-store'
 
@@ -57,8 +57,9 @@ const editorConfig = {
       },
       fieldName: 'file',
       // 由于后端返回的结构与默认的不一致，需要自定义插入图片
-      customInsert (res, insertFn) {
-        insertFn(import.meta.env.VUE_APP_RESOURCE_API + res.data.path, '图片')
+      customInsert (res: Record<string, unknown>, insertFn: (url: string, alt: string) => void) {
+        const data = res.data as Record<string, string>
+        insertFn(import.meta.env.VUE_APP_RESOURCE_API + data.path, '图片')
       }
     },
     // 行高配置
@@ -72,7 +73,7 @@ const editorConfig = {
 watch(
   () => props.value,
   (val) => {
-    editorContent.value = val
+    editorContent.value = val ?? ''
   },
   { immediate: true }
 )
@@ -90,10 +91,10 @@ onUnmounted(() => {
   editor.value.destroy() // 组件销毁时，及时销毁编辑器
 })
 
-function onCreated (_editor) {
+function onCreated (_editor: IDomEditor) {
   editor.value = Object.seal(_editor) // 一定要用 Object.seal() ，否则会报错
 }
-async function onChange (_editor) {
+async function onChange (_editor: IDomEditor) {
   await nextTick()
   emits('update:value', editorContent.value)
   emits('change', editorContent.value)

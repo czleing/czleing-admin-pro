@@ -12,7 +12,7 @@
         <template #headerCell="{ column }">
           <template v-if="column.title">
             <span>
-              <a-tooltip v-if="column.tooltip" :title="column.tooltip">
+              <a-tooltip v-if="getCol(column).tooltip" :title="getCol(column).tooltip">
                 <QuestionCircleOutlined />
               </a-tooltip>
               {{ column.title }}
@@ -20,21 +20,21 @@
           </template>
         </template>
         <template #bodyCell="{ text, record, index, column }">
-          <template v-if="column.field">
+          <template v-if="getCol(column).field">
             <div class="flex-x x-middle gap2">
-              <span v-if="getFnValue(column.required, record, modelValue)" class="text-danger">*</span>
+              <span v-if="getFnValue(getCol(column).required, record, modelValue)" class="text-danger">*</span>
               <CComponent
-                v-model:value="record[column.dataIndex]"
-                :field="getFinalField(column.field, record)"
-                :is-view="column.isView || disabled"
+                v-model:value="record[getColDataIndex(column)]"
+                :field="getFinalField(getCol(column).field, record)"
+                :is-view="getCol(column).isView || disabled"
                 :cellInfo="{ text, record, index, column }"
                 class="flex-auto"
-                @update:value="(val) => handleChange(val, record, column.field)"
+                @update:value="(val: unknown) => handleChange(val, record, getCol(column).field)"
               />
             </div>
           </template>
           <!-- 操作列 -->
-          <template v-else-if="useDelete && modelValue.length > minCount && column.type === 'action' && !disabled">
+          <template v-else-if="useDelete && modelValue.length > minCount && getCol(column).type === 'action' && !disabled">
             <a-popconfirm
               placement="left"
               title="确认要删除该行吗？"
@@ -87,11 +87,42 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { QuestionCircleOutlined, PlusCircleOutlined, ClearOutlined, FormOutlined } from '@ant-design/icons-vue'
 import CComponent from '@/components/crud/components/c-component'
+import type { CrudComponentField, CrudControlProps, MaybeFn } from '@/components/crud/types'
 import { getFnValue } from '@/utils'
 import { message } from 'ant-design-vue'
+import type { PropType } from 'vue'
+import type { ColumnType, ColumnsType } from 'ant-design-vue/es/table/interface'
+
+/** 表格行数据 */
+type TableRow = Record<string, unknown>
+
+/** 扩展列配置，在 ant-design-vue 列配置基础上增加自定义属性 */
+interface DynamicColumn {
+  title?: string
+  tooltip?: string
+  dataIndex?: string
+  type?: string
+  required?: unknown
+  disabled?: unknown
+  isView?: boolean
+  hidden?: boolean
+  ocrIgnore?: boolean
+  defaultValue?: unknown
+  props?: Record<string, unknown>
+  field?: {
+    label?: string
+    fieldName?: string
+    type?: unknown
+    disabled?: unknown
+    props?: Record<string, unknown>
+    required?: unknown
+    [key: string]: unknown
+  }
+  [key: string]: unknown
+}
 
 const props = defineProps({
   // 组件值，对象数组
@@ -121,7 +152,7 @@ const props = defineProps({
    * props: 组件属性配置（++）
    * props.onChange: // 控件值改变事件（++），通过修改record里的属性进行多列间联动 (val, record, records) => {}
    */
-  columns: { type: Array, required: true },
+  columns: { type: Array as PropType<DynamicColumn[]>, required: true },
   // 是否禁用组件，禁用后只能查看，不能操作
   disabled: { type: Boolean, default: false },
   // 是否需要默认新增一行
@@ -134,9 +165,23 @@ const props = defineProps({
   useTextOCR: { type: Boolean, default: true },
 })
 
-const modelValue = ref([])
-const currColumns = computed(() => [
-  ...props.columns.filter(item => !item.hidden && item.type !== EControlType.eHidden).map(item => {
+const modelValue = ref<TableRow[]>([])
+
+/** 表格插槽中的列配置转换为扩展列配置 */
+function getCol (column: ColumnType): DynamicColumn {
+  return column as unknown as DynamicColumn
+}
+
+/** 安全获取列的 dataIndex */
+function getColDataIndex (column: ColumnType): string {
+  return (getCol(column).dataIndex ?? '') as string
+}
+
+/** eHidden 控件类型的运行时值 */
+const HIDDEN_CONTROL_TYPE = EControlType.eHidden as unknown as string
+
+const currColumns = computed(() => ([
+  ...props.columns.filter(item => !item.hidden && item.type !== HIDDEN_CONTROL_TYPE).map(item => {
     return {
       ...item,
       type: undefined,
@@ -158,7 +203,7 @@ const currColumns = computed(() => [
     align: 'center',
     type: 'action'
   } : null
-].filter(Boolean))
+].filter(Boolean)) as unknown as ColumnsType)
 
 onMounted(() => {
   if (!props.disabled && (!props.value || props.value.length === 0)) {
@@ -174,49 +219,63 @@ watch(
   { immediate: true, deep: true }
 )
 
-function setData(val) {
-  modelValue.value = val ?? []
+function setData(val: unknown[]) {
+  modelValue.value = (val ?? []) as TableRow[]
   modelValue.value.forEach(item => {
     item[props.primaryKey] = item[props.primaryKey] ?? Date.now()
   })
 }
 
 // 获取最终的字段配置，将动态的函数形式的值转成具体值
-function getFinalField (field, record) {
-  const props = getFnValue(field.props, record, modelValue.value) ?? {}
-  const disabled = getFnValue(field.disabled, record, modelValue.value)
-  const placeholder = getFnValue(props.placeholder, record, modelValue.value)
+function getFinalField (field: DynamicColumn['field'], record: TableRow): CrudComponentField {
+  // 模板中已通过 v-if 保证 field 存在，此处仅做类型收敛
+  const target = field as CrudComponentField
+  const fieldProps = (getFnValue(target.props, record, modelValue.value) ?? {}) as CrudControlProps
+  const disabled = getFnValue(
+    target.disabled as MaybeFn<boolean, [TableRow, TableRow[]]>,
+    record,
+    modelValue.value
+  )
+  const placeholder = getFnValue(
+    fieldProps.placeholder as unknown as MaybeFn<string, [TableRow, TableRow[]]>,
+    record,
+    modelValue.value
+  )
   if (disabled !== undefined) {
-    props.disabled = disabled
+    fieldProps.disabled = disabled
   }
   if (placeholder !== undefined) {
-    props.placeholder = placeholder
+    fieldProps.placeholder = placeholder
   }
-  const finalField = {
-    ...field,
-    required: getFnValue(field.required, record, modelValue.value),
-    props
+  return {
+    ...target,
+    required: getFnValue(target.required, record, modelValue.value),
+    props: fieldProps
   }
-  return finalField
 }
 
-function handleChange (val, record, field) {
-  if (typeof field.props?.onChange === 'function') {
-    field.props.onChange(val, record, modelValue) // 中转 onUpdate:value 事件，增加事件参数
+function handleChange (val: unknown, record: TableRow, field: DynamicColumn['field']) {
+  if (field) {
+    const onChange = (field.props as Record<string, unknown>)?.onChange
+    if (typeof onChange === 'function') {
+      ;(onChange as (val: unknown, record: TableRow, model: unknown) => void)(val, record, modelValue)
+    }
   }
   emitChange()
 }
 
 /** 删除一行 */
-function deleteHandle(index) {
+function deleteHandle(index: number) {
   modelValue.value.splice(index, 1)
   emitChange()
 }
 /** 新增一行 */
 function addHandle() {
-  const emptyObj = { [props.primaryKey]: Date.now() }
+  const emptyObj: TableRow = { [props.primaryKey]: Date.now() }
   props.columns.forEach((item) => {
-    emptyObj[item.dataIndex] = item.defaultValue ?? null
+    if (item.dataIndex) {
+      emptyObj[item.dataIndex] = item.defaultValue ?? null
+    }
   })
   modelValue.value.push(emptyObj)
   emitChange()
@@ -241,15 +300,15 @@ function textOcrHandle () {
     const lines = textContent.value.split('\n').filter(line => line.trim())
     let now = Date.now()
     const newData = lines.map(line => {
-      const obj = {[props.primaryKey]: ++now}
-      let splitChar = '\t'
-      if (!line.includes(splitChar)) {
+      const obj: TableRow = {[props.primaryKey]: ++now}
+      let splitChar: string | RegExp = '\t'
+      if (!line.includes(splitChar as string)) {
         splitChar = '|'
-        if (!line.includes(splitChar)) {
+        if (!line.includes(splitChar as string)) {
           splitChar = '，'
-          if (!line.includes(splitChar)) {
+          if (!line.includes(splitChar as string)) {
             splitChar = ','
-            if (!line.includes(splitChar)) {
+            if (!line.includes(splitChar as string)) {
               splitChar = /\s+/
             }
           }
@@ -257,7 +316,9 @@ function textOcrHandle () {
       }
       const values = line.split(splitChar)
       props.columns.filter(item => !item.hidden && item.ocrIgnore !== true).forEach((col, index) => {
-        obj[col.dataIndex] = values[index] ?? null
+        if (col.dataIndex) {
+          obj[col.dataIndex] = values[index] ?? null
+        }
       })
       return obj
     })

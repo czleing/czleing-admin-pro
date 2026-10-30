@@ -114,7 +114,7 @@
 <script setup>
 import { useSortable } from '@/hooks/useSortable'
 import { useSettingStore } from '@/stores/setting-store'
-import { useTabsStore } from '@/stores/tabs-store.js'
+import { useTabsStore } from '@/stores/tabs-store'
 import { DownOutlined, DownSquareFilled, FullscreenExitOutlined, FullscreenOutlined, HeartOutlined, StarOutlined } from '@ant-design/icons-vue'
 import { theme } from 'ant-design-vue'
 import { h } from 'vue'

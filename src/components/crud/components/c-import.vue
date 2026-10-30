@@ -33,90 +33,113 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ImportOutlined, InboxOutlined } from '@ant-design/icons-vue'
+import type { UploadFile } from 'ant-design-vue'
 import { h } from 'vue'
-import axios from '@/api'
-import { loadingRequest } from '@/utils/index.js'
+import axiosService from '@/api/index'
+import { loadingRequest } from '@/utils/index'
+import type { CrudImportExpose, CrudModalExpose, ImportOpenOptions } from '../types'
 
-const props = defineProps({
-  // 上传地址
-  url: { type: String },
-  // 模板下载地址
-  templateUrl: { type: String },
-  // 弹出层标题
-  title: { type: String },
-  // 是否显示覆盖更新控制按钮
-  showReplace: { type: Boolean, default: true },
-  // 是否显示导入按钮
-  showBtn: { type: Boolean, default: true },
-  // 导入按钮文字
-  btnText: { type: String }
-})
+const props = withDefaults(
+  defineProps<{
+    /** 上传地址 */
+    url?: string
+    /** 模板下载地址 */
+    templateUrl?: string
+    /** 弹出层标题 */
+    title?: string
+    /** 是否显示覆盖更新控制按钮 */
+    showReplace?: boolean
+    /** 是否显示导入按钮 */
+    showBtn?: boolean
+    /** 导入按钮文字 */
+    btnText?: string
+  }>(),
+  {
+    showReplace: true,
+    showBtn: true
+  }
+)
 
 const { t } = useI18n()
-const cModal = ref()
+const cModal = ref<CrudModalExpose>()
 const isReplace = ref(false)
-const fileList = ref([])
+const fileList = ref<UploadFile[]>([])
+/** 原始文件对象，用于 FormData 上传（UploadFile 不是 File 的子类） */
+const rawFile = ref<File | null>(null)
 const uploading = ref(false)
 const uploadDisabled = computed(() => fileList.value.length === 0 || uploading.value)
 
-const currUrl = ref(props.url)
-const currTemplateUrl = ref(props.templateUrl)
-const currTitle = ref(props.title || t('crud.import'))
+const currUrl = ref<string | undefined>(props.url)
+const currTemplateUrl = ref<string | undefined>(props.templateUrl)
+const currTitle = ref<string | undefined>(props.title ?? t('crud.import'))
 
 /** 通过 API 方式调用弹出导入窗，并设置相关属性 */
-function open (option = {}) {
+function open(option: ImportOpenOptions = {}): void {
   currUrl.value = option.url
   currTemplateUrl.value = option.templateUrl
   currTitle.value = option.title
   onImportHandle()
 }
 
-function onImportHandle () {
+function onImportHandle(): void {
   if (!currUrl.value) {
     console.error('未配置导入接口[url]')
     return
   }
-  cModal.value.open({
+  cModal.value?.open({
     title: currTitle.value,
     onConfirm: upload
   })
 }
-function downloadTemplate () {
+
+function downloadTemplate(): void {
   if (!currTemplateUrl.value) {
     console.error('未配置模板下载接口[templateUrl]')
     return
   }
-  axios.download(currTemplateUrl.value)
+  void axiosService.download(currTemplateUrl.value)
 }
-function handleRemove () {
+
+function handleRemove(): void {
   fileList.value = []
+  rawFile.value = null
 }
-function beforeUpload (_file) {
-  fileList.value = [_file]
+
+function beforeUpload(file: File): boolean {
+  rawFile.value = file
+  fileList.value = [file as unknown as UploadFile]
   return false // 返回 false，阻止自动上传
 }
-function upload (close) {
+
+async function upload(close: () => Promise<void>): Promise<void> {
+  if (!currUrl.value || !rawFile.value) return
   const formData = new FormData()
-  formData.append('file', fileList.value[0])
-  loadingRequest(uploading, async () => {
-    await axios.post(currUrl.value + `?updateSupport=${isReplace.value}`, formData)
-    beforeCloseHandle()
-    close()
-    emits('success')
-  }, t('crud.importSuccess'))
+  formData.append('file', rawFile.value)
+  await loadingRequest(
+    uploading,
+    async () => {
+      await axiosService.post(`${currUrl.value}?updateSupport=${isReplace.value}`, formData)
+      beforeCloseHandle()
+      await close()
+      emits('success')
+    },
+    t('crud.importSuccess')
+  )
 }
-function beforeCloseHandle () {
+
+function beforeCloseHandle(): void {
   fileList.value = []
+  rawFile.value = null
   isReplace.value = false
 }
 
-const emits = defineEmits(['success'])
+const emits = defineEmits<{
+  (e: 'success'): void
+}>()
 
-defineExpose({
-  open
-})
+defineExpose<CrudImportExpose>({ open })
 </script>
 
 <style lang="scss" scoped>

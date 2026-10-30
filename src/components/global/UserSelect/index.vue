@@ -13,13 +13,13 @@
       :placeholder="placeholder"
       v-model:value="selectedUserIds"
       :disabled="disabled"
-      :mode="multiple ? 'multiple' : 'default'"
+      :mode="multiple ? 'multiple' : undefined"
       :allowClear="allowClear"
       :dropdownStyle="{ width: 0, overflow: 'hidden' }"
       :getPopupContainer="() => UserSelectPopupContainer"
       v-bind="$attrs"
       @click.native="open({ value: selectedUserIds })"
-      @deselect="removeUser"
+      @deselect="(userId: unknown) => removeUser(userId as string | number)"
     >
       <a-select-option
         v-for="item in selectedUserOptions"
@@ -62,12 +62,30 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CPage from '@/components/crud/c-page.vue'
-import { EControlType } from '@/enum/index.js'
-import { isEmpty } from '@/utils/index.js'
+import type { TableConfig } from '@/components/crud/types'
+import { EControlType } from '@/enum/index'
+import { isEmpty } from '@/utils/index'
 import axios from '@/api'
 import { nextTick } from 'vue'
+
+/** 用户数据 */
+interface SelectUser {
+  userId?: string | number
+  nickName?: string
+  userName?: string
+  deptName?: string
+  phonenumber?: string
+  dept?: { deptName?: string; [key: string]: unknown }
+  [key: string]: unknown
+}
+
+/** 打开弹窗时接收的参数 */
+interface UserSelectOpenOptions {
+  value?: unknown
+  callback?: (ids: unknown, objs: unknown) => void
+}
 
 defineOptions({
   name: 'UserSelect'
@@ -109,12 +127,12 @@ const UserSelectPopupContainer = ref()
 const primaryKey = 'userId'
 const primaryName = 'nickName'
 const needRefresh = ref(false) // 用户列表是否需要刷新，比如：弹窗关闭之后，更新了查询参数 userParams, 待弹窗显示之后，刷新用户列表
-const options = ref({}) // 弹窗时 open 接收的参数，如：id, callback
+const options = ref<UserSelectOpenOptions>({}) // 弹窗时 open 接收的参数，如：id, callback
 const isLoaded = ref(false) // 当前列表是否已经加载
 const selectUserIds = computed(() => selectUsers.value?.map(user => user[primaryKey])) // 当前选中但未确认选择的用户ids
-const selectUsers = ref([]) // 当前选中但未确认选择的用户
+const selectUsers = ref<SelectUser[]>([]) // 当前选中但未确认选择的用户
 const selectedUserIds = ref() // '' 或 ['xx','xx'] 当前已确认选择的用户IDS，单选时是用户ID(单选 a-select 必须设置单个值，不能设置数组)
-const selectedUserOptions = ref([]) // 当前已确认的用户数据，单选、多选时都是数组，单选时只有一项
+const selectedUserOptions = ref<SelectUser[]>([]) // 当前已确认的用户数据，单选、多选时都是数组，单选时只有一项
 const selectedUserNames = computed(() => selectedUserOptions.value?.map(user => user[primaryName]))
 const selectedNum = computed(() => selectUsers.value?.length || 0)
 const multiple = computed(() => props.maxCount !== 1)
@@ -137,7 +155,7 @@ watch(
 )
 
 /** 打开弹窗 */
-async function open (_options) {
+async function open (_options: UserSelectOpenOptions) {
   selector.value.blur()
   if (props.disabled) return
   options.value = _options
@@ -161,17 +179,17 @@ function close () {
 }
 
 /** 给控件设置值 */
-async function setData (val) {
+async function setData (val: unknown) {
   // 预先加载用户信息，解决回显问题
-  let ids = val || []
+  let ids: Array<string | number> = val as Array<string | number> || []
   if (val && typeof val === 'string') {
     ids = val.split(',')
   } else if (typeof val === 'number') {
     ids = [val]
   }
-  ids = ids.map(id => String(id))
+  ids = ids.map((id: string | number) => String(id))
   if (!isEmpty(ids) && selectUsers.value.length === 0) {
-    const result = await axios.post('/system/user/selectUser?from=initUserSelect', {
+    const result = await axios.post<{ list: SelectUser[] }>('/system/user/selectUser?from=initUserSelect', {
       pageNum: 1,
       pageSize: 9999,
       ids
@@ -215,8 +233,8 @@ const filterConfig = {
         allowClear: true,
         remote: {
           url: '/system/role/select',
-          converter (list) {
-            return list?.map(item => ({ id: item.roleKey, name: item.roleName }))
+          converter (list: unknown) {
+            return (list as Array<Record<string, unknown>>)?.map((item) => ({ id: item.roleKey as string, name: item.roleName as string }))
           }
         }
       }
@@ -237,7 +255,7 @@ const toolsConfig = {
     {
       name: '清空',
       props: {
-        type: 'default',
+        type: 'default' as const,
         disabled: () => isEmpty(selectUserIds.value),
         onClick () {
           selectUsers.value = []
@@ -247,10 +265,10 @@ const toolsConfig = {
   ]
 }
 
-const tableConfig = computed(() => ({
+const tableConfig = computed<TableConfig<SelectUser>>(() => ({
   props: {
-    rowClick ({ key, record }) {
-      if (!selectUserIds.value.includes(key)) {
+    rowClick ({ key, record }: { key: unknown; record: SelectUser }) {
+      if (!selectUserIds.value.includes(key as string | number)) {
         if (props.maxCount >= 1 && selectUsers.value.length >= props.maxCount) {
           selectUsers.value.shift()
         }
@@ -279,7 +297,7 @@ const tableConfig = computed(() => ({
       dataIndex: 'deptName',
       resizable: true,
       width: 150,
-      customRender: ({ record }) => record.dept?.deptName ?? '-'
+      customRender: ({ record }: { record: SelectUser }) => record.dept?.deptName ?? '-'
     },
     {
       title: '手机号码',
@@ -289,13 +307,13 @@ const tableConfig = computed(() => ({
   ]
 }))
 
-function beforeSearch (params) {
+function beforeSearch (params: Record<string, unknown>) {
   return {
     ...props.userParams,
     ...params
   }
 }
-function afterSearch (list) {
+function afterSearch (list: SelectUser[]) {
   isLoaded.value = true
   return list
 }
@@ -307,7 +325,7 @@ const modalProps = computed(() => {
   }
 })
 
-function removeUser (userId) {
+function removeUser (userId: string | number) {
   selectUsers.value = selectUsers.value?.filter(item => item[primaryKey] != userId)
   onConfirm()
 }

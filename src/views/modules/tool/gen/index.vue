@@ -29,7 +29,7 @@ import CPage from '@/components/crud/c-page.vue'
 import ImportTableModal from './modal/import-table-modal.vue'
 import EditModal from './modal/edit-modal.vue'
 import PreviewModal from './modal/preview-modal.vue'
-import axios from '@/api/index.js'
+import axios from '@/api/index'
 import { message } from 'ant-design-vue'
 
 const cPage = ref()

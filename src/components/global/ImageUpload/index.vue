@@ -33,11 +33,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { PlusOutlined } from '@ant-design/icons-vue'
-import { useAuthStore } from '@/stores/auth-store.js'
-import { byteFormat, getFullUrl } from '@/utils/index.js'
+import { useAuthStore } from '@/stores/auth-store'
+import { byteFormat, getFullUrl } from '@/utils/index'
 import { message, Upload } from 'ant-design-vue'
+import type { UploadFile, UploadProps } from 'ant-design-vue'
+
+/** 上传文件项，额外保存文件路径 */
+interface UploadItem extends UploadFile {
+  path?: string
+}
 
 /**
  * 其他属性：
@@ -83,7 +89,7 @@ const uploadUrl = import.meta.env.VITE_APP_BASE_API + '/oss/upload'
 const headers = { Authorization: 'Bearer ' + authStore.token }
 
 // 文件列表
-const fileList = ref([])
+const fileList = ref<UploadItem[]>([])
 // 文件大小限制格式化字符串
 const maxFileSize = computed(() => byteFormat(props.fileSize << 10))
 
@@ -95,20 +101,20 @@ watch(
   { immediate: true, deep: true }
 )
 
-async function setValue (value) {
+async function setValue (value: unknown) {
   await nextTick()
   if (props.valueType === 'Array') {
-    fileList.value = value ?? []
+    fileList.value = (value ?? []) as UploadItem[]
   } else if (props.valueType === 'String') {
-    if (!value) {
+    if (!value || typeof value !== 'string') {
       fileList.value = []
       return
     }
     let i = 0
-    fileList.value = value?.split(',')?.filter(Boolean)?.map(path => {
+    fileList.value = value.split(',').filter(Boolean).map((path: string): UploadItem => {
       i++
       return {
-        uid: Date.now() + i,
+        uid: String(Date.now() + i),
         name: path.match(/.*\/([^/]+\.\w+)/)?.[1] || path,
         status: 'done',
         url: getFullUrl(path),
@@ -125,7 +131,7 @@ async function setValue (value) {
  * @param {Object} file 要上传的文件
  * @param {Array} files 
  */
-function beforeUploadHandle (file, files) {
+function beforeUploadHandle (file: File, files: File[]) {
   if (file.size >> 10 > props.fileSize) {
     message.warning(`图片大小不能超过${maxFileSize.value}`)
     return Upload.LIST_IGNORE
@@ -138,13 +144,15 @@ function beforeUploadHandle (file, files) {
  * file.status: error|uploading|done|removed
  * file.response: 上传服务器响应内容，从此处获取服务器地址，
  */
-function onChangeHandle ({ file, fileList: files, event }) {
+function onChangeHandle (info: Parameters<NonNullable<UploadProps['onChange']>>[0]) {
+  const file = info.file as UploadItem
+  const files = info.fileList as UploadItem[]
   if (file.status === 'done' && file.response) {
     const path = file.response?.data?.path
     file.path = path
     file.url = getFullUrl(path)
     delete file.response
-    if (files.every(f => f.url)) {
+    if (files.every((f: UploadItem) => f.url)) {
       emitChange()
     }
   } else if (file.status === 'removed') {
@@ -154,14 +162,14 @@ function onChangeHandle ({ file, fileList: files, event }) {
 }
 
 // 预览组件
-const previewModal = ref()
+const previewModal = ref<any>()
 // 预览图片地址
-const previewUrl = ref()
+const previewUrl = ref<string>('')
 // 预览
-function previewHandle (file) {
-  previewUrl.value = file.url
+function previewHandle (file: UploadItem) {
+  previewUrl.value = file.url ?? ''
   previewModal.value.open({
-    title: `${file.name} ${ file.size > 0 ? ('( ' + byteFormat(file.size) + ' )') : ''}`,
+    title: `${file.name} ${ (file.size ?? 0) > 0 ? ('( ' + byteFormat(file.size!) + ' )') : ''}`,
     width: '80%'
   })
 }

@@ -16,7 +16,7 @@
 
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
-import { EControlType, EIsEnabled } from '@/enum/index.js'
+import { EControlType, EIsEnabled } from '@/enum/index'
 import axios from '@/api'
 import { Modal } from 'ant-design-vue'
 

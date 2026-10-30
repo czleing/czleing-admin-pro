@@ -10,7 +10,7 @@
 
 <script setup>
   import CPage from '@/components/crud/c-page.vue'
-  import { EControlType, EIsEnabled } from '@/enum/index.js'
+  import { EControlType, EIsEnabled } from '@/enum/index'
   import { message } from 'ant-design-vue'
 
   const cPage = ref()

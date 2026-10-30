@@ -25,7 +25,7 @@
       // export: ''
     }"
     :api-method-config="{
-      // 预设功能接口请求方式设置，默认全部post
+      // 预设功能接口请求方式设置，默认遵循 RESTful 规范，如：/system/user/add => POST
       // add: '',
       // ...
     }"
@@ -60,17 +60,56 @@
   </CPage>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CPage from '@/components/crud/c-page.vue'
-import { EControlType, EIsEnabled } from '@/enum/index.js'
+import type {
+  AfterOpenModalContext,
+  AfterSubmitContext,
+  BeforeSubmitContext,
+  CrudPageExpose,
+  CrudRecord,
+  FilterConfig,
+  ListResult,
+  ModalConfig,
+  SearchParams,
+  TableActionConfig,
+  TableConfig,
+  ToolsConfig,
+  TransformDetailContext,
+  TreeConfig
+} from '@/components/crud/types'
+import { EControlType, EIsEnabled } from '@/enum/index'
 import { message } from 'ant-design-vue'
 
-const cPage = ref()
+/** 列表行数据类型，按实际业务字段定义，配置中的 record 会自动推导为该类型 */
+type DemoRow = {
+  id: number
+  nickName: string
+  age: string
+  avatar: string
+  image: string
+  amount: number
+  withUnit: number
+  name2: string
+  dict: string
+  status: number
+  diy: string
+  color: string
+  isEnabled: boolean
+  phonenumber: string
+  address: string
+  slotField: string
+  createTime: string
+  userId?: number
+}
+
+/** CPage 实例，可获得 refresh / clearSelect / selectedIds 等方法的类型提示 */
+const cPage = ref<CrudPageExpose<DemoRow>>()
 const { t } = useI18n()
 defineOptions({ name: 'DemoPage' })
 
 /** 左侧树形配置，不配置则不使用树 */
-const treeConfig = {
+const treeConfig: TreeConfig = {
   url: '/system/user/deptTree',
   params: {}, // 查询参数
   // method: 'post',
@@ -79,7 +118,7 @@ const treeConfig = {
 }
 
 /** 查询条件配置 */
-const filterConfig = computed(() => ({
+const filterConfig = computed<FilterConfig>(() => ({
   useCache: true, // 使用查询条件暂存，默认 false
   // cacheBtnText: '记住查询', // 暂存按钮文字，默认 '记住查询'
   col: { sm: 8, lg: 6, xxl: 6 }, // 所有表单项栅格设置，默认：{ sm: 8, lg: 6, xxl: 4 }，参照 a-col
@@ -154,9 +193,9 @@ const filterConfig = computed(() => ({
     }
   ]
 }))
-const uploadFile = ref()
+const uploadFile = ref<unknown>()
 /** 自定义工具栏按钮配置 object | computed(() => object) */
-const toolsConfig = computed(() => ({
+const toolsConfig = computed<ToolsConfig<DemoRow>>(() => ({
   // addBtnText: '新增',
   // addInitData: { parentId: 0 }, // 新增时初始化表单的数据
   // backBtnText: '返回',
@@ -219,7 +258,7 @@ const toolsConfig = computed(() => ({
   ]
 }))
 /** 数据列表配置 */
-const tableConfig = computed(() => ({
+const tableConfig = computed<TableConfig<DemoRow>>(() => ({
   props: {
     scroll: { x: 'max-content' }
     // 参考 a-table props
@@ -246,7 +285,7 @@ const tableConfig = computed(() => ({
       resizable: true,
       width: 100,
       // sorter: true, // 服务端排序
-      sorter: (a, b) => (a.nickName ?? '').localeCompare(b.nickName ?? '', 'zh-CN') // 本地排序，中文排序
+      sorter: (a, b) => String(a.nickName ?? '').localeCompare(String(b.nickName ?? ''), 'zh-CN') // 本地排序，中文排序
       // sorter: (a, b) => a.totalCount - b.totalCount, // 本地排序，非中文排序
     },
     {
@@ -311,7 +350,7 @@ const tableConfig = computed(() => ({
       customRender: ({ value, record, index, column }) => { // 自定义渲染函数
         return h('span', {
           class: 'text-success'
-        }, '状态:' + value)
+        }, '状态:' + String(value))
       }
     },
     {
@@ -321,10 +360,8 @@ const tableConfig = computed(() => ({
       customRender: ({ value, record, index, column }) => {
         return h(resolveComponent('a-tag'), {
           bordered: false,
-          color: record.color
-        }, {
-          default: () => value
-        })
+          color: record.color as string
+        }, String(value))
       }
     },
     {
@@ -370,7 +407,7 @@ const tableConfig = computed(() => ({
       actionMoreText: '更多', // 更多按钮名称，默认"更多"
       // action: 操作列配置，T[] || ({ record }) => T[]
       action: ({ record }) => {
-        const btns = [
+        const btns: TableActionConfig<DemoRow>[] = [
           // 预设：edit, detail, delete, toggle，预设功能的权限会自动绑定，无需手动设置
           // 名称和图标至少设置一个
           {
@@ -438,7 +475,7 @@ const tableConfig = computed(() => ({
 /**
  * 新增、修改、详情弹窗配置
  */
-const modalConfig = computed(() => ({
+const modalConfig = computed<ModalConfig>(() => ({
   title: 'Demo', // 弹窗标题，会自动根据类型拼上新增、编辑、详情关键字
   // fullTitle: '', // 全称，不会自动拼接其他字符串
   width: 800, // 弹窗宽度，默认 600
@@ -476,11 +513,11 @@ const modalConfig = computed(() => ({
         // col: { span: 12 }, // 当前表单项(包含文本和控件)栅格设置，固定宽度可以设置为 { flex: '280px' }，参照 a-col 属性，默认根据 formConfig.cols 计算
         // labelCol: { span: 3 }, // 当前表单项文本部分栅格设置，会覆盖 formConfig.labelCol, 参照 a-col，默认继承 formConfig.labelCol
         // wrapperCol: { span: 21 }, // 当前表单项控件部分栅格设置，会覆盖 formConfig.wrapperCol, 参照 a-col，默认继承 formConfig.wrapperCol
-        props: formData => { // 控件属性配置，Object | formData => Object, 没有属性可以不配
+        props: formData => ({ // 控件属性配置，Object | formData => Object, 没有属性可以不配
           // 根据 type 继承自对应 ant-design-vue 控件的属性和事件
           // placeholder 会默认生成，可以不配
           allowClear: true
-        }
+        })
       },
       {
         label: '隐藏字段', // 类似隐藏域，可以放置一些提交时需要的额外信息，可以在表单联动时动态设置值
@@ -685,7 +722,8 @@ const modalConfig = computed(() => ({
             },
             // autoRefresh: true, // 每次弹窗后自动刷新远程数据
             converter (result) { // 对接口返回数据进行修改，转成 [{id, name, xxx}] 格式
-              return result.list?.map(item => ({ id: item.userId, name: item.nickName }))
+              const data = result as { list?: Array<{ userId: number; nickName: string }> }
+              return (data.list ?? []).map(item => ({ id: item.userId, name: item.nickName }))
             }
           }
         }
@@ -862,7 +900,8 @@ const modalConfig = computed(() => ({
               props: {
                 component: { // table 内的组件拥有单元格相关信息： cellInfo = { text, record, index, column }
                   render ({ $attrs }) {
-                    return h('span', $attrs.cellInfo.index + 1)
+                    const cellInfo = $attrs.cellInfo as { index: number }
+                    return h('span', cellInfo.index + 1)
                   }
                 }
               },
@@ -931,8 +970,8 @@ const modalConfig = computed(() => ({
           diyProp: '自定义属性',
           // component：vue组件，对象或返回对象的函数 Object || (formData) => Object
           component: {
-            render (ctx) {
-              return h('span', {}, ['自定义组件8888', ctx.$attrs.diyProp])
+            render (ctx: { $attrs: Record<string, unknown> }) {
+              return h('span', {}, ['自定义组件8888', String(ctx.$attrs.diyProp)])
             }
           }
           // 或者 使用全局组件, import { resolveComponent } from 'vue'
@@ -951,7 +990,8 @@ const modalConfig = computed(() => ({
   })
 }))
 
-function getMockData (searchParams) {
+/** 模拟列表接口，真实项目直接配置接口地址字符串即可（字符串 | (searchParams) => ListResult） */
+function getMockData (searchParams: SearchParams): ListResult<DemoRow> {
   console.log('searchParams', searchParams)
   return {
     list: [
@@ -972,54 +1012,52 @@ function getMockData (searchParams) {
 }
 /**
  * 查询前修改查询参数
- * @param {object} searchParams 查询参数
+ * @param searchParams 查询参数
  */
-function beforeSearch (searchParams) {
+function beforeSearch (searchParams: SearchParams): SearchParams {
   return searchParams
 }
 
 /**
  * 查询后修改查询结果
- * @param {Array} list 查询结果列表
+ * @param list 查询结果列表
  */
-function afterSearch (list) {
+function afterSearch (list: DemoRow[]): DemoRow[] {
   return list
 }
 
 /**
  * 提交表单数据前对提交的数据修改
- * @param {Object} submitData 提交的数据
- * @param {Object} param 其他参数
+ * @param submitData 提交的数据
+ * @param ctx 上下文：isAdd / isEdit / isView / detail
  * @returns 修改后的数据
  */
-function beforeSubmit (submitData, { isAdd, isEdit, isView, detail }) {
+function beforeSubmit (submitData: CrudRecord, { isAdd, isEdit, isView, detail }: BeforeSubmitContext): CrudRecord {
   return submitData
 }
 
 /**
  * 提交表单数据成功后执行
- * @param {Object} formData 提交的数据
- * @param {Object} param 其他参数
- * @returns 修改后的数据
+ * @param ctx 上下文：isAdd / isEdit / formData / detail
  */
-function afterSubmit ({ isAdd, isEdit, formData, detail }) {
+function afterSubmit ({ isAdd, isEdit, formData, detail }: AfterSubmitContext): void {
 }
 
 /**
  * 弹窗(新增、修改、详情弹窗)后执行
- * @param {Object} param 其他参数
+ * @param ctx 上下文：isAdd / isEdit / isView / record / detail / cForm
  */
-function afterOpenModal ({ isAdd, isEdit, isView, record, detail, cForm }) {
+function afterOpenModal ({ isAdd, isEdit, isView, record, detail, cForm }: AfterOpenModalContext): void {
   // const formRemotes = cForm.value.remotes()
   // formRemotes['有远程数据源的字段的字段名']?.() // 手动触发获取某个字段的远程数据源
 }
 
 /**
  * 编辑、详情时，对详情数据修改
- * @param {Object} detail 详情数据
- * @param {Object} param 其他参数
+ * @param detail 详情数据
+ * @param ctx 上下文：isEdit / isView
  */
-function transformDetail (detail, { isEdit, isView }) {
+function transformDetail (detail: CrudRecord, { isEdit, isView }: TransformDetailContext): CrudRecord {
   return detail
 }
 </script>

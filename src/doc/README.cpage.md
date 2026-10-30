@@ -1,6 +1,7 @@
 # CPage 组件使用文档
 AI 基于 [demo-page](../views/demo/demo-page.vue) 总结
 ## 目录
+- TS 类型支持（types 目录、泛型 Row 与类型导入）
 - 概览（CPage 顶级 Props / Events）
 - treeConfig（左侧筛选树配置）
 - filterConfig（查询区配置）
@@ -37,6 +38,48 @@ AI 基于 [demo-page](../views/demo/demo-page.vue) 总结
   />
 ```
 
+## 〇、TS 类型支持（types 目录）
+
+CRUD 组件与配置已全部 TS 化（`<script setup lang="ts">`），配置类型统一收敛在 `src/components/crud/types`，统一从 `@/components/crud/types` 导入：
+
+| 文件 | 导出的主要类型 | 说明 |
+|---|---|---|
+| common.ts | CrudRecord、CrudFormData、SearchParams、MaybeFn、OptionItem、ListResult | 通用基础类型 |
+| api.ts | CrudApiConfig、CrudApiMethodConfig、CrudApiOptionConfig、CrudPermissionConfig | 预设接口地址 / 请求方式 / 权限配置 |
+| tree.ts | TreeConfig | 左侧树配置 |
+| filter.ts | FilterConfig、FilterFieldConfig | 查询区配置 |
+| tools.ts | ToolsConfig\<Row\>、ToolItem\<Row\>、ToolButtonProps\<Row\>、ToolsContext\<Row\> | 工具栏配置 |
+| table.ts | TableConfig\<Row\>、CrudTableColumn\<Row\>、CrudTableProps\<Row\>、TableActionConfig\<Row\> | 表格配置 |
+| form.ts | FormConfig、CrudFormField（可辨识联合）、各控件 Props、RemoteConfig、FormRule | 弹窗表单配置 |
+| modal.ts | ModalConfig、ModalButtonConfig、ModalContext、ModalFormContext | 弹窗配置 |
+| page.ts | CrudPageProps\<Row\>、CrudPageExpose\<Row\>、BeforeSubmitContext、AfterSubmitContext、AfterOpenModalContext、TransformDetailContext | 页面 Props / 实例 / 回调上下文 |
+
+设计要点：
+1. **泛型 Row**：用 `type` 定义行数据类型（如 `type UserRow = { id: number; nickName: string }`），`TableConfig<UserRow>`、`ToolsConfig<UserRow>` 等配置中的 `record`、`selectedObjs` 会自动推导为 `UserRow`，无需重复声明；
+2. **可辨识联合**：表单字段的 `type` 以 `EControlType` 枚举作为判别字段，写 `type: EControlType.eSelect` 时 `props` 自动提示 `SelectProps` 的属性，`eRadio` → `RadioGroupProps`、`eDate` → `DatePickerProps`、`eTreeSelect` → `TreeSelectProps`，antdv 组件属性全部复用其自带类型（`ColProps`、`UploadProps`、`FormInstance` 等）；
+3. **值或函数**：`label`、`required`、`hidden`、`props`、`on` 等同时支持静态值与函数，由 `MaybeFn<T, Args>` 表达，写函数时参数自动带上 `formData` 类型；
+4. **实例类型**：`const cPage = ref<CrudPageExpose<UserRow>>()` 可获得 `refresh()`、`clearSelect()`、`selectedIds`、`selectedObjs` 等提示。
+
+```ts
+import type { CrudPageExpose, FilterConfig, TableConfig, ToolsConfig, ModalConfig, TreeConfig } from '@/components/crud/types'
+
+/** 列表行数据类型，配置中的 record 会自动推导为该类型 */
+type UserRow = {
+  id: number
+  nickName: string
+  isEnabled: boolean
+}
+
+const treeConfig: TreeConfig = { ... }
+const filterConfig = computed<FilterConfig>(() => ({ ... }))
+const toolsConfig = computed<ToolsConfig<UserRow>>(() => ({ ... }))
+const tableConfig = computed<TableConfig<UserRow>>(() => ({ ... }))
+const modalConfig = computed<ModalConfig>(() => ({ ... }))
+const cPage = ref<CrudPageExpose<UserRow>>()
+```
+
+---
+
 ## 一、CPage 顶级 Props / Events
 | 属性 | 类型 | 说明 | 默认 |
 |---|---:|---|---|
@@ -50,7 +93,7 @@ AI 基于 [demo-page](../views/demo/demo-page.vue) 总结
 | :no-select | Boolean | 禁用行选择（true 则不显示选择列） | false |
 | :no-tools | Boolean | 禁用工具栏（true 则隐藏工具区） | false |
 | :api-config | Object | 预设功能接口地址配置，支持：list, add, update, detail, delete, toggle, import, importTemplate, export | 根据路由自动生成 |
-| :api-method-config | Object | 预设功能请求方式配置 | 默认全部 post |
+| :api-method-config | Object | 预设功能请求方式配置 | 默认 RESTful 规范 |
 | :api-option-config | Object | 预设功能请求额外选项（如 headers） | {} |
 | :permission-config | Object | 预设功能权限配置 | 根据路由生成 |
 | :tree-config | Object | 左侧树配置（不传则不显示树） | undefined |
@@ -78,14 +121,16 @@ AI 基于 [demo-page](../views/demo/demo-page.vue) 总结
 |---|---:|---|---|
 | url | String | 获取树数据的接口地址 | 必填 |
 | params | Object | 额外请求参数 | {} |
-| method | String | 请求方法（post\|get） | post |
+| method | String | 请求方法（post\|get） | get |
 | replaceField | Object | 字段替换：{ key, children, title } | { key:'id', children:'children', title:'title' } |
 | searchField | String | 选中节点用于列表查询的字段名（默认 orgId） | "orgId" |
 | ... | - | 其他属性可以根据需要自由扩展 | - |
 
 示例：
-```javascript
-const treeConfig = {
+```ts
+import type { TreeConfig } from '@/components/crud/types'
+
+const treeConfig: TreeConfig = {
   url: '/system/user/deptTree',
   replaceField: { key: 'id', children: 'children', title: 'label' },
   searchField: 'deptId'
@@ -142,15 +187,18 @@ const treeConfig = {
 | ... | - | 其他属性可以根据需要自由扩展 |
 
 示例：
-```javascript
-const toolsConfig = computed(() => ({
+```ts
+import type { ToolsConfig } from '@/components/crud/types'
+
+/** UserRow 为列表行数据类型，selectedObjs 会自动推导为 UserRow[] */
+const toolsConfig = computed<ToolsConfig<UserRow>>(() => ({
   addBtnText: '新增根节点',
   addInitData: { parentId: 0 },
   otherTools: [{
     name: '自定义按钮', // String | ({ selectedIds, selectedObjs, pagination }) => String
     permission: 'system:user:diy',
     props: {
-      type: 'link',
+      type: 'link', // a-button 的 type 自动提示
       icon: 'EditOutlined',
       disabled: ({ selectedIds, selectedObjs, pagination }) => selectedObjs.some(item => item.status === 1),
       onClick ({ selectedIds, selectedObjs, pagination }) {
@@ -202,7 +250,7 @@ const toolsConfig = computed(() => ({
 | key | String | 列 key |
 | width / minWidth / maxWidth | Number\|String | 宽度\|最小宽度\|最大宽度 |
 | resizable | Boolean | 是否可拖拽调整宽度，默认 false |
-| sorter | Boolean \| Function | 服务端排序或本地排序函数，为true，表示服务端排序，为函数则表示本地排序：(a, b) => a.xxx - b.xxx，汉字或某些英文需要使用 (a, b) = > (a.xxx ?? '').localeCompare(b.xxx ?? '', 'zh-Hans-CN') |
+| sorter | Boolean \| Function | 服务端排序或本地排序函数，为 true 表示服务端排序，为函数则表示本地排序：(a, b) => Number(a.xxx) - Number(b.xxx)；中文/英文排序：(a, b) => String(a.xxx ?? '').localeCompare(String(b.xxx ?? ''), 'zh-CN')。TS 下 a、b 为 CrudRecord，字段取值为 unknown，需先 String()/Number() 转换 |
 | customRender | Function | 自定义渲染 (ctx) => vnode/string |
 | ellipsis | Boolean | 是否超出省略 |
 | fixed | String | 固定列 'left'\|'right' |
@@ -303,7 +351,7 @@ const toolsConfig = computed(() => ({
 | ... | - | 其他属性可以根据需要自由扩展 | - |
 
 **分组用法** 只支持嵌套一层
-```js
+```ts
 fields: [
   {
     label: '名称',
@@ -354,7 +402,7 @@ fields: [
 | converter | Function | 数据源数据转换器 (res) => res | - |
 
 示例：
-```js
+```ts
 {
   label: '动态下拉',
   fieldName: 'dmSelect',
@@ -363,14 +411,15 @@ fields: [
     // useRefresh: false,
     remote: {
       url: '/system/user/selectUser',
-      // method: 'get', // 默认 post
+      // method: 'get', // 默认 get
       params: {
         // type: 1,
         // type: '{formData.radio1:required}'
       },
       // autoRefresh: true,
-      converter (result) {
-        return result.list?.map(item => ({ id: item.userId, name: item.nickName }))
+      converter (result) { // 返回类型为 unknown，按接口结构断言后转换为 [{ id, name }]
+        const data = result as { list?: Array<{ userId: number; nickName: string }> }
+        return (data.list ?? []).map(item => ({ id: item.userId, name: item.nickName }))
       }
     }
   }
@@ -398,6 +447,8 @@ fields: [
 | afterSubmit({isAdd,isEdit,formData,detail}) | Object | — | 提交成功后的回调 |
 | afterOpenModal({isAdd,isEdit,isView,record,detail,cForm}) | Object | — | 弹窗打开后 |
 | transformDetail(detail, {isEdit,isView}) | Object | Object | 编辑/详情时对接口返回 detail 做转换后返回 |
+
+> 回调的上下文均有对应 TS 类型（`BeforeSubmitContext`、`AfterSubmitContext`、`AfterOpenModalContext`、`TransformDetailContext`），import 后标注在参数上即可获得字段提示。
 
 ---
 

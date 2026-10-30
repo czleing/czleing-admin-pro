@@ -10,7 +10,7 @@
 
 <script setup>
   import CPage from '@/components/crud/c-page.vue'
-  import { EControlType, EIsEnabled } from '@/enum/index.js'
+  import { EControlType, EIsEnabled } from '@/enum/index'
 
   /** 查询条件配置 */
   const filterConfig = {

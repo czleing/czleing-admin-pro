@@ -44,13 +44,13 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth-store.js'
+import { useAuthStore } from '@/stores/auth-store'
 import { message } from 'ant-design-vue'
 import DefaultAvatar from '@/assets/images/avatar.jpeg'
-import { EUserType, EControlType } from '@/enum/index.js'
+import { EUserType, EControlType } from '@/enum/index'
 import CForm from '@/components/crud/components/c-form.vue'
-import axios from '@/api/index.js'
-import { getFullUrl } from '@/utils/index.js'
+import axios from '@/api/index'
+import { getFullUrl } from '@/utils/index'
 
 const authStore = useAuthStore()
 const userInfo = computed(() => authStore.userInfo)

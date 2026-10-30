@@ -14,8 +14,8 @@
 </template>
 
 <script setup>
-import settings from '@/config/setting.js'
-import { useSettingStore } from '@/stores/setting-store.js'
+import settings from '@/config/setting'
+import { useSettingStore } from '@/stores/setting-store'
 
 const { websiteInfo: info } = settings
 const settingStore = useSettingStore()

@@ -35,8 +35,8 @@
 
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
-import { EControlType } from '@/enum/index.js'
-import { useDictStore } from '@/stores/dict-store.js'
+import { EControlType } from '@/enum/index'
+import { useDictStore } from '@/stores/dict-store'
 
 const props = defineProps({
   dictType: String

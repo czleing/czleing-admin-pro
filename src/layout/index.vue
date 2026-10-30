@@ -81,17 +81,17 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth-store.js'
-import { useMenuStore } from '@/stores/menu-store.js'
-import { useSettingStore } from '@/stores/setting-store.js'
-import { useTabsStore } from '@/stores/tabs-store.js'
+import { useAuthStore } from '@/stores/auth-store'
+import { useMenuStore } from '@/stores/menu-store'
+import { useSettingStore } from '@/stores/setting-store'
+import { useTabsStore } from '@/stores/tabs-store'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useThemeToken } from '../hooks/useThemeToken'
 import { useWindowSize } from '../hooks/useWindowSize'
 import Header from './components/header/index.vue'
 import MenuSide from './components/side/index.vue'
 import Tabs from './components/tabs/index.vue'
-import settings from '@/config/setting.js'
+import settings from '@/config/setting'
 import { setRootCssVars } from '@/utils'
 
 const setting = settings.websiteInfo

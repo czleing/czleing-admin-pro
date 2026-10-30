@@ -214,12 +214,12 @@
 </template>
 
 <script setup>
-import { useNumFormat } from '@/hooks/useNumFormat.js'
-import useViewTransition from '@/hooks/useViewTransition.js'
+import { useNumFormat } from '@/hooks/useNumFormat'
+import useViewTransition from '@/hooks/useViewTransition'
 import { langOptions } from '@/locales/index'
-import { useSettingStore } from '@/stores/setting-store.js'
+import { useSettingStore } from '@/stores/setting-store'
 import { SettingOutlined, UndoOutlined } from '@ant-design/icons-vue'
-import settings from '@/config/setting.js'
+import settings from '@/config/setting'
 import { h } from 'vue'
 import Field from './field.vue'
 import Left from './icons/left.vue'

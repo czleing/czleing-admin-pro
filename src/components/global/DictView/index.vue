@@ -7,14 +7,14 @@
           class="a-tag"
           v-if="item.tagType === 'default' || !item.tagType"
           :key="'s_' + index"
-          :class="item.cssClass"
+          :class="item.cssClass as string"
         >{{ item.label }}</span>
         <a-tag
           v-else
           :bordered="false"
           :key="'t_' + index"
           :color="item.tagType"
-          :class="item.cssClass"
+          :class="item.cssClass as string"
         >
           {{ item.label }}
         </a-tag>
@@ -26,8 +26,16 @@
   </div>
 </template>
 
-<script setup>
-import { useDict } from '@/hooks/useDict.js'
+<script setup lang="ts">
+import { useDict } from '@/hooks/useDict'
+
+/** 字典项 */
+interface DictItem {
+  value: string | number
+  label?: string
+  tagType?: import('ant-design-vue').TagProps['color']
+  cssClass?: string
+}
 
 const props = defineProps({
   dictType: String,
@@ -40,8 +48,8 @@ const props = defineProps({
   }
 })
 
-const currItems = ref()
-const dict = useDict([props.dictType], dicts => {
+const currItems = ref<DictItem[]>([])
+const dict = useDict([props.dictType as string], dicts => {
   setValue(props.value)
 })
 
@@ -52,16 +60,17 @@ watch(
   }
 )
 
-function setValue (value) {
+function setValue (value: unknown) {
   if (typeof value === 'string') {
     value = value.split(',')
   } else if (typeof value === 'number') {
     value = [String(value)]
   }
-  currItems.value = value?.map(val => {
-    const dictItem = dict[props.dictType]?.find(item => item.value === val)
-    return dictItem ?? (props.showValue ? { value: val } : {})
-  })
+  const dictItems = dict[props.dictType as string] as DictItem[] | undefined
+  currItems.value = ((value as unknown[])?.map(val => {
+    const dictItem = dictItems?.find(item => item.value === val)
+    return dictItem ?? (props.showValue ? { value: val, label: String(val) } : { value: val })
+  }) ?? []) as DictItem[]
 }
 </script>
 

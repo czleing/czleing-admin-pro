@@ -7,7 +7,7 @@
     <template v-if="moreActions && moreActions.length > 0">
       <!-- 更多 -->
       <a-dropdown>
-        <a v-hasPermi="morePermissions" href="javascript:;">
+        <a v-permission="morePermissions" href="javascript:;">
           {{ column.actionMoreText ?? $t('crud.more') }}
           <DownOutlined />
         </a>
@@ -26,23 +26,34 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { DownOutlined } from '@ant-design/icons-vue'
 import { getFnValue } from '@/utils/index'
 import CTableActionItem from './c-table-action-item.vue'
+import type {
+  CrudRecord,
+  CrudTableColumn,
+  NormalizedTableAction,
+  ResolvedPermissionConfig,
+  TableActionConfig
+} from '../types'
 
-const props = defineProps({
-  column: Object,
-  record: {
-    type: Object,
-    default: () => ({})
-  },
-  permissionConfig: Object
-})
-
+const props = withDefaults(
+  defineProps<{
+    /** 操作列配置 */
+    column: CrudTableColumn
+    /** 当前行数据 */
+    record?: CrudRecord
+    /** 权限配置 */
+    permissionConfig: ResolvedPermissionConfig
+  }>(),
+  {
+    record: () => ({})
+  }
+)
 
 /** 所有操作按钮 */
-const currActions = computed(() => {
+const currActions = computed<NormalizedTableAction[]>(() => {
   const actions = getFnValue(props.column.action, { record: props.record })
   if (!actions) return []
   return actions.map(action => {
@@ -67,7 +78,7 @@ const morePermissions = computed(() => {
   return moreActions.value.map(item => item.permission)
 })
 
-function getPermission (action) {
+function getPermission(action: TableActionConfig): string | undefined {
   if (typeof action.callback === 'string') {
     // 预设按钮
     return props.permissionConfig[action.callback]
@@ -76,15 +87,16 @@ function getPermission (action) {
   }
 }
 
-function getCallback (action) {
+function getCallback(action: TableActionConfig): NormalizedTableAction['callback'] {
   if (typeof action.callback === 'string') {
-    return () => emits('action', { action: action.callback, record: props.record })
-  } else {
-    return action.callback
+    return () => emits('action', { action: action.callback as string, record: props.record })
   }
+  return action.callback ?? (() => {})
 }
 
-const emits = defineEmits(['action'])
+const emits = defineEmits<{
+  (e: 'action', params: { action: string; record: CrudRecord }): void
+}>()
 
 </script>
 

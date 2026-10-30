@@ -12,7 +12,7 @@
 
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
-import { listToTree } from '@/utils/index.js'
+import { listToTree } from '@/utils/index'
 
 const cPage = ref()
 const filterConfig = {

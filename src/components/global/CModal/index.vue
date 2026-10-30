@@ -33,8 +33,22 @@
   </div>
 </template>
 
-<script setup>
-import { loadingRequest } from '@/utils/index.js'
+<script setup lang="ts">
+import { loadingRequest } from '@/utils/index'
+
+/** 弹窗打开参数 */
+interface ModalOpenOptions {
+  mode?: 'modal' | 'drawer'
+  title?: string
+  width?: string | number
+  showConfirm?: boolean
+  showCancel?: boolean
+  confirmText?: string
+  cancelText?: string
+  onCancel?: () => Promise<void> | void
+  onConfirm?: (close: () => Promise<void>, extraData: unknown) => Promise<void> | void
+  extraData?: unknown
+}
 
 const props = defineProps({
   title: String,
@@ -59,9 +73,9 @@ const currConfirmText = ref(props.confirmText)
 const currCancelText = ref(props.cancelText)
 const currShowConfirm = ref(props.showConfirm)
 const currShowCancel = ref(props.showCancel)
-let onConfirm = null
-let onCancel = null
-let extraData = null
+let onConfirm: Function | null = null
+let onCancel: Function | null = null
+let extraData: unknown = null
 
 watch(
   () => props.confirmText,
@@ -81,7 +95,7 @@ watch(
  * options.width 弹窗宽度
  * @param {Object} options
  */
-function open (options) {
+function open (options: ModalOpenOptions) {
   currMode.value = options?.mode ?? props.mode
   currTitle.value = options?.title ?? props.title
   currConfirmText.value = options?.confirmText ?? props.confirmText
@@ -89,8 +103,8 @@ function open (options) {
   currWidth.value = ((options?.width ?? props.width) + 'px').replace('pxpx', 'px')
   currShowConfirm.value = options?.showConfirm ?? props.showConfirm
   currShowCancel.value = options?.showCancel ?? props.showCancel
-  onConfirm = options?.onConfirm ?? props.onConfirm
-  onCancel = options?.onCancel ?? props.onCancel
+  onConfirm = (options?.onConfirm ?? props.onConfirm) as Function | null
+  onCancel = (options?.onCancel ?? props.onCancel) as Function | null
   extraData = options?.extraData
   visible.value = true
 }

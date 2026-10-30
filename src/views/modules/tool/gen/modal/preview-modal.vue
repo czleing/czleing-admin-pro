@@ -39,7 +39,7 @@ export default {
 </script>
 
 <script setup>
-import axios from '@/api/index.js'
+import axios from '@/api/index'
 
 const props = defineProps({
   datasource: String

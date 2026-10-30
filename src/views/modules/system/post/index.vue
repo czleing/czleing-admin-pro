@@ -3,11 +3,12 @@
   <CPage primary-key="postId" :filter-config="filterConfig" :table-config="tableConfig" :modal-config="modalConfig" />
 </template>
 
-<script setup>
+<script setup lang="ts">
   import CPage from '@/components/crud/c-page.vue'
+  import { FilterConfig, ModalConfig, TableActionConfig, TableConfig } from '@/components/crud/types'
 
   /** 查询条件配置 */
-  const filterConfig = {
+  const filterConfig: FilterConfig = {
     fields: [
       { label: '岗位编码', fieldName: 'postCode' },
       { label: '岗位名称', fieldName: 'postName' },
@@ -20,8 +21,18 @@
     ]
   }
 
+  type Post = {
+    postId: number
+    postCode: string
+    postName: string
+    postSort: number
+    isEnabled: boolean
+    updateTime: string
+    remark: string
+  }
+
   /** 数据列表配置 */
-  const tableConfig = computed(() => ({
+  const tableConfig = computed<TableConfig<Post>>(() => ({
     columns: [
       { title: '岗位编码', dataIndex: 'postCode' },
       { title: '岗位名称', dataIndex: 'postName' },
@@ -33,7 +44,7 @@
         title: '操作',
         actionShowNum: 2, // 展示操作按钮数量，剩余的将收进更多里
         action: ({ record }) => {
-          const btns = [
+          const btns: TableActionConfig<Post>[] = [
             { name: '详情', callback: 'detail' },
             { name: '编辑', callback: 'edit' },
             { name: '删除', callback: 'delete' },
@@ -52,7 +63,7 @@
   /**
    * 新增、修改、详情弹窗配置
    */
-  const modalConfig = computed(() => ({
+  const modalConfig = computed<ModalConfig>(() => ({
     title: '岗位信息', // 弹窗标题，会自动根据类型拼上新增、编辑、详情关键字
     width: 700, // 弹窗宽度，默认 600
     mode: 'modal', // 弹窗模式, modal 或 drawer

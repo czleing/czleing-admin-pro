@@ -72,19 +72,25 @@
   </div>
 </template>
 
-<script setup>
-import cComponent from '@/components/crud/components/c-component';
+<script setup lang="ts">
 import cForm from '@/components/crud/components/c-form.vue';
 import { Modal } from 'ant-design-vue';
 import dayjs from 'dayjs';
-import { EControlType } from '@/enum'
+import { EControlType, EMenuType } from '@/enum'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 import ProvinceCityAreaSelect from '@/components/common/ProvinceCityAreaSelect/index.vue'
+import type { CrudFormExpose, CrudModalExpose, CrudRecord, FormConfig } from '@/components/crud/types';
 
 defineOptions({ name: 'FormExample' })
 
+/** 岗位接口返回项 */
+interface PostItem {
+  postId: number
+  postName: string
+}
+
 // 基础使用
-const formConfig1 = {
+const formConfig1: FormConfig = {
   autoReset: false,
   fields: [
     {
@@ -129,7 +135,7 @@ const formConfig1 = {
         remote: {
           url: '/system/post/select',
           converter (list) {
-            return list?.map(item => ({ id: item.postId, name: item.postName }))
+            return (list as PostItem[] | undefined)?.map(item => ({ id: item.postId, name: item.postName })) ?? []
           }
         }
       }
@@ -138,7 +144,7 @@ const formConfig1 = {
 }
 
 // 自由控制
-const formConfig2 = {
+const formConfig2: FormConfig = {
   cols: 1,
   autoReset: false,
   fields: [
@@ -178,12 +184,12 @@ const formConfig2 = {
   ]
 }
 const initData = { birthday: '2020-02-02' } // 表单默认填充数据
-const freeForm = useTemplateRef('freeForm')
+const freeForm = useTemplateRef<CrudFormExpose>('freeForm')
 function validate () {
-  freeForm.value.validate()
+  freeForm.value?.validate()
 }
 function setData () {
-  freeForm.value.setFormData({
+  freeForm.value?.setFormData({
     name: '张三',
     sex: '1',
     dateRange: [dayjs('2026-01-01'), dayjs('2026-12-30')]
@@ -194,66 +200,66 @@ function setIsView () {
   isView.value = !isView.value
 }
 async function getData1 () {
-  const data = await freeForm.value.validate()
+  const data = await freeForm.value?.validate()
   Modal.success({
     title: '获取到的转换前的数据',
     content: JSON.stringify(data),
   })
 }
 async function getData2 () {
-  const data = await freeForm.value.getSubmitData()
+  const data = await freeForm.value?.getSubmitData()
   Modal.success({
     title: '获取到的转换后的数据',
     content: JSON.stringify(data),
   })
 }
-function onSubmitHandle (submitData) {
+function onSubmitHandle (submitData: CrudRecord): void {
   Modal.success({
     title: '提交的数据',
     content: JSON.stringify(submitData),
   })
 }
 function submit () {
-  freeForm.value.submit()
+  freeForm.value?.submit()
 }
 function reset () {
-  freeForm.value.reset()
+  freeForm.value?.reset()
 }
 
 // 弹出表单
-const modal1 = useTemplateRef('modal1')
+const modal1 = useTemplateRef<CrudModalExpose>('modal1')
 function openModal () {
-  modal1.value.open({
+  modal1.value?.open({
     mode: 'modal',
     width: 600,
   })
 }
 
-const modal2 = useTemplateRef('modal2')
-const form2 = useTemplateRef('cForm2')
+const modal2 = useTemplateRef<CrudModalExpose>('modal2')
+const form2 = useTemplateRef<CrudFormExpose>('cForm2')
 function openDrawer () {
-  modal2.value.open({
+  modal2.value?.open({
     mode: 'drawer',
     width: 600,
     onConfirm: async (close) => {
-      const submitData = await form2.value.getSubmitData()
+      const submitData = await form2.value?.getSubmitData()
       Modal.success({
         title: '提交的数据',
         content: JSON.stringify(submitData),
         onOk: () => {
-          form2.value.reset()
+          form2.value?.reset()
           close()
         }
       })
     },
     onCancel: () => {
-      form2.value.reset()
+      form2.value?.reset()
     }
   })
 }
 
 // 分组
-const formConfigGroup = {
+const formConfigGroup: FormConfig = {
   cols: 2,
   labelCol: { flex: '120px' },
   autoReset: false,
@@ -308,7 +314,7 @@ const formConfigGroup = {
 }
 
 // 联动
-const formConfig3 = computed(() => ({
+const formConfig3 = computed<FormConfig>(() => ({
   labelCol: { flex: '120px' },
   autoReset: false,
   fields: [
@@ -325,14 +331,14 @@ const formConfig3 = computed(() => ({
         buttonStyle: 'solid', // optionType 为 button 时，button 的风格样式, outline | solid
         onChange (val, option, formData) {
           if (formData.menuType == EMenuType.eDir) {
-            formData.path = formData.path?.replace('http://', '')
+            formData.path = (formData.path as string | undefined)?.replace('http://', '')
             formData.isFrame = false
           }
         }
       }
     },
     {
-      label: formData => EMenuType._of(formData.menuType) + '名称',
+      label: formData => EMenuType._of(formData.menuType as string) + '名称',
       fieldName: 'menuName',
       type: EControlType.eInput,
       required: true,
@@ -340,7 +346,7 @@ const formConfig3 = computed(() => ({
       }
     },
     {
-      label: formData => EMenuType._of(formData.menuType) + '图标',
+      label: formData => EMenuType._of(formData.menuType as string) + '图标',
       none: formData => formData.menuType === EMenuType.eBtn,
       fieldName: 'icon',
       type: EControlType.eCustom,
@@ -358,14 +364,15 @@ const formConfig3 = computed(() => ({
       none: formData => formData.menuType !== EMenuType.eMenu,
       props: {
         onChange (val, formData) {
-          formData.path = formData.path ?? ''
+          let path = String(formData.path ?? '')
           if (val) {
-            if (!formData.path.includes('http')) {
-              formData.path = 'http://' + formData.path
+            if (!path.includes('http')) {
+              path = 'http://' + path
             }
           } else {
-            formData.path = formData.path.replace('http://', '')
+            path = path.replace('http://', '')
           }
+          formData.path = path
         }
       }
     },

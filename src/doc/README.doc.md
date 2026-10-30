@@ -6,43 +6,11 @@
 - ant-design-vue 内部的 less 变量已注入到全局 less 环境，.less文件、《style lang="less" scoped》 中可直接使用
 - antdv 的 less 变量为编译时变量，不会因页面上主题切换而变化，因主题而变化的变量需要换为 css 变量(运行时变量)，变量参考: src/layout/index.vue
 - 图标使用 ant-design 图标，不够用时根据自己喜好引入第三方图标库即可
-- 为保持基座干净简洁，本基座未添加 eslint、husky、prettier 等约束及格式化插件，如有必要请自行添加
 - CPage 组件及相关子组件只为简化 CRUD 开发，本项目基础模块都是通过该组件实现，但非必选，不适用时使用传统模式开发即可
+- CRUD（CPage 及 c-table、c-form、c-filter、c-tools 等）TS 配置类型统一收敛在 `src/components/crud/types`，类型化的用法与说明见 [CPage 使用文档](./README.cpage.md)
 
 ### 2、接口请求
-为避免接口龙飞凤舞情况，前后端统一约定，method 统一使用 post，参数统一使用请求体传参，摒弃`restfull`规范及一接口一封装模式，采用通用的请求方式，如：
-```javascript
-import api from '@/api'
-...
-// 带参数，带分页，带排序示例
-const xxxPager = await api.post('/xxx/xxx/list', {
-  priceRange: [10, 100],
-  createTimeBegin: 1784085277690,
-  createTimeEnd: Date.now(),
-  page: {
-    pageSize: 10,
-    pageNum: 1,
-    orderByColumn: 'price',
-    isAsc: 'asc'
-  }
-})
-xxxPager.total
-xxxPager.list
-
-// 非分页列表情况
-const xxxList = await api.post('/xxx/xxx/list', { xxx: 'xxx' })
-// xxxList => [{...}, {...}]
-
-// 单个对象情况
-const xxxObj = await api.post('/xxx/xxx/getXXX', { xxx: 'xxx' })
-// xxxObj => {...}
-
-```
-#### 请求
-- 第一个参数为接口地址，第二个参数为请求参数，第三个参数为其他配置，可选，如 headers, content-type 的设置
-- Content-Type 统一为 application/json，一般情况无需设置
-- method 统一为 post
-- 统一 post 的好处是在对接接口时，只需关注 url 和 参数，不用关注 method、content-type、传参位置等其他内容，以及省去数据来回的类型转换，提高沟通和开发效率
+- 遵循 RESTful 规范，一接口一封装模式，统一管理在 `src/api` 目录下, 按模块分类管理
 
 #### 响应
 - 框架对 axios 的二次封装，简化了获取响应数据步骤，对全局异常统一拦截处理，使业务不需要关注全局异常处理
@@ -74,7 +42,7 @@ token.value.colorSuccess
 
 ### 4、获取当前登录用户
 ```javascript
-import { useAuthStore } from '@/stores/auth-store.js'
+import { useAuthStore } from '@/stores/auth-store'
 
 const authStore = useAuthStore()
 // 是否已登录
@@ -84,11 +52,11 @@ console.log('当前登录用户：', authStore.userInfo)
 ```
 
 ### 5、权限控制
-使用自定义指令 `v-hasPermi`、`v-noPermi`、`v-hasRole`
+使用自定义指令 `v-permission`、`v-noPermi`、`v-role`
 
 ```html
-<a-button v-hasPermi="'system:user:add'">新增</a-button>
-<a-button v-hasPermi="['xxx:xxx:xxx1', 'xxx:xxx:xxx2']">新增</a-button>
+<a-button v-permission="'system:user:add'">新增</a-button>
+<a-button v-permission="['xxx:xxx:xxx1', 'xxx:xxx:xxx2']">新增</a-button>
 ```
 
 使用 hook
@@ -199,11 +167,19 @@ function onConfirm (close, extraData) {
   />
 </template>
 
-<script setup>
+<script setup lang="ts">
   import CPage from '@/components/crud/c-page.vue'
+  import type { FilterConfig, ModalConfig, TableConfig } from '@/components/crud/types'
+
+  /** 列表行数据类型，配置中的 record 会自动推导为该类型 */
+  type UserRow = {
+    postCode: string
+    postName: string
+    isEnabled: boolean
+  }
 
   /** 查询条件配置 */
-  const filterConfig = {
+  const filterConfig: FilterConfig = {
     fields: [
       { label: '编码', fieldName: 'postCode' }, // 不写 type，默认 Input
       { label: '名称', fieldName: 'postName' },
@@ -212,7 +188,7 @@ function onConfirm (close, extraData) {
   }
 
   /** 数据列表配置 */
-  const tableConfig = {
+  const tableConfig: TableConfig<UserRow> = {
     columns: [
       { title: '编码', dataIndex: 'postCode' },
       { title: '名称', dataIndex: 'postName' },
@@ -232,7 +208,7 @@ function onConfirm (close, extraData) {
   }
 
   /** 新增、修改、详情弹窗配置 */
-  const modalConfig = {
+  const modalConfig: ModalConfig = {
     title: 'xx信息', // 弹窗标题，会自动根据类型拼上新增、编辑、详情关键字
     // width: 700, // 弹窗宽度，默认 600
     // mode: 'modal', // 弹窗模式, modal 或 drawer
@@ -248,7 +224,7 @@ function onConfirm (close, extraData) {
 ```
 
 #### 8.2、全配置参考案例：[demo-page](../views/demo/demo-page.vue)
-既是案例也是文档，也可以访问[CPage 使用文档](./README.cpage.md)
+既是案例也是文档，也可以访问[CPage 使用文档](./README.cpage.md)；demo-page 已改为 TS 写法，各类配置均绑定了对应类型，可直接参考类型声明方式
 
 #### 8.3、CRUD 里部分组件也可单独使用
 如：src/components/crud/components 下的 c-form、c-component、c-import、c-tree、c-table、c-filter 等，如：
@@ -260,9 +236,11 @@ function onConfirm (close, extraData) {
     @submit-handle="onSubmitHandle"
   />
 </template>
-<script setup>
-import cForm from '@/components/crud/components/c-form.vue';
-const formConfig = {
+<script setup lang="ts">
+import cForm from '@/components/crud/components/c-form.vue'
+import type { FormConfig } from '@/components/crud/types'
+
+const formConfig: FormConfig = {
   autoReset: false, // 点击取消或提交表单后是否自动重置表单
   fields: [
     {
@@ -286,8 +264,8 @@ const formConfig = {
       props: {
         remote: {
           url: '/system/post/select',
-          converter (list) {
-            return list.map(item => ({
+          converter (list) { // 返回类型为 unknown，按接口结构断言后转换为 [{ id, name }]
+            return (list as Array<{ postId: number; postName: string }>).map(item => ({
               id: item.postId,
               name: item.postName
             }))
@@ -297,7 +275,7 @@ const formConfig = {
     },
   ]
 }
-async function onSubmitHandle (submitData) {
+async function onSubmitHandle (submitData: Record<string, unknown>): Promise<void> {
   console.log('校验通过，提交的数据为：', submitData)
 }
 </script>

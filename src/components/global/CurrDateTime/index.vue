@@ -3,7 +3,7 @@
   <span>{{ time.format(format) }}</span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import dayjs from "dayjs"
 
 const props = defineProps({

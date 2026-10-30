@@ -8,8 +8,8 @@
   </div>
 </template>
 
-<script setup>
-import { useThemeToken } from '@/hooks/useThemeToken.js'
+<script setup lang="ts">
+import { useThemeToken } from '@/hooks/useThemeToken'
 
 const props = defineProps({
   title: { type: String }

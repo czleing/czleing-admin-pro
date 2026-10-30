@@ -36,7 +36,7 @@
 import { useAuthStore } from '@/stores/auth-store'
 import { CaretDownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
 import DefaultAvatar from '@/assets/images/avatar.jpeg'
-import { getFullUrl } from '@/utils/index.js'
+import { getFullUrl } from '@/utils/index'
 
 const authStore = useAuthStore()
 const router = useRouter()

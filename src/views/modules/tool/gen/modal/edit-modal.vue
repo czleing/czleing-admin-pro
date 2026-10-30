@@ -39,8 +39,8 @@
 </template>
 
 <script setup>
-import { EControlType } from '@/enum/index.js'
-import axios from '@/api/index.js'
+import { EControlType } from '@/enum/index'
+import axios from '@/api/index'
 import CForm from '@/components/crud/components/c-form.vue'
 
 const props = defineProps({

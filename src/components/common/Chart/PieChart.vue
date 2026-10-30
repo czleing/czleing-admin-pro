@@ -21,64 +21,91 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import VChart, { THEME_KEY } from 'vue-echarts'
 import { use } from 'echarts/core'
+import type { EChartsOption, PieSeriesOption } from 'echarts'
 import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent, LegendComponent, ToolboxComponent } from 'echarts/components'
 import { merge } from 'lodash-es'
 import { Empty } from 'ant-design-vue'
 import { colorsTypeBar } from '@/utils/color.constants'
-import { useSettingStore } from '@/stores/setting-store';
+import { useSettingStore } from '@/stores/setting-store'
 import { useNumFormat } from '@/hooks/useNumFormat'
 import { InfoCircleFilled } from '@ant-design/icons-vue'
 
 use([CanvasRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, ToolboxComponent])
 
-const props = defineProps({
+/** 图表数据项，字段名由 nameField / valueField 指定 */
+type PieDataItem = Record<string, unknown>
+
+interface Props {
   /** 图表标题 */
-  title: { type: String, default: '' },
+  title?: string
   /** 图表数据 */
-  data: { type: Array, default: () => [] },
+  data?: PieDataItem[]
   /** 名称字段 */
-  nameField: { type: String, default: 'name' },
+  nameField?: string
   /** 值字段 */
-  valueField: { type: String, default: 'value' },
-  loading: { type: Boolean, default: false },
+  valueField?: string
+  /** 是否加载中 */
+  loading?: boolean
   /** 保留小数位数 */
-  digit: { type: Number, default: 0 },
+  digit?: number
   /** 单位 */
-  unit: { type: String, default: '' },
-  emptyText: String,
+  unit?: string
+  /** 空数据提示文本 */
+  emptyText?: string
   /** 饼图扇形圆角 */
-  borderRadius: { type: Number, default: 8 },
+  borderRadius?: number
   /** 总计文本，默认总计 */
-  totalText: String,
-  colors: { type: Array, default: () => colorsTypeBar },
+  totalText?: string
+  /** 颜色列表 */
+  colors?: string[]
   /** 内环半径，传入0则为实心圆 */
-  innerRadius: { type: [String, Number], default: '50%' },
+  innerRadius?: string | number
   /** 外环半径 */
-  outerRadius: { type: [String, Number], default: '75%' },
+  outerRadius?: string | number
   /** echarts option 增量配置，可覆盖默认配置 */
-  option: { type: Object, default: () => ({}) },
+  option?: EChartsOption
   /** 饼图点击事件 */
-  onItemClick: { type: Function, default: null },
+  onItemClick?: ((params: unknown) => void) | null
   /** 饼图点击提示 */
-  clickTips: String,
+  clickTips?: string
   /** 是否显示下载按钮 */
-  showDownload: { type: Boolean, default: false },
-  width: { type: String, default: '100%' },
-  height: { type: String, default: '200px' }
+  showDownload?: boolean
+  /** 图表宽度 */
+  width?: string
+  /** 图表高度 */
+  height?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  title: '',
+  data: () => [],
+  nameField: 'name',
+  valueField: 'value',
+  loading: false,
+  digit: 0,
+  unit: '',
+  borderRadius: 8,
+  colors: () => colorsTypeBar,
+  innerRadius: '50%',
+  outerRadius: '75%',
+  option: () => ({} as EChartsOption),
+  onItemClick: null,
+  showDownload: false,
+  width: '100%',
+  height: '200px',
 })
 
-const chartRef = ref(null)
-let chartInstance = null
-const settingStore = useSettingStore();
-const { numFormat } = useNumFormat();
-provide(THEME_KEY, settingStore.mode);
-const isLight = computed(() => settingStore.mode === 'light');
+const chartRef = ref<InstanceType<typeof VChart> | null>(null)
+const settingStore = useSettingStore()
+const { numFormat } = useNumFormat()
+provide(THEME_KEY, settingStore.mode)
+const isLight = computed(() => settingStore.mode === 'light')
 const ringMode = computed(() => !!props.innerRadius)
 const isEmptyData = computed(() => {
   if (!Array.isArray(props.data) || props.data.length === 0) return true
@@ -89,18 +116,18 @@ const totalValue = computed(() => {
   return props.data.reduce((sum, item) => sum + Number(item[props.valueField] || 0), 0)
 })
 
-const formatTotalValue = (val) => `${numFormat(val, { digit: props.digit })}${props.unit}`
+const formatTotalValue = (val: number): string => `${numFormat(val, { digit: props.digit })}${props.unit}`
 
 const pieSeriesData = computed(() => {
   return props.data.map(item => ({
-    name: item[props.nameField],
-    value: Number(item[props.valueField] || 0)
+    name: String(item[props.nameField] ?? ''),
+    value: Number(item[props.valueField] || 0),
   }))
 })
 
-const baseOption = computed(() => {
+const baseOption = computed<EChartsOption>(() => {
   const { borderRadius, innerRadius, outerRadius, title, colors, unit } = props
-  const seriesItem = {
+  const seriesItem: PieSeriesOption = {
     type: 'pie',
     radius: ringMode.value ? [innerRadius, outerRadius] : outerRadius,
     itemStyle: { borderRadius },
@@ -109,8 +136,8 @@ const baseOption = computed(() => {
     labelLine: { length: 0, length2: 0 },
     center: ['40%', '56%'],
     emphasis: {
-      itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.2)' }
-    }
+      itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.2)' },
+    },
   }
   return {
     color: colors.length ? colors : undefined,
@@ -121,9 +148,7 @@ const baseOption = computed(() => {
       tooltip: {
         confine: true,
         show: true,
-        formatter: function (param) {
-          return '<div>' + param.title + '</div>';
-        },
+        formatter: (param: unknown): string => `<div>${(param as { title?: string }).title}</div>`,
       },
       top: -10,
       right: -10,
@@ -134,13 +159,13 @@ const baseOption = computed(() => {
     title: { text: title, textStyle: { color: isLight.value ? 'black' : 'white', fontSize: 15 }, left: 'left', top: 'top' },
     tooltip: { trigger: 'item', formatter: `{b}: {c}${unit} ({d}%)` },
     legend: { orient: 'vertical', right: 10, top: 'center', textStyle: { color: isLight.value ? 'black' : 'white' } },
-    series: [seriesItem]
+    series: [seriesItem],
   }
 })
 
-const mergedOption = computed(() => merge({}, baseOption.value, props.option))
+const mergedOption = computed<EChartsOption>(() => merge({}, baseOption.value, props.option))
 
-function onChartClick (params) {
+function onChartClick(params: unknown): void {
   if (props.onItemClick) {
     props.onItemClick(params)
   }

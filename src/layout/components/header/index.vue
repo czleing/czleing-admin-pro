@@ -64,8 +64,8 @@
 <script setup>
 import Logo from './logo.vue'
 import SideItem from '../side/SideItem.vue'
-import { useMenuStore } from '@/stores/menu-store.js'
-import { useSettingStore } from '@/stores/setting-store.js'
+import { useMenuStore } from '@/stores/menu-store'
+import { useSettingStore } from '@/stores/setting-store'
 import HeaderUser from './header-user.vue'
 import HeaderMessage from './header-message.vue'
 import HeaderFullscreen from './header-fullscreen.vue'

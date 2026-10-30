@@ -68,47 +68,53 @@
   </div>
 </template>
 
-<script setup>
-import { useSearchCache } from '@/components/crud/hooks/useSearchCache.js'
+<script setup lang="ts">
+import { useSearchCache } from '@/components/crud/hooks/useSearchCache'
 import { EControlType } from '@/enum'
-import { isAllFieldEmpty, isDayjs, isEmpty, isNotEmpty } from '@/utils/index.js'
+import { isAllFieldEmpty, isDayjs, isEmpty, isNotEmpty } from '@/utils/index'
+import type { IsEmptyValue } from '@/utils/index'
 import { DeleteOutlined, DownOutlined, SearchOutlined, UndoOutlined, UpOutlined } from '@ant-design/icons-vue'
+import type { Dayjs } from 'dayjs'
 import { message } from 'ant-design-vue'
+import type { FormInstance } from 'ant-design-vue'
 import { h } from 'vue'
-import CComponent from './c-component.js'
+import CComponent from './c-component'
+import type { CrudControlProps, CrudFilterExpose, FilterConfig, ResolvedFilterField, SearchParams, CrudModalExpose } from '../types'
 
-const props = defineProps({
-  config: {
-    type: Object,
-    default: () => ({})
+const props = withDefaults(
+  defineProps<{
+    /** 查询条件配置 */
+    config?: FilterConfig
+  }>(),
+  {
+    config: () => ({})
   }
-})
+)
+
 const { t } = useI18n()
 const defaultCol = { sm: 8, lg: 6, xxl: 4 }
-const col = computed(() => props.config?.col ?? defaultCol)
-const currFields = computed(() => {
-  return props.config?.fields?.map(field => {
+const col = computed(() => props.config.col ?? defaultCol)
+const currFields = computed<ResolvedFilterField[]>(() => {
+  const fields = props.config.fields ?? []
+  return fields.map((field) => {
+    // props 支持函数形式，查询区只使用静态属性
+    const fieldProps = (typeof field.props === 'function' ? {} : (field.props ?? {})) as CrudControlProps
     return {
       ...field,
-      props: {
-        ...field.props,
-        allowClear: field.props?.allowClear ?? true
-      }
+      label: typeof field.label === 'string' ? field.label : undefined,
+      props: { ...fieldProps, allowClear: fieldProps.allowClear ?? true }
     }
-  }) ?? []
+  })
 })
-const searchForm = ref()
-const loading = inject('c-page.loading', false)
-const searchParams = inject('c-page.searchParams', ref({})) // 共享的查询参数，格式化后的数据，实时从 formData 同步
-const formData = reactive({}) // 当前查询表单绑定的数据
-const {
-  cacheList,
-  getCondition,
-  setCondition,
-  delCondition
-} = useSearchCache()
+const searchForm = ref<FormInstance>()
+const loading = inject<Ref<boolean>>('c-page.loading', ref(false))
+const searchParams = inject<Ref<SearchParams>>('c-page.searchParams', ref({})) // 共享的查询参数，格式化后的数据，实时从 formData 同步
+const formData = reactive<Record<string, unknown>>({}) // 当前查询表单绑定的数据
+const { cacheList, getCondition, setCondition, delCondition } = useSearchCache()
 const noCondition = computed(() => isAllFieldEmpty(formData))
-const emits = defineEmits(['search'])
+const emits = defineEmits<{
+  (e: 'search'): void
+}>()
 
 provide('c-form.formData', formData)
 
@@ -128,10 +134,10 @@ watch(
 )
 
 /** 设置默认参数 */
-function setDefault () {
-  currFields.value.forEach(field => {
+function setDefault(): void {
+  currFields.value.forEach((field) => {
     formData[field.fieldName] = undefined
-    if (isNotEmpty(field.defaultValue)) {
+    if (isNotEmpty(field.defaultValue as IsEmptyValue)) {
       formData[field.fieldName] = field.defaultValue
     }
   })
@@ -139,98 +145,111 @@ function setDefault () {
 
 /** 日期范围字段收集 */
 const dateRangeFields = computed(() => {
-  return currFields.value.filter(field => field.type === EControlType.eDateRange)
+  return currFields.value.filter((field) => field.type === EControlType.eDateRange)
 })
 
 /** 获取转换后的表单数据 */
-function getTransformedFormData () {
-  const transformedFormData = {}
+function getTransformedFormData(): SearchParams {
+  const transformedFormData: SearchParams = {}
   for (const key in formData) {
     const value = formData[key]
-    if (isNotEmpty(value)) {
+    if (isNotEmpty(value as IsEmptyValue)) {
       transformedFormData[key] = value
     }
   }
   // 日期范围字段处理
-  dateRangeFields.value.forEach(field => {
+  dateRangeFields.value.forEach((field) => {
     const value = transformedFormData[field.fieldName]
-    if (isNotEmpty(value)) {
-      const fieldNames = field.props?.fieldNames ?? [`${field.fieldName}Begin`, `${field.fieldName}End`]
-      transformedFormData[fieldNames[0]] = isDayjs(value[0]) ? value[0].startOf('day').hour(0).valueOf() : value[0]
-      transformedFormData[fieldNames[1]] = isDayjs(value[1]) ? value[1].endOf('day').valueOf() : value[1]
+    if (isNotEmpty(value as IsEmptyValue)) {
+      const rawFieldNames = field.props.fieldNames
+      const fieldNames: [string, string] = Array.isArray(rawFieldNames) && rawFieldNames.length === 2
+        ? [rawFieldNames[0], rawFieldNames[1]]
+        : [`${field.fieldName}Begin`, `${field.fieldName}End`]
+      const range = Array.isArray(value) ? value : []
+      const start = range[0] as Dayjs | undefined
+      const end = range[1] as Dayjs | undefined
+      transformedFormData[fieldNames[0]] = isDayjs(start) ? start!.startOf('day').hour(0).valueOf() : range[0]
+      transformedFormData[fieldNames[1]] = isDayjs(end) ? end!.endOf('day').valueOf() : range[1]
       delete transformedFormData[field.fieldName]
     }
   })
   return transformedFormData
 }
 
-function onSubmitHandle () {
+function onSubmitHandle(): void {
   emits('search')
 }
-function onResetHandle () {
-  searchForm.value.resetFields()
+function onResetHandle(): void {
+  searchForm.value?.resetFields()
   setDefault()
   emits('search')
 }
 
 // --------- 折叠、展开 ------------
-const cFilter = useTemplateRef('cFilter')
+const cFilter = useTemplateRef<HTMLElement>('cFilter')
 const rowMaxShowNum = ref(5)
 const needFold = computed(() => currFields.value.length > rowMaxShowNum.value)
 const isFold = ref(false)
-const foldRef = useTemplateRef('foldRef')
+const foldRef = useTemplateRef<HTMLElement>('foldRef')
 const mouseX = ref(0)
-async function toggleFold () {
+async function toggleFold(): Promise<void> {
   isFold.value = !isFold.value
   rowMaxShowNum.value = 5
   await nextTick()
   if (isFold.value) {
-    const rowMaxHeight = 60;
-    async function initShowNum () {
-      if (cFilter.value.clientHeight > rowMaxHeight && rowMaxShowNum.value > 1) {
-        rowMaxShowNum.value = rowMaxShowNum.value - 1;
+    const rowMaxHeight = 60
+    async function initShowNum(): Promise<void> {
+      if ((cFilter.value?.clientHeight ?? 0) > rowMaxHeight && rowMaxShowNum.value > 1) {
+        rowMaxShowNum.value = rowMaxShowNum.value - 1
         await nextTick()
-        initShowNum()
+        await initShowNum()
       }
     }
-    initShowNum()
+    await initShowNum()
   }
 }
-function onMouseover (e) {
-  mouseX.value = e.clientX - foldRef.value.getBoundingClientRect().x
+function onMouseover(e: MouseEvent): void {
+  const rect = foldRef.value?.getBoundingClientRect()
+  mouseX.value = e.clientX - (rect?.x ?? 0)
 }
 
 // ------- 记住查询 start ----------
-const cacheNameModal = ref()
+const cacheNameModal = ref<CrudModalExpose>()
 const cacheName = ref('')
-function onRememberHandle () {
+function onRememberHandle(): void {
   if (noCondition.value) {
     message.warning(t('crud.pleaseEnterSearchParams'))
     return
   }
   cacheName.value = ''
-  cacheNameModal.value.open({
-    onConfirm (close) {
+  cacheNameModal.value?.open({
+    onConfirm: async (close) => {
       if (cacheName.value) {
         setCondition(toRaw(formData), cacheName.value)
-        close()
+        await close()
       } else {
         message.error(t('crud.pleaseEnterRemark'))
       }
     }
   })
 }
-function onSelectCache (id) {
+function onSelectCache(id: number): void {
   const cacheData = getCondition(id)
+  if (!cacheData) return
   for (const key in formData) {
     formData[key] = cacheData[key]
   }
 }
-function onDeleteCache (id) {
+function onDeleteCache(id: number): void {
   delCondition(id)
 }
 // ------- 记住查询 end ----------
 
+defineExpose<CrudFilterExpose>({
+  getTransformedFormData,
+  onSearchHandle: onSubmitHandle,
+  onResetHandle
+})
 </script>
 
 <style lang="less" scoped>

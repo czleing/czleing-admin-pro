@@ -44,11 +44,12 @@
 <script setup>
 import { notification, message } from 'ant-design-vue';
 import { MessageOutlined, SmileOutlined, BellOutlined } from '@ant-design/icons-vue'
-import axios from '@/api/index.js'
+import axios from '@/api/index'
 import { useRouter } from 'vue-router'
 import { watch, onMounted, onUnmounted } from 'vue'
-import { useAuthStore } from '@/stores/auth-store.js'
-import { useSSE } from '@/hooks/useSEE.js'
+import { useAuthStore } from '@/stores/auth-store'
+import { useSSE } from '@/hooks/useSEE'
+import settings from '@/config/setting'
 
 const { connect, addSSEListener, disconnect } = useSSE()
 const router = useRouter()
@@ -117,7 +118,7 @@ async function getList() {
     // 模拟
     if (pageParam.value.pageNum === 1) {
       list.value = [
-        { id: 1, type: '1', code: '', content: '欢迎使用 czleing-admin!' },
+        { id: 1, type: '1', code: '', content: `欢迎使用 ${settings.websiteInfo.systemName}!` },
         { id: 2, type: '2', code: 'Z0001', content: '本周周报待提交，请点击前往填写' },
         { id: 3, type: '2', code: 'D0009', content: '线上 bug 工单待处理，立即查看并修复' },
         { id: 4, type: '2', code: 'D0009', content: '新的审批申请待查阅，点击进入审核' },

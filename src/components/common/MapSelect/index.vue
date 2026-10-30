@@ -57,7 +57,7 @@
 </template>
 <script>
 import AMapLoader from '@amap/amap-jsapi-loader' // 引入AMapLoader
-import { stringStar } from '@/utils/index.js'
+import { stringStar } from '@/utils/index'
 
 window._AMapSecurityConfig = {
   // 设置安全密钥

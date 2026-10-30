@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { useMenuStore } from '@/stores/menu-store.js'
+import { useMenuStore } from '@/stores/menu-store'
 
 const route = useRoute()
 const menuStore = useMenuStore()

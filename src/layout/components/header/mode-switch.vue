@@ -10,7 +10,7 @@
 </template>
 <script setup>
 import useViewTransition from '@/hooks/useViewTransition';
-import { useSettingStore } from '@/stores/setting-store.js'
+import { useSettingStore } from '@/stores/setting-store'
 
 const settingStore = useSettingStore()
 const { startViewTransition } = useViewTransition()

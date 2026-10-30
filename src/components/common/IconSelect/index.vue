@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { icons } from '../../global/a-icon'
 
 const props = defineProps({
@@ -40,7 +40,7 @@ function open () {
   cModal.value?.open()
 }
 
-function onSelectHandle (name) {
+function onSelectHandle (name: string) {
   modelValue.value = name
   cModal.value?.close()
 }

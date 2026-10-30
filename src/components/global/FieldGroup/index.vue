@@ -23,9 +23,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RightCircleOutlined } from '@ant-design/icons-vue'
-import { useThemeToken } from '@/hooks/useThemeToken.js'
+import { useThemeToken } from '@/hooks/useThemeToken'
 
 const props = defineProps({
   title: String,

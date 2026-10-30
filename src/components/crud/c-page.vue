@@ -1,7 +1,7 @@
 <!-- CRUD 页面组件 -->
 <template>
-  <div ref="cPage" class="c-page" :class="{'is-fullscreen': isFullScreen}">
-    <div v-if="treeConfig" ref="treeBox" class="c-page__tree mr10 pr10" :class="{'is-hide': !isTreeShow}">
+  <div ref="cPage" class="c-page" :class="{ 'is-fullscreen': isFullScreen }">
+    <div v-if="treeConfig" ref="treeBox" class="c-page__tree mr10 pr10" :class="{ 'is-hide': !isTreeShow }">
       <!-- 树 -->
       <CTree v-show="isTreeShow" class="c-tree" :config="treeConfig" @selected="onTreeSelectHandle" />
       <div class="c-page__tree__toggle pointer flex-y-center radius6" @click="toggleTree">
@@ -59,7 +59,7 @@
         :permission-config="permission"
         :before-search="beforeSearch"
         :after-search="afterSearch"
-        @action="onActionHandle"
+        @action="onTableActionHandle"
         @resize-column="resizeColumn"
       >
         <!-- 自定义插槽 -->
@@ -93,105 +93,82 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts" generic="Row extends CrudRecord = CrudRecord">
 import CFilter from '@/components/crud/components/c-filter.vue'
 import CForm from '@/components/crud/components/c-form.vue'
 import CTable from '@/components/crud/components/c-table.vue'
 import CTools from '@/components/crud/components/c-tools.vue'
 import CTree from '@/components/crud/components/c-tree.vue'
-import { useSettingStore } from '@/stores/setting-store'
-import { isNotEmpty } from '@/utils/index.js'
+import { useResizableRight } from '@/hooks/useResizableRight'
+import type { IsEmptyValue } from '@/utils/index'
+import { isNotEmpty } from '@/utils/index'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons-vue'
+import { useTemplateRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useActionHandle } from './hooks/useActionHandle'
 import { useApiConfig } from './hooks/useApiConfig'
 import { useApiMethodConfig } from './hooks/useApiMethodConfig'
 import { usePermissionConfig } from './hooks/usePermissionConfig'
-import { useTemplateRef } from 'vue'
-import { useResizableRight } from '@/hooks/useResizableRight'
+import type {
+  CrudFormExpose,
+  CrudModalExpose,
+  CrudPageEmits,
+  CrudPageProps,
+  CrudPagination,
+  CrudRecord,
+  CrudSorter,
+  CrudTableColumn,
+  CrudTableExpose,
+  PageActionParams
+} from './types'
 
-const props = defineProps({
-  /** 没有新增按钮，可选 */
-  noAdd: Boolean,
-  /** 没有删除按钮，可选 */
-  noDelete: Boolean,
-  /** 没有表格多选框，可选 */
-  noSelect: Boolean,
-  /** 没有操作栏，可选 */
-  noTools: Boolean,
-  /** 没有全屏按钮，可选 */
-  noFullscreen: Boolean,
-  /** 有返回按钮，可选 */
-  hasGoBack: Boolean,
-  /** 有导入按钮，可选 */
-  hasImport: Boolean,
-  /** 有导出按钮，可选 */
-  hasExport: Boolean,
-  /** 主键字段名，默认 id */
-  primaryKey: { type: String, default: 'id' },
-  /** 操作栏配置，可选 */
-  toolsConfig: Object,
-  /** 接口配置，可选，默认根据路由及功能生成（如：新增：/system/user -> /system/user/add） */
-  apiConfig: Object,
-  /** 接口请求方式配置，可选，默认根据是否使用restfull风格自动生成，不使用restfull则全部post请求 */
-  apiMethodConfig: Object,
-  /** 接口请求其他配置，如：headers, content-type 等，可选 */
-  apiOptionConfig: Object,
-  /** 权限配置，可选，默认根据路由及功能生成（如：新增：/system/user -> system:user:add） */
-  permissionConfig: Object,
-  /** 左侧树形控件配置，可选 */
-  treeConfig: Object,
-  /** 过滤条件配置，可选 */
-  filterConfig: Object,
-  /** 表格配置，可选，也可以通过插槽自定义实现表格部分，比如需要以卡片形式展示 */
-  tableConfig: Object,
-  /** 增改查弹窗配置，可选 */
-  modalConfig: { type: Object, default: () => ({}) },
-  /** 查询前修改查询参数，可选，params => ({ ...params, type: 1 }) */
-  beforeSearch: Function,
-  /** 查询后修改查询结果，可选，list => list.map(...) */
-  afterSearch: Function,
-  /** 提交表单前修改表单数据，可选，data => ({...}) */
-  beforeSubmit: Function,
-  /** 提交表单成功后执行，可选，formData => ({...}) */
-  afterSubmit: Function,
-  /** 编辑或查看详情时转换详情数据，可选，detail => ({...}) */
-  transformDetail: Function,
-  /** 弹出表单弹窗后执行，可做一些新增、编辑、查看详情前的数据准备工作，可选，({ isAdd, isEdit, isView }) => {} */
-  afterOpenModal: Function,
+const props = withDefaults(defineProps<CrudPageProps<Row>>(), {
+  primaryKey: 'id',
+  modalConfig: () => ({})
 })
 const loading = ref(false)
-const cTable = ref()
-const cModal = ref()
-const cForm = ref()
-const columns = ref()
+const cTable = ref<CrudTableExpose<Row>>()
+const cModal = ref<CrudModalExpose>()
+const cForm = ref<CrudFormExpose>()
+const columns = ref<CrudTableColumn<Row>[]>([])
 const { t } = useI18n()
-const selectedIds = ref([])
-const selectedObjs = ref([])
-const searchParams = ref({}) // 当前查询参数，格式化后的数据，实时同步
+const selectedIds = ref<(string | number)[]>([])
+const selectedObjs = ref<Row[]>([])
+const searchParams = ref<Record<string, unknown>>({}) // 当前查询参数，格式化后的数据，实时同步
 const showSearch = ref(true)
-const checkedFieldNames = ref(props.tableConfig?.columns?.filter(item => item.hidden !== true)?.map(item => item.dataIndex))
-const settingStore = useSettingStore()
+const checkedFieldNames = ref<string[]>(
+  props.tableConfig?.columns
+    ?.filter((item) => item.hidden !== true)
+    .map((item) => (typeof item.dataIndex === 'string' ? item.dataIndex : '')) ?? []
+)
 const useTableBorder = ref(0)
-const pagination = ref({
+const pagination = ref<CrudPagination>({
   showSizeChanger: true,
-  showTotal: (total, range) => t('crud.totalPage', { value: total }),
+  showTotal: (total: number) => t('crud.totalPage', { value: total }),
   pageSize: props.tableConfig?.props?.pageSize ?? 10,
   current: 1,
   total: 0
 })
-const sorter = ref({
+const sorter = ref<CrudSorter>({
   field: undefined,
   order: undefined
 })
 const filterAutoSearch = computed(() => {
-  return props.filterConfig?.fields?.some(field => isNotEmpty(field.defaultValue))
+  return props.filterConfig?.fields?.some((field) => isNotEmpty(field.defaultValue as IsEmptyValue))
 })
-const tableSlots = computed(() => columns.value?.filter(column => column.slot))
-const { api } = useApiConfig(props.apiConfig) // 接口
+const tableSlots = computed(() => {
+  const result: { slot: string }[] = []
+  columns.value.forEach((column) => {
+    if (typeof column.slot === 'string') {
+      result.push({ slot: column.slot })
+    }
+  })
+  return result
+})
+const { api } = useApiConfig<Row>(props.apiConfig) // 接口
 const { permission } = usePermissionConfig(props.permissionConfig) // 权限
 const { apiMethod } = useApiMethodConfig(props.apiMethodConfig) // 接口请求方式
-const emit = defineEmits(['added', 'updated', 'deleted'])
+const emit = defineEmits<CrudPageEmits>()
 const {
   isAdd,
   isEdit,
@@ -203,13 +180,14 @@ const {
   onBatchDeleteHandle, // 批量删除处理
   onActionHandle, // 表格中预设按钮点击处理
   onSubmitHandle // 提交表单处理
-} = useActionHandle({
+} = useActionHandle<Row>({
   cModal,
   cForm,
   cTable,
   modalConfig: props.modalConfig,
   api,
   apiMethod,
+  permissionConfig: permission,
   transformDetail: props.transformDetail,
   afterOpenModal: props.afterOpenModal,
   primaryKey: props.primaryKey,
@@ -218,7 +196,7 @@ const {
   emit
 })
 watchSyncEffect(() => {
-  columns.value = [...props.tableConfig?.columns]
+  columns.value = [...(props.tableConfig?.columns ?? [])]
 })
 
 /** 与子组件共享变量 */
@@ -234,59 +212,71 @@ provide('c-page.onReloadHandle', onReloadHandle)
 provide('c-page.useTableBorder', useTableBorder)
 
 const isTreeShow = ref(true)
-function toggleTree () {
+function toggleTree(): void {
   isTreeShow.value = !isTreeShow.value
 }
 
-function onSearchHandle () {
+function onSearchHandle(): void {
   pagination.value.current = 1
-  cTable.value.search()
+  void cTable.value?.search()
 }
-function onRefreshHandle () {
-  cTable.value.refresh()
+function onRefreshHandle(): Promise<void> {
+  return cTable.value?.refresh() ?? Promise.resolve()
 }
-function onReloadHandle () {
+function onReloadHandle(): Promise<void> {
   clearSelect()
-  cTable.value.reload()
+  return cTable.value?.reload() ?? Promise.resolve()
 }
-function onCancelHandle () {
+function onCancelHandle(): void {
   cForm.value?.reset()
 }
-function onTreeSelectHandle (orgId) {
+function onTreeSelectHandle(orgId?: string | number): void {
   searchParams.value[props.treeConfig?.searchField ?? 'orgId'] = orgId
-  cTable.value.search()
+  void cTable.value?.search()
 }
-function toggleShowSearch () {
+function toggleShowSearch(): void {
   showSearch.value = !showSearch.value
 }
-function clearSelect () {
+function clearSelect(): void {
   selectedIds.value = []
   selectedObjs.value = []
 }
 
 /** 拖拽调整左侧树宽度 */
-let treeBoxRef = useTemplateRef('treeBox')
-let resizerRef = useTemplateRef('resizerRef')
+const treeBoxRef = useTemplateRef<HTMLElement>('treeBox')
+const resizerRef = useTemplateRef<HTMLElement>('resizerRef')
 const treeMinWidth = 180
 const treeMaxWidth = 320
 useResizableRight(treeBoxRef, resizerRef, treeMinWidth, treeMaxWidth)
 
 /** CRUD 区域局部全屏 */
 const isFullScreen = ref(false)
-function toggleFullScreen () {
+function toggleFullScreen(): void {
   if (isFullScreen.value) {
     isFullScreen.value = false
   } else {
     isFullScreen.value = true
   }
 }
-function sortColumn (oldIndex, newIndex) {
+function sortColumn(oldIndex?: number, newIndex?: number): void {
+  if (oldIndex === undefined || newIndex === undefined) return
   const moveColumn = columns.value.splice(oldIndex, 1)[0]
-  columns.value.splice(newIndex, 0, moveColumn)
+  if (moveColumn) {
+    columns.value.splice(newIndex, 0, moveColumn)
+  }
 }
-function resizeColumn (dataIndex, width) {
-  const col = columns.value.find(item => item.dataIndex === dataIndex)
-  col && (col.width = width)
+function resizeColumn(dataIndex: string, width: number): void {
+  for (const col of columns.value) {
+    if (col.dataIndex === dataIndex) {
+      col.width = width
+      return
+    }
+  }
+}
+
+/** 表格行操作事件（表格组件返回的行数据类型为 CrudRecord，此处收敛为 Row） */
+function onTableActionHandle(params: { action: string; record: CrudRecord }): void {
+  onActionHandle({ ...params, record: params.record as Row } as PageActionParams<Row>)
 }
 
 defineExpose({

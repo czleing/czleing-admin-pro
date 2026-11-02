@@ -5,16 +5,16 @@
 </div>
 
 ## 简介
-### 技术栈：Vue3.5 + Vite8 + Pinia3 + Ant-design-vue4 + TypeScript + axios + vue-router + pnpm
+### 技术栈：Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
 
 该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，更适合企业中多人团队合作。
 
 ## 相关项目
-| 名称 | 说明 | 地址 |
+| 项目 | 说明 | 地址 |
 | --- | --- | --- |
-| czleing-admin | js 版本前端，带代码生成、系统管理等功能，可拿来直接开发 | https://gitee.com/czleing/czleing-admin.git |
-| czleing-admin-pro(当前项目) | ts 版本前端，工程化能力增强，带代码生成、系统管理等功能，可拿来直接开发 | https://gitee.com/czleing/czleing-admin-pro.git |
-| czleing-admin-api | 后端，spring-boot 单体服务 | https://gitee.com/czleing/czleing-admin-api.git |
+| czleing-admin | js 版本前端 | [gitee](https://gitee.com/czleing/czleing-admin.git) \| [github](https://github.com/czleing/czleing-admin.git) |
+| czleing-admin-pro(当前项目) | ts 版本前端，工程化能力增强 | [gitee](https://gitee.com/czleing/czleing-admin-pro.git) \| [github](https://github.com/czleing/czleing-admin-pro.git) |
+| czleing-admin-api | spring-boot 单体后端服务 | [gitee](https://gitee.com/czleing/czleing-admin-api.git) \| [github](https://github.com/czleing/czleing-admin-api.git) |
 
 ## 环境要求
 - node: 22+
@@ -39,7 +39,7 @@
 
 ## 框架功能及特点
 - 轻量化（没有微前端、没有微服务、TS类型简单、第三方依赖少、目录简洁、简单实用）
-- 配置化（CPage组件将CRUD重复逻辑封装，通过三段配置即可生成CRUD页面，面向配置开发，全系统风格统一，代码量极少）
+- 配置化（CPage组件将CRUD重复逻辑封装，通过三段配置即可生成功能强大的CRUD页面，面向配置开发，全系统风格统一，代码量极少）
 - 主题动态切换(多种预设主题加多色自定义，非只换主色调，可选主题背景图，让主题更鲜明、底层使用 CSS 变量 + ThemeToken 双方案)
 - 全局明/暗色模式(提供多种切换动画，丝滑过度)
 - 使用静态路由+动态路由及权限配置(按钮级功能权限 + 数据权限，自定义指令+函数校验)

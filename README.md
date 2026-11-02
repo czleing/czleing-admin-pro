@@ -34,7 +34,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 - unplugin-auto-import 常用API免导入插件，如使用 ref, reactive 不在需要写 import { ref, reactive } from 'vue'
 - eslint 代码规范检查工具
 - husky 代码提交规范检查工具
-- commitlint 代码提交规范检查工具
+- commitlint 代码提交检查范围工具
 - pnpm 包管理工具
 
 

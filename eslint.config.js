@@ -1,11 +1,12 @@
 // ESLint 配置（flat config）：统一约束 JS/TS/Vue 代码质量与风格
 // 规则体系：eslint 官方推荐 + typescript-eslint 推荐 + eslint-plugin-vue 强烈推荐
 import js from '@eslint/js'
+import { defineConfig } from 'eslint/config'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import pluginVue from 'eslint-plugin-vue'
 
-export default tseslint.config(
+export default defineConfig(
   // 不参与检查的目录与自动生成文件
   {
     ignores: ['dist', 'node_modules', 'public', 'src/types/auto-import.d.ts', 'src/types/components.d.ts'],

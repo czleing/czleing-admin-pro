@@ -5,16 +5,17 @@
 </div>
 
 ## 简介
-### 技术栈：Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
+### 技术栈
+Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
 
-该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，更适合企业中多人团队合作。
+该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，更适合企业中多人团队合作开发及长期维护。
 
 ## 相关项目
 | 项目 | 说明 | 地址 |
 | --- | --- | --- |
-| czleing-admin | js 版本前端 | [gitee](https://gitee.com/czleing/czleing-admin.git) \| [github](https://github.com/czleing/czleing-admin.git) |
-| czleing-admin-pro(当前项目) | ts 版本前端，工程化能力增强 | [gitee](https://gitee.com/czleing/czleing-admin-pro.git) \| [github](https://github.com/czleing/czleing-admin-pro.git) |
-| czleing-admin-api | spring-boot 单体后端服务 | [gitee](https://gitee.com/czleing/czleing-admin-api.git) \| [github](https://github.com/czleing/czleing-admin-api.git) |
+| czleing-admin | js 版本前端，简单快速，约束少，开发更快 | [gitee](https://gitee.com/czleing/czleing-admin.git) \| [github](https://github.com/czleing/czleing-admin.git) |
+| czleing-admin-pro(当前项目) | ts 版本前端，工程化能力强，约束多，更易维护 | [gitee](https://gitee.com/czleing/czleing-admin-pro.git) \| [github](https://github.com/czleing/czleing-admin-pro.git) |
+| czleing-admin-api | java 版本后端，spring-boot 单体服务 | [gitee](https://gitee.com/czleing/czleing-admin-api.git) \| [github](https://github.com/czleing/czleing-admin-api.git) |
 
 ## 环境要求
 - node: 22+

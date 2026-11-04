@@ -545,6 +545,7 @@ const modalConfig = computed<ModalConfig>(() => ({
         subTitle: '分组副标题', // String || formData => String
         // hidden: formData => !formData.userName, // true表示隐藏该组(数据仍在)，Boolean || formData => Boolean
         // none: formData => !formData.userName, // true表示不需要该组(从表单中移除)，Boolean || formData => Boolean
+        // defaultExpand: false, // 默认展开状态，默认展开，Boolean
         fields: [
           {
             label: '密码',

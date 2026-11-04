@@ -1,4 +1,4 @@
-<!-- 字段分组-组件 -->
+<!-- 字段分组-组件，可展开收起(带平滑过渡动画)，可自定义标题和副标题及默认展开状态 -->
 <template>
   <div class="field-group" :class="{ 'is-expand': showContainer }">
     <div
@@ -31,9 +31,10 @@ import { useThemeToken } from '@/hooks/useThemeToken'
 
 const props = defineProps({
   title: String,
-  subTitle: String
+  subTitle: String,
+  defaultExpand: { type: Boolean, default: true },
 })
-const showContainer = ref(true)
+const showContainer = ref(props.defaultExpand)
 const { token } = useThemeToken()
 
 function toggle () {

@@ -491,6 +491,7 @@ export type CrudFormField =
 export interface FormFieldGroup {
   title?: MaybeFn<string, [CrudFormData]>
   subTitle?: MaybeFn<string, [CrudFormData]>
+  defaultExpand?: boolean
   hidden?: MaybeFn<boolean, [CrudFormData]>
   none?: MaybeFn<boolean, [CrudFormData]>
   fields: CrudFormField[]
@@ -506,11 +507,11 @@ export interface FormConfig {
   labelCol?: ColProps
   /** 控件部分栅格设置，默认 { flex: '1 1 0' } */
   wrapperCol?: ColProps
-  /** 打开弹窗时是否重置表单（默认重置） */
+  /** 关闭弹窗/提交成功 后是否重置表单（默认重置） */
   autoReset?: boolean
   /** 提交成功后是否自动关闭弹窗（默认关闭） */
   autoClose?: boolean
-  /** 提交时是否移除 none 字段 */
+  /** 提交时是否移除 none = true 的字段，默认移除 */
   removeNoneFields?: boolean
   fields: CrudFormField[]
 }
@@ -537,4 +538,5 @@ export interface NormalizedFormField {
   fields?: NormalizedFormField[]
   title?: string
   subTitle?: string
+  defaultExpand?: boolean
 }

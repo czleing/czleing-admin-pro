@@ -15,7 +15,7 @@
           <template v-if="isGroup(field) && !field.none">
             <!-- 控件组 -->
             <a-col span="24" v-show="!field.hidden">
-              <FieldGroup :title="field.title" :subTitle="field.subTitle">
+              <FieldGroup :title="field.title" :subTitle="field.subTitle" :defaultExpand="field.defaultExpand">
                 <a-row :gutter="15">
                   <template v-for="child in field.fields ?? []" :key="child.fieldName">
                     <a-col v-if="!child.none" v-show="!child.hidden" v-bind="child.col">
@@ -173,6 +173,7 @@ function normalizeField(field: CrudFormField): NormalizedFormField {
       subTitle: resolveMaybe(field.subTitle),
       hidden: resolveMaybe(field.hidden),
       none: resolveMaybe(field.none),
+      defaultExpand: field.defaultExpand,
       props: {},
       fields: normalizeFields(field.fields)
     }

@@ -176,9 +176,9 @@ export interface TransformResult {
  * 将数值转为 xx万 或 xx亿
  * @param num 数值
  * @param digit 小数位数
- * @param isForceTransform 是否强制转换，false 则大于 9999 才会转
+ * @param isForceTransform 是否强制转换，默认：false 大于 9999 才会转
  */
-export function transformNum(num: number | string, digit = 2, isForceTransform = true): TransformResult {
+export function transformNum(num: number | string, digit = 2, isForceTransform = false): TransformResult {
   let n = Number(num)
   let unit = ''
   if ((isForceTransform && n > 0) || (!isForceTransform && n > 9999)) {

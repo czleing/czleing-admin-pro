@@ -149,12 +149,11 @@ export const useTabsStore = defineStore('tabs', {
     },
     /** 收藏/取消收藏 */
     toogleFavorite(tabIndex?: number): void {
-      const store = this as unknown as { currentIndex: number; tabList: TabItem[]; favoriteKeys: string[]; favoriteTabs: TabItem[] }
-      const idx = tabIndex ?? store.currentIndex
-      const tab = store.tabList[idx]
+      const idx = tabIndex ?? this.currentIndex
+      const tab = this.tabList[idx]
       if (!tab?.fullPath) return
-      if (store.favoriteKeys.includes(tab.fullPath)) {
-        store.favoriteTabs = store.favoriteTabs.filter((item) => item.fullPath !== tab.fullPath)
+      if (this.favoriteKeys.includes(tab.fullPath)) {
+        this.favoriteTabs = this.favoriteTabs.filter((item) => item.fullPath !== tab.fullPath)
       } else {
         this.favoriteTabs.push({ ...tab, matched: undefined, meta: { ...tab.meta, matchedPaths: undefined } })
       }

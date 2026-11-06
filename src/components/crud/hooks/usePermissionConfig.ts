@@ -16,7 +16,6 @@ export function usePermissionConfig(
   const permissionPrefix = route.path.split('/').slice(1).join(':')
   const permission: ResolvedPermissionConfig = {
     add: permissionConfig.add ?? `${permissionPrefix}:add`,
-    edit: permissionConfig.update ?? `${permissionPrefix}:update`,
     update: permissionConfig.update ?? `${permissionPrefix}:update`,
     detail: permissionConfig.detail ?? `${permissionPrefix}:detail`,
     list: permissionConfig.list ?? `${permissionPrefix}:list`,

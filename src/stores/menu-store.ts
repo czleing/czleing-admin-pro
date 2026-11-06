@@ -242,10 +242,10 @@ export const useMenuStore = defineStore('menu', {
     /** 路由变化处理 */
     handleRouteChange(routeFrom: { meta?: RouteMeta; fullPath?: string }, routeTo: { meta?: RouteMeta; fullPath?: string }): void {
       const settingStore = useSettingStore()
-      void routeTo
       // 记录每个一级菜单最后一次打开的子菜单，用于下次切换一级菜单时，自动激活该子菜单
       const firstPathFrom = (routeFrom?.meta as NavRouteMeta | undefined)?.matchedPaths?.[0]
-      if (settingStore.menuLayout === 'top-left' && settingStore.autoOpenChildMenu && firstPathFrom) {
+      const firstPathTo = (routeTo?.meta as NavRouteMeta | undefined)?.matchedPaths?.[0]
+      if (firstPathFrom !== firstPathTo && settingStore.menuLayout === 'top-left' && settingStore.autoOpenChildMenu && firstPathFrom) {
         this.latestChildPathMap[firstPathFrom] = routeFrom.fullPath as string
       }
     },

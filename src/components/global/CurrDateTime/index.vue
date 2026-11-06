@@ -29,6 +29,6 @@ onMounted(() => {
   run()
 })
 onUnmounted(() => {
-  clearInterval(timer.value)
+  clearTimeout(timer.value)
 })
 </script>

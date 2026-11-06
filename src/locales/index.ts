@@ -27,14 +27,20 @@ function getI18nConfig() {
   Object.entries(moduleLangs).forEach(([path, module]) => {
     const match = path.match(/^.*\/([^/]*)\.(js|ts)$/)
     const lang = match?.[1] ?? path
-    const existing = (messages as any)[lang] || {}
-    ;(messages as any)[lang] = mergeWith({}, existing, (module as { default: unknown }).default)
+    const existing = messages[lang] || {}
+    messages[lang] = mergeWith({}, existing, (module as { default: unknown }).default)
   })
-  const USER_SETTINGS = localStorage.getItem('CZ_USER_SETTINGS')
-  const settings = USER_SETTINGS ? JSON.parse(USER_SETTINGS) : null
+  let locale = 'zh-cn'
+  try {
+    const USER_SETTINGS = localStorage.getItem('CZ_USER_SETTINGS')
+    const settings = USER_SETTINGS ? JSON.parse(USER_SETTINGS) : null
+    locale = settings?.locale || locale
+  } catch (e) {
+    console.error(e)
+  }
   return {
     legacy: false,
-    locale: settings?.locale || 'zh-cn',
+    locale: locale,
     fallbackLocale: 'zh-cn',
     messages,
   }

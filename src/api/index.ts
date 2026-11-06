@@ -33,8 +33,8 @@ instance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const authStore = useAuthStore()
     const token = authStore.token
-    if (token) {
-      config.headers.authorization = config.headers.authorization ?? 'Bearer ' + token
+    if (token && config.headers.useToken !== false) {
+      config.headers.authorization = config.headers.authorization ?? ('Bearer ' + token)
     }
     return config
   },
@@ -79,23 +79,18 @@ instance.interceptors.response.use(
   }
 )
 
-// 下载 blob 二进制文件
+// 下载 blob 二进制文件（响应拦截器识别到二进制内容类型时自动触发）
 function handleDownload(response: AxiosResponse): void {
-  const filename = (response.headers['download-filename'] as string) || ''
-  const blob = new Blob([response.data])
-  if ((window.navigator as Navigator & { msSaveBlob?: (blob: Blob, filename: string) => void }).msSaveBlob) {
-    ;(window.navigator as Navigator & { msSaveBlob: (blob: Blob, filename: string) => void }).msSaveBlob(blob, decodeURIComponent(filename))
-  } else {
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-    link.href = window.URL.createObjectURL(blob)
-    link.setAttribute('download', decodeURIComponent(filename))
-    link.click()
-    link.remove()
-    window.URL.revokeObjectURL(url)
-    window.URL.revokeObjectURL(url)
-    void url
-  }
+  const filename = decodeURIComponent((response.headers['download-filename'] as string) || '')
+  const blob = new Blob([response.data as BlobPart])
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.setAttribute('download', filename)
+  link.click()
+  link.remove()
+  // 点击后异步释放对象 URL，避免立即释放导致部分浏览器取消下载，同时防止内存泄漏
+  window.setTimeout(() => window.URL.revokeObjectURL(url), 0)
 }
 
 // 会话失效统一处理：提示并走登录失效流程（业务 code 401 与 HTTP 401 共用）
@@ -178,6 +173,7 @@ class AxiosService {
       method: 'get',
       url,
       params,
+      responseType: config?.responseType,
       headers: config?.headers,
     }) as unknown as Promise<T>
   }
@@ -192,14 +188,19 @@ class AxiosService {
     }) as unknown as Promise<T>
   }
 
-  download(url: string, data: Record<string, unknown> = {}, config?: RequestConfig): Promise<Blob> {
-    return instance.request({
+  /**
+   * 下载二进制文件
+   * 浏览器下载由响应拦截器自动触发，此处直接返回原始 axios 响应（AxiosResponse），
+   * 调用方通常只 await 触发下载，无需处理返回值
+   */
+  download(url: string, data: Record<string, unknown> = {}, config?: RequestConfig): Promise<AxiosResponse<Blob>> {
+    return instance.request<Blob, AxiosResponse<Blob>>({
       method: 'post',
       url,
       data,
       responseType: 'blob',
       headers: config?.headers,
-    }) as unknown as Promise<Blob>
+    })
   }
 
   put<T = unknown>(url: string, data: Record<string, unknown> = {}): Promise<T> {

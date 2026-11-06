@@ -130,6 +130,7 @@ const developerRoutes: RouteRecordRaw[] = [
     meta: {
       title: '测试菜单',
       icon: 'ExperimentOutlined',
+      hidden: !import.meta.env.DEV,
       isLeaf: true,
       matchedPaths: ['/test2', '/test2/demo2'],
       cache: true,

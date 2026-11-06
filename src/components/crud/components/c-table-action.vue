@@ -80,8 +80,9 @@ const morePermissions = computed(() => {
 
 function getPermission(action: TableActionConfig): string | undefined {
   if (typeof action.callback === 'string') {
-    // 预设按钮
-    return props.permissionConfig[action.callback]
+    // 预设操作 edit 对应权限配置中的 update
+    const presetKey: keyof ResolvedPermissionConfig = action.callback === 'edit' ? 'update' : action.callback
+    return props.permissionConfig[presetKey]
   } else {
     return action.permission
   }

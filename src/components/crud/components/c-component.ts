@@ -106,6 +106,11 @@ export default defineComponent({
       })
       triggerRemote = async () => {
         await dictStore.initDictByTypes([dictType], { [dictType]: { force: true } })
+        // 字典加载失败不会抛出异常（initDictByTypes 内部 allSettled），需按 errors 判断真实结果
+        if (dictStore.errors[dictType]) {
+          message.error(t('crud.refreshFailed'))
+          return
+        }
         message.success(t('crud.refreshSuccess'))
       }
     }

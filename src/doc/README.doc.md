@@ -52,7 +52,7 @@ console.log('当前登录用户：', authStore.userInfo)
 ```
 
 ### 5、权限控制
-使用自定义指令 `v-permission`、`v-noPermi`、`v-role`
+使用自定义指令 `v-permission`、`v-noPermission`、`v-role`
 
 ```html
 <a-button v-permission="'system:user:add'">新增</a-button>
@@ -91,14 +91,15 @@ if (hasPermission('system:user:add')) {
 
 - 独立使用，通过 `useDict`
 ```javascript
-import { useDict } from '@/hooks/useDict.js'
-// 用法一：
-const dict = useDict(['is_delete', 'audit_status'])
+import { useDict } from '@/hooks/useDict'
+// 用法一：返回 { dict, errors }
+const { dict, errors } = useDict(['is_delete', 'audit_status'])
 
 dict['audit_status'] // 异步赋值 reactive 响应式对象 dict
+errors['audit_status'] // 加载失败时的错误信息，加载成功则无该 key
 
 // 用法二：
-useDict(['audit_status'], dict => {
+useDict(['audit_status'], (dict, errors) => {
   console.log(dict['audit_status'])
 })
 

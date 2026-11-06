@@ -4,12 +4,11 @@
  */
 import type { App } from 'vue'
 import copy, { type DirectiveModule } from './modules/copy'
-import draggable from './modules/draggable'
 import vPermission from './modules/permission'
-import noPermi from './modules/noPermi'
+import noPermission from './modules/noPermission'
 import vRole from './modules/role'
 
-const directives: DirectiveModule[] = [copy, draggable, vPermission, noPermi, vRole]
+const directives: DirectiveModule[] = [copy, vPermission, noPermission, vRole]
 
 export default {
   install(app: App): void {

@@ -94,7 +94,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     /** 获取图形验证码 */
     getCode(): Promise<CaptchaResult> {
-      return axios.get<CaptchaResult>('/captchaImage', {}, { headers: { isToken: false } })
+      return axios.get<CaptchaResult>('/captchaImage', {}, { headers: { useToken: false } })
     },
     /**
      * 登录统一入口

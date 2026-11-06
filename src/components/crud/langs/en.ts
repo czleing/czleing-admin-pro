@@ -110,6 +110,9 @@ export default {
     bgDiy: 'Customize',
     restoreSettings: 'Restore default settings',
     restoreSettingsConfirm: 'Are you sure to restore the default settings?',
+    versionUpdate: 'Version Update',
+    versionUpdateConfirm: 'A new version is available, do you want to update now?',
+    updateNow: 'Now Update',
   },
   // crud
   crud: {
@@ -157,6 +160,7 @@ export default {
     end: 'End',
     all: 'All',
     refreshSuccess: 'Refreshed successfully',
+    refreshFailed: 'Refresh failed',
     refreshData: 'Refresh Data',
     confirmDoIt: 'Are you sure to perform {text} operation on this record?',
     this: 'This',

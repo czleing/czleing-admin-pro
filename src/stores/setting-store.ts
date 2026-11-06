@@ -306,7 +306,6 @@ export const useSettingStore = defineStore('setting', () => {
     layoutDivide,
     firstMenuMode,
     firstMenuAlign,
-    matchMediaInstance,
     useBg,
     bgImage,
     bgBlur,

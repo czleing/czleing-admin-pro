@@ -111,6 +111,9 @@ export default {
     bgDiy: '自定义',
     restoreSettings: '恢复默认设置',
     restoreSettingsConfirm: '确认恢复默认设置吗？',
+    versionUpdate: '版本更新',
+    versionUpdateConfirm: '检测到有新版本待更新，是否现在更新？',
+    updateNow: '现在更新',
   },
   // crud
   crud: {
@@ -158,6 +161,7 @@ export default {
     end: '止',
     all: '全部',
     refreshSuccess: '刷新成功',
+    refreshFailed: '刷新失败',
     refreshData: '刷新数据',
     confirmDoIt: '确定对该条数据执行{text}操作吗？',
     this: '此',

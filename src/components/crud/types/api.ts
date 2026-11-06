@@ -59,7 +59,6 @@ export type CrudApiOptionConfig = Partial<Record<CrudApiAction, ApiOptionConfig>
 export interface CrudPermissionConfig {
   add?: string
   update?: string
-  edit?: string
   detail?: string
   list?: string
   delete?: string
@@ -88,7 +87,6 @@ export type ResolvedApiMethodConfig = Record<CrudApiAction, CrudRequestMethod>
 export interface ResolvedPermissionConfig {
   add: string
   update: string
-  edit: string
   detail: string
   list: string
   delete: string

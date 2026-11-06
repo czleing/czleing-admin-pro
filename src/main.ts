@@ -14,8 +14,8 @@ pinia.use(createPersistedState({
   key: id => id.includes('CZ_') ? id : `CZ_${id.toUpperCase()}`
 }))
 app.use(router).use(pinia).use(directives).use(components).use(i18n)
-app.mount('#app')
-
 app.config.errorHandler = (err, vm, info) => {
   console.error('[全局异常]', err, vm, info)
 }
+app.mount('#app')
+

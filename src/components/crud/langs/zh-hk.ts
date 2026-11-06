@@ -111,6 +111,9 @@ export default {
     bgDiy: '自定義',
     restoreSettings: '恢復默認設置',
     restoreSettingsConfirm: '確認恢復默認設置嗎？',
+    versionUpdate: '版本更新',
+    versionUpdateConfirm: '有新版本待更新，是否現在更新？',
+    updateNow: '現在更新',
   },
   // crud
   crud: {
@@ -158,6 +161,7 @@ export default {
     end: '結束',
     all: '全部',
     refreshSuccess: '重新整理成功',
+    refreshFailed: '重新整理失敗',
     refreshData: '重新整理資料',
     confirmDoIt: '確定要對該筆資料執行{text}操作嗎？',
     this: '此',

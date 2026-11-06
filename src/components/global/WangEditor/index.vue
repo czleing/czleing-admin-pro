@@ -51,7 +51,7 @@ const editorConfig = {
   MENU_CONF: {
     // 上传图片配置
     uploadImage: {
-      server: import.meta.env.VUE_APP_BASE_API + '/oss/upload',
+      server: import.meta.env.VITE_APP_BASE_API + '/oss/upload',
       headers: {
         Authorization: 'Bearer ' + token,
       },
@@ -59,7 +59,7 @@ const editorConfig = {
       // 由于后端返回的结构与默认的不一致，需要自定义插入图片
       customInsert (res: Record<string, unknown>, insertFn: (url: string, alt: string) => void) {
         const data = res.data as Record<string, string>
-        insertFn(import.meta.env.VUE_APP_RESOURCE_API + data.path, '图片')
+        insertFn(import.meta.env.VITE_APP_RESOURCE_API + data.path, '图片')
       }
     },
     // 行高配置

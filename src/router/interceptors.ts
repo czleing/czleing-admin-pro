@@ -18,8 +18,6 @@ export const beforeInterceptor: NavigationGuard = async (to, _from) => {
   const needLogin = to.meta.needLogin !== false
   const authStore = useAuthStore()
   const menuStore = useMenuStore()
-  const settingStore = useSettingStore()
-  void settingStore
   if (needLogin) {
     if (import.meta.env.VITE_APP_IGNORE_LOGIN !== 'true' && !authStore.hasLogin) {
       return { name: 'login' }
@@ -31,7 +29,7 @@ export const beforeInterceptor: NavigationGuard = async (to, _from) => {
         promises.push(menuStore.loadMenuToRoute())
       }
       if (authStore.userInfo === null) {
-        promises.push(authStore.getUserInfo(true) as unknown as Promise<void>)
+        promises.push(authStore.getUserInfo(true))
       }
       if (promises.length) {
         await Promise.all(promises)
@@ -47,10 +45,13 @@ export const beforeInterceptor: NavigationGuard = async (to, _from) => {
 /**
  * 路由拦截器-后置守卫
  */
-export const afterInterceptor: (to: RouteLocationNormalized, from: RouteLocationNormalized, failure?: NavigationFailure | void) => void = (to) => {
+export const afterInterceptor: (to: RouteLocationNormalized, from: RouteLocationNormalized, failure?: NavigationFailure | void) => void = (to, from, failure) => {
+  if (failure) {
+    return
+  }
   const settingStore = useSettingStore()
   if (settingStore.useDynamicPageTitle) {
-    window.document.title = (to.meta.title as string) + ' | ' + settings.websiteInfo.systemName
+    window.document.title = (to.meta.title ?? '' as string) + ' | ' + settings.websiteInfo.systemName
   } else {
     window.document.title = settings.websiteInfo.systemName
   }

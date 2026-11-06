@@ -1,13 +1,271 @@
-<!-- 地图选择位置组件，拷贝于旧项目，后续有时间再优化 -->
-<!-- <MapSelect v-model="formData.location" /> -->
-<!-- <MapSelect v-model:lng="formData.lng" v-model:lat="formData.lat" /> -->
+<!-- 地图选择位置组件（基于高德地图 JSAPI），支持 v-model:value 经纬度数组 / v-model:lng / v-model:lat 双向绑定，属性命名与 ant-design-vue 保持一致 -->
+<!-- 用法：<MapSelect v-model:value="formData.location" :full-address="formData.address" /> -->
+<script setup lang="ts">
+import { load as loadAMap } from '@amap/amap-jsapi-loader'
+import { message } from 'ant-design-vue'
+import { stringStar } from '@/utils'
+import type { AMapAutoComplete, AMapMapClickEvent, AMapMapInstance, AMapMarker, AMapNamespace, AMapPlaceSearch, AMapPoi } from './types'
+
+interface Props {
+  /** 经纬度数组，格式如：[113.26, 23.12] */
+  value?: number[] | null
+  /** 详细地址，用于回显展示，避免额外逆地理解析 */
+  fullAddress?: string
+  /** 是否禁用，禁用后只能预览经纬度、地址，不能弹出地图定位 */
+  disabled?: boolean
+  /** 是否只读，只读后能弹出地图查看，不能选择及改变地址 */
+  readOnly?: boolean
+  /** 是否允许清除已选位置 */
+  allowClear?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  value: undefined,
+  fullAddress: '',
+  disabled: false,
+  readOnly: false,
+  allowClear: true,
+})
+
+const emit = defineEmits<{
+  (e: 'update:value', location: number[]): void
+  (e: 'update:lng', lng: number | undefined): void
+  (e: 'update:lat', lat: number | undefined): void
+  (e: 'change', location: number[], address: string): void
+}>()
+
+/** 默认地图中心坐标（广州） */
+const DEFAULT_LOCATION: number[] = [113.264013, 23.128053]
+
+const visible = ref(false)
+const searchKey = ref('')
+const location = ref<number[]>([])
+/** 弹窗内当前选中的地址 */
+const address = ref('')
+/** 已确认选中的坐标 */
+const confirmLocation = ref<number[]>([])
+/** 已确认选中的地址 */
+const confirmAddress = ref('')
+
+// 高德地图相关对象为原生实例，无需响应式，用普通变量持有
+let amap: AMapNamespace | null = null
+let map: AMapMapInstance | null = null
+let autoComplete: AMapAutoComplete | null = null
+let placeSearch: AMapPlaceSearch | null = null
+let markers: AMapMarker[] = []
+let geocoderReady = false
+
+// 设置高德安全密钥，须在 JSAPI 加载前完成
+window._AMapSecurityConfig = {
+  securityJsCode: import.meta.env.VITE_APP_GD_MAP_SECRET,
+}
+
+/**
+ * 加载高德 JSAPI 及插件
+ * loader 的类型声明返回 Promise<any>，此处统一收敛断言为组件内声明的命名空间类型
+ * @param plugins 需要加载的插件列表，如 ['AMap.Geocoder']
+ */
+async function loadAMapJS(plugins: string[]): Promise<AMapNamespace> {
+  amap = (await loadAMap({
+    key: import.meta.env.VITE_APP_GD_MAP_KEY,
+    version: '2.0',
+    plugins,
+  })) as unknown as AMapNamespace
+  return amap
+}
+
+/** 确保 Geocoder 插件可用；loader resolve 后插件类可能延迟挂载，短轮询兜底 */
+async function ensureGeocoder(): Promise<void> {
+  if (geocoderReady && window.AMap?.Geocoder) {
+    return
+  }
+  await loadAMapJS(['AMap.Geocoder'])
+  for (let retry = 0; retry < 10 && !window.AMap?.Geocoder; retry++) {
+    await new Promise<void>((resolve) => setTimeout(resolve, 300))
+  }
+  if (!window.AMap?.Geocoder) {
+    throw new Error('加载 Geocoder 模块出错')
+  }
+  geocoderReady = true
+}
+
+/**
+ * 逆地理解析：根据经纬度获取详细地址
+ * @param lnglat 经纬度数组 [经度, 纬度]
+ * @returns 详细地址，参数不合法或解析失败返回空字符串
+ */
+async function getAddressByLnglat(lnglat: number[]): Promise<string> {
+  if (!Array.isArray(lnglat) || lnglat.length !== 2) {
+    return ''
+  }
+  try {
+    await ensureGeocoder()
+  } catch (err) {
+    message.error((err as Error).message)
+    return ''
+  }
+  const namespace = window.AMap
+  if (!namespace) {
+    return ''
+  }
+  return new Promise((resolve) => {
+    const geocoder = new namespace.Geocoder({})
+    geocoder.getAddress(lnglat, (status, result) => {
+      resolve(status === 'complete' && result?.regeocode ? result.regeocode.formattedAddress : '')
+    })
+  })
+}
+
+/** 根据 value 同步当前选中值与地址回显 */
+async function applyValue(val?: number[] | null): Promise<void> {
+  const lnglat = Array.isArray(val) ? [...val] : []
+  location.value = lnglat
+  confirmLocation.value = [...lnglat]
+  if (lnglat.length === 2) {
+    address.value = props.fullAddress || (await getAddressByLnglat(lnglat))
+  } else {
+    address.value = ''
+  }
+  confirmAddress.value = address.value
+}
+
+/** 地图初始化（首次打开弹窗时加载 JSAPI 并创建地图，再次打开只移动中心点） */
+async function initMap(): Promise<void> {
+  const center = confirmLocation.value.length === 2 ? confirmLocation.value : DEFAULT_LOCATION
+  if (map) {
+    setMarker(center)
+    map.setCenter(center)
+    map.setZoom(location.value.length === 2 ? 15 : 8, true)
+    return
+  }
+  try {
+    const namespace = await loadAMapJS(['AMap.AutoComplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.ToolBar', 'AMap.Geocoder'])
+    map = new namespace.Map('mapContainer', {
+      viewMode: '3D',
+      zoom: confirmLocation.value.length === 2 ? 15 : 8,
+      center,
+      resizeEnable: true,
+    })
+    map.addControl(new namespace.Scale())
+    map.addControl(new namespace.ToolBar())
+    setMarker(center)
+    if (!props.readOnly && !props.disabled) {
+      initSearch(namespace, map)
+      map.on('click', clickMapHandler)
+    }
+  } catch {
+    message.error('地图加载失败，请检查网络或地图 Key 配置')
+  }
+}
+
+/** 初始化关键字搜索：绑定 #searchInput 联想输入与地点查询 */
+function initSearch(namespace: AMapNamespace, mapInstance: AMapMapInstance): void {
+  autoComplete = new namespace.AutoComplete({ input: 'searchInput' })
+  placeSearch = new namespace.PlaceSearch({ map: mapInstance })
+  autoComplete.on('select', selectSiteHandle)
+}
+
+/** 选中联想搜索出的 POI 记录 */
+function selectSiteHandle(e: { poi?: AMapPoi }): void {
+  const poi = e.poi
+  if (poi?.location) {
+    location.value = [poi.location.lng, poi.location.lat]
+    placeSearch?.setCity(poi.adcode)
+    placeSearch?.search(poi.name)
+    address.value = `${poi.district ?? ''}${poi.name}`
+    searchKey.value = address.value
+  } else {
+    message.error('查询地址失败，请重新输入地址')
+  }
+}
+
+/** 点击地图：取点击点经纬度、打点标记并逆解析地址 */
+async function clickMapHandler(e: AMapMapClickEvent): Promise<void> {
+  location.value = [e.lnglat.getLng(), e.lnglat.getLat()]
+  setMarker(location.value)
+  address.value = await getAddressByLnglat(location.value)
+  searchKey.value = address.value
+}
+
+/** 添加点标记（先清除旧标记） */
+function setMarker(lnglat: number[]): void {
+  if (!amap || !map) {
+    return
+  }
+  removeMarker()
+  const marker = new amap.Marker({ position: lnglat })
+  marker.setMap(map)
+  markers.push(marker)
+}
+
+/** 移除已有标记 */
+function removeMarker(): void {
+  if (map && markers.length) {
+    map.remove(markers)
+  }
+  markers = []
+}
+
+/** 确认选择：向父组件同步选中结果并关闭弹窗 */
+function handleConfirm(): void {
+  confirmLocation.value = [...location.value]
+  confirmAddress.value = address.value
+  emit('update:value', confirmLocation.value)
+  emit('update:lng', confirmLocation.value[0])
+  emit('update:lat', confirmLocation.value[1])
+  emit('change', confirmLocation.value, confirmAddress.value)
+  visible.value = false
+}
+
+/** 清除已选位置并同步给父组件 */
+function handleClear(): void {
+  location.value = []
+  address.value = ''
+  searchKey.value = ''
+  handleConfirm()
+}
+
+/** 打开地图弹窗（禁用状态不响应），等待弹窗 DOM 渲染后再初始化地图 */
+async function handleOpen(): Promise<void> {
+  if (props.disabled) {
+    return
+  }
+  visible.value = true
+  await nextTick()
+  void initMap()
+}
+
+/** 关闭地图弹窗 */
+function handleClose(): void {
+  visible.value = false
+}
+
+onMounted(() => {
+  applyValue(props.value)
+})
+
+watch(
+  () => props.value,
+  (val) => {
+    applyValue(val)
+  }
+)
+
+onBeforeUnmount(() => {
+  if (map) {
+    map.destroy()
+    map = null
+  }
+})
+</script>
+
 <template>
   <div class="map-select">
     <div>
       <a-popover>
         <template #content>
-          <template v-if="confirmLoacation && confirmLoacation.length">
-            <div>经纬度：[{{ confirmLoacation.join(', ') }}]</div>
+          <template v-if="confirmLocation && confirmLocation.length">
+            <div>经纬度：[{{ confirmLocation.join(', ') }}]</div>
             <div>详细地址：{{ confirmAddress || '-' }}</div>
           </template>
           <template v-else-if="!disabled && !readOnly">
@@ -18,7 +276,7 @@
           </template>
         </template>
         <span>
-          <a :disabled="disabled" @click="open">
+          <a :class="{ disabled }" @click="handleOpen">
             <template v-if="confirmAddress">
               {{ stringStar(confirmAddress, 5, 10, '.') }}
             </template>
@@ -27,18 +285,14 @@
             </template>
           </a>
         </span>
-        <a-icon v-if="allowClear && confirmAddress && !disabled && !readOnly" type="close-circle" theme="filled" class="ml10" @click.stop="onClearHandle" />
+        <a-icon v-if="allowClear && confirmAddress && !disabled && !readOnly" type="close-circle" theme="filled" class="ml10" @click.stop="handleClear" />
       </a-popover>
     </div>
-    <a-modal :title="readOnly ? '查看地点' : '选择地点'" :visible="visible" :width="1200" @cancel="close">
+    <a-modal :title="readOnly ? '查看地点' : '选择地点'" :open="visible" :width="1200" @cancel="handleClose">
       <div>
         <div v-if="!readOnly" class="flex-x x-middle mb10">
           <div class="nowrap">关键字搜索：</div>
-          <a-input
-            v-model="searchKey"
-            placeholder="请输入内容"
-            id="searchInput"
-          />
+          <a-input v-model:value="searchKey" placeholder="请输入内容" id="searchInput" />
         </div>
         <div id="mapContainer" class="radius5" style="height:500px;" />
         <div class="tc mt10">
@@ -50,235 +304,22 @@
       </div>
       <template #footer>
         <span>
-          <a-button @click="close">取 消</a-button>
-          <a-button v-if="!disabled && !readOnly" type="primary" @click="submit">确 定</a-button>
+          <a-button @click="handleClose">取 消</a-button>
+          <a-button v-if="!disabled && !readOnly" type="primary" @click="handleConfirm">确 定</a-button>
         </span>
       </template>
     </a-modal>
   </div>
 </template>
-<script>
-import AMapLoader from '@amap/amap-jsapi-loader' // 引入AMapLoader
-import { stringStar } from '@/utils/index'
 
-window._AMapSecurityConfig = {
-  // 设置安全密钥
-  securityJsCode: import.meta.env.VITE_APP_GD_MAP_SECRET
+<style lang="less" scoped>
+.map-select a.disabled {
+  color: rgba(0, 0, 0, 0.25);
+  cursor: not-allowed;
 }
-export default {
-  props: {
-    modelValue: Array, // 经纬度数组，格式如：[113, 23]
-    fullAddress: String, // 地址，用于展示、回显时设置，避免额外去解析
-    disabled: Boolean, // 是否禁用，禁用后只能预览，查看经纬度、地址，不能弹出地图定位
-    readOnly: Boolean, // 是否只读，只读后能预览并弹出地图定位，不能选择及改变地址
-    allowClear: { type: Boolean, default: true }
-  },
-  data () {
-    return {
-      loading: false,
-      visible: false,
-      searchKey: '',
-      map: null,
-      autoComplete: null,
-      placeSearch: null,
-      defaultLocation: [113.264013, 23.128053],
-      location: [], // 当前选中的坐标
-      address: '', // 当前选中的地址
-      markers: [],
-      geocoderInited: false,
-      confirmLoacation: [], // 确认选中的坐标
-      confirmAddress: '' // 确认选中的地址
-    }
-  },
-  unmounted () {
-    this.map && this.map.destroy()
-  },
-  watch: {
-    modelValue (val) {
-      this.setValue(val)
-    }
-  },
-  methods: {
-    async setValue (val) {
-      this.location = val
-      this.confirmLoacation = val
-      if (val && val.length === 2) {
-        await this.initGeocoder()
-        if (this.fullAddress) {
-          this.address = this.fullAddress
-        } else {
-          this.address = await this.getAddressByLnglat(val)
-        }
-        this.confirmAddress = this.address
-      } else {
-        this.address = ''
-      }
-      this.confirmAddress = this.address
-    },
-    async initGeocoder () {
-      if (window.AMap && AMap.Geocoder) {
-        return Promise.resolve()
-      }
-      return new Promise((resolve, reject) => {
-        if (!this.geocoderInited) {
-          this.geocoderInited = true
-          AMapLoader.load({
-            key: import.meta.env.VITE_APP_GD_MAP_KEY, // 申请好的Web端开发者Key，首次调用 load 时必填
-            version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-            plugins: ['AMap.Geocoder']
-          }).then(() => {
-            let time = 10 // 每 300 毫秒检测一次 Geocoder 是否加载好，最多检测 10 次
-            // 延迟原因：then 后，不能立即拿到 AMap.Geocoder
-            let timer = setInterval(() => {
-              time--
-              if (AMap && AMap.Geocoder) {
-                clearInterval(timer)
-                resolve()
-              }
-              if (time <= 0) {
-                clearInterval(timer)
-              }
-            }, 300)
-            resolve()
-          }).catch(e => {
-            reject(new Error('加载 Geocoder 模块出错'))
-          })
-        } else {
-          resolve()
-        }
-      })
-    },
-    // 地图初始化
-    initMap () {
-      const centerLocation = this.confirmLoacation.length === 2 ? this.confirmLoacation : this.defaultLocation
-      if (!this.map) {
-        this.initGeocoder()
-        AMapLoader.load({
-          key: config.GD_MAP_KEY, // 申请好的Web端开发者Key，首次调用 load 时必填
-          version: '2.0', // 指定要加载的 JSAPI 的版本，缺省时默认为 1.4.15
-          plugins: ['AMap.AutoComplete', 'AMap.PlaceSearch', 'AMap.Scale', 'AMap.ToolBar']
-        }).then(AMap => {
-          this.map = new AMap.Map('mapContainer', {
-            // 设置地图容器id
-            viewMode: '3D', // 是否为3D地图模式
-            zoom: this.modelValue && this.modelValue.length === 2 ? 15 : 8, // 初始化地图级别
-            center: centerLocation, // 中心点坐标
-            resizeEnable: true
-          })
-          this.map.addControl(new AMap.Scale())
-          this.map.addControl(new AMap.ToolBar())
-          // 创建标记
-          this.setMarker(centerLocation)
-          if (!this.readOnly && !this.disabled) {
-            // 关键字查询
-            this.searchMap()
-            // 监听鼠标点击事件
-            this.map.on('click', this.clickMapHandler)
-          }
-        }).catch(e => {
-          console.log(e)
-        })
-      } else {
-        // 创建标记
-        this.setMarker(centerLocation)
-        // 将标记显示在地图中心
-        this.map.setCenter(centerLocation)
-        // 设置缩放层级 setZoom(zoom, immediately, duration) immediately：是否立即跳转到目标级别(不使用动画)
-        this.map.setZoom(this.location && this.location.length === 2 ? 15 : 8, true)
-      }
-    },
-    // 关键字查询
-    searchMap () {
-      // 搜索框自动完成类
-      this.autoComplete = new AMap.AutoComplete({
-        input: 'searchInput' // 使用联想输入的input的id
-      })
-      // 构造地点查询类
-      this.placeSearch = new AMap.PlaceSearch({
-        map: this.map
-      })
-      // 当选中某条搜索记录时触发
-      this.autoComplete.on('select', this.selectSite)
-    },
-    // 选中查询出的记录
-    selectSite (e) {
-      // console.log('选择回调数据：', e)
-      if (e.poi.location) {
-        this.location = [e.poi.location.lng, e.poi.location.lat]
-        this.placeSearch.setCity(e.poi.adcode)
-        this.placeSearch.search(e.poi.name) // 关键字查询
-        this.address = e.poi.district + e.poi.name
-        this.searchKey = this.address
-      } else {
-        this.$message.error('查询地址失败，请重新输入地址')
-      }
-    },
-    // 点击地图事件获取经纬度，并添加标记
-    async clickMapHandler (e) {
-      this.location = [e.lnglat.getLng(), e.lnglat.getLat()]
-      this.setMarker(this.location)
-      // 点击地图上的位置，根据经纬度转换成详细地址
-      this.address = await this.getAddressByLnglat(this.location)
-      this.searchKey = this.address // 把查询到的地址赋值到输入框
-    },
-    getAddressByLnglat (lnglat) {
-      if (!lnglat || !Array.isArray(lnglat) || lnglat.length !== 2) {
-        return Promise.resolve()
-      }
-      return new Promise((resolve, reject) => {
-        let geocoder = new window.AMap.Geocoder({})
-        geocoder.getAddress(lnglat, (status, result) => {
-          if (status === 'complete' && result.regeocode) {
-            const address = result.regeocode.formattedAddress
-            resolve(address)
-          } else {
-            reject(new Error(`经纬度[${lnglat}]解析失败`))
-          }
-        })
-      })
-    },
-    // 添加标记
-    setMarker (lnglat) {
-      this.removeMarker()
-      let marker = new AMap.Marker({
-        position: lnglat
-      })
-      marker.setMap(this.map)
-      this.markers.push(marker)
-    },
-    // 删除之前后的标记点
-    removeMarker () {
-      if (this.map && this.markers) {
-        this.map.remove(this.markers)
-      }
-    },
-    onClearHandle () {
-      this.location = []
-      this.address = ''
-      this.submit()
-    },
-    submit () {
-      this.confirmLoacation = this.location
-      this.confirmAddress = this.address
-      this.$emit('update:modelValue', this.confirmLoacation)
-      this.$emit('update:lng', this.confirmLoacation[0])
-      this.$emit('update:lat', this.confirmLoacation[1])
-      this.$emit('change', this.confirmLoacation, this.confirmAddress)
-      this.close()
-    },
-    open () {
-      this.visible = true
-      this.initMap()
-    },
-    close () {
-      this.visible = false
-    }
-  }
-}
-</script>
 
-<style lang="scss">
-.amap-sug-result {
+/* 地图关键字联想面板由 AMap JSAPI 动态注入 DOM，scoped 属性选择器无法命中，借助 :global 提升层级避免被弹窗遮挡 */
+:global(.amap-sug-result) {
   z-index: 2999 !important;
 }
 </style>

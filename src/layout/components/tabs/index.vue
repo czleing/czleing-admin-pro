@@ -25,58 +25,44 @@
             <template #overlay>
               <a-menu>
                 <a-menu-item @click="tabsStore.closeTab(index)">
-                  <template #icon>
-                    <CloseCircleFilled class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.closeTab') }}</span>
+                  <CloseCircleFilled class="text-primary" />
+                  <span class="ml8">{{ $t('frame.closeTab') }}</span>
                 </a-menu-item>
                 <a-menu-divider />
-                <a-menu-item @click="tabsStore.refreshTab()" :disabled="currentTab !== tab.fullPath">
-                  <template #icon>
-                    <SyncOutlined class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.refreshTab') }}</span>
+                <a-menu-item :disabled="currentTab !== tab.fullPath" @click="tabsStore.refreshTab()">
+                  <SyncOutlined class="text-primary" />
+                  <span class="ml8">{{ $t('frame.refreshTab') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="openInNewWindow(tab.fullPath, tab.path)">
-                  <template #icon>
-                    <SubnodeOutlined class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.openInNewWindow') }}</span>
+                  <SubnodeOutlined class="text-primary" />
+                  <span class="ml8">{{ $t('frame.openInNewWindow') }}</span>
                 </a-menu-item>
                 <a-menu-item v-if="settingStore.useTabFavorite" @click="tabsStore.toogleFavorite(index)">
                   <template v-if="tabsStore.favoriteKeys.includes(tab.fullPath)">
-                    <HeartFilled slot="icon" class="text-primary" />
-                    <span class="ml6">{{ $t('frame.removeFavorite') }}</span>
+                    <HeartFilled class="text-primary" />
+                    <span class="ml8">{{ $t('frame.removeFavorite') }}</span>
                   </template>
                   <template v-else>
-                    <HeartOutlined slot="icon" class="text-primary" />
-                    <span class="ml6">{{ $t('frame.favorite') }}</span>
+                    <HeartOutlined class="text-primary" />
+                    <span class="ml8">{{ $t('frame.favorite') }}</span>
                   </template>
                 </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="tabsStore.clearLeftTabs(index)" :disabled="index === 0">
-                  <template #icon>
-                    <ArrowLeftOutlined class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.closeLeft') }}</span>
+                  <ArrowLeftOutlined class="text-primary" />
+                  <span class="ml8">{{ $t('frame.closeLeft') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearRightTabs(index)" :disabled="index === tabsStore.tabList.length - 1">
-                  <template #icon>
-                    <ArrowRightOutlined class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.closeRight') }}</span>
+                  <ArrowRightOutlined class="text-primary" />
+                  <span class="ml8">{{ $t('frame.closeRight') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearOtherTabs(index)" :disabled="tabsStore.tabList.length === 1">
-                  <template #icon>
-                    <SwapOutlined class="text-primary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.closeOther') }}</span>
+                  <SwapOutlined class="text-primary" />
+                  <span class="ml8">{{ $t('frame.closeOther') }}</span>
                 </a-menu-item>
                 <a-menu-item @click="tabsStore.clearAllTabs()">
-                  <template #icon>
-                    <CloseCircleTwoTone :twoToneColor="token.colorPrimary" />
-                  </template>
-                  <span class="ml6">{{ $t('frame.closeAll') }}</span>
+                  <CloseCircleTwoTone :twoToneColor="token.colorPrimary" />
+                  <span class="ml8">{{ $t('frame.closeAll') }}</span>
                 </a-menu-item>
               </a-menu>
             </template>
@@ -129,9 +115,8 @@
 import { useSortable } from '@/hooks/useSortable'
 import { useSettingStore } from '@/stores/setting-store'
 import { useTabsStore } from '@/stores/tabs-store'
-import { DownOutlined, DownSquareFilled, FullscreenExitOutlined, FullscreenOutlined, HeartOutlined, StarOutlined } from '@ant-design/icons-vue'
+import { FullscreenExitOutlined, FullscreenOutlined, HeartOutlined } from '@ant-design/icons-vue'
 import { theme } from 'ant-design-vue'
-import { h } from 'vue'
 
 const props = defineProps({
   isFullscreen: Boolean,
@@ -150,7 +135,6 @@ const tabType = computed(() => {
     'line': 'line',
   }[settingStore.tabType]
 })
-const showHeader = ref(true)
 
 watchEffect(() => {
   currentTab.value = route.fullPath
@@ -164,7 +148,7 @@ function onDeleteHandle(path) {
   tabsStore.removeTab(tabsStore.tabList.findIndex(tab => tab.fullPath === path))
 }
 function openInNewWindow (fullPath, path) {
-  window.open('#' + fullPath, path)
+  window.open('#' + fullPath, path.replace('/', '_'))
 }
 
 // 拖拽排序

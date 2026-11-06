@@ -1,10 +1,9 @@
 /**
  * 缓存相关 store
- * 管理：菜单搜索历史、记住的登录账号（密码加密存储）
+ * 管理：菜单搜索历史、记住的登录账号（仅记住账号，不保存密码）
  */
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { decrypt, encrypt } from '@/utils/jsencrypt'
 
 /** 搜索菜单历史项 */
 export interface SearchedMenu {
@@ -14,39 +13,25 @@ export interface SearchedMenu {
   target?: string
 }
 
-/** 登录账号（password 为加密后的密文） */
-export interface LoginAccount {
-  account: string
-  password: string
-}
-
 export const useCacheStore = defineStore('cache', () => {
   /** 搜索菜单历史 */
   const searchedMenus = ref<SearchedMenu[]>([])
-  /** 记录登录用户 */
-  const loginAccount = ref<LoginAccount>()
+  /** 记住的登录账号 */
+  const loginAccount = ref<string>()
 
-  /** 获取记住的登录账号（密码已解密） */
-  function getLoginAccount(): LoginAccount | undefined {
-    if (loginAccount.value) {
-      return {
-        account: loginAccount.value.account,
-        password: decrypt(loginAccount.value.password) as string,
-      }
+  /** 获取记住的登录账号，未记住时返回空字符串 */
+  function getLoginAccount(): string {
+    // 兼容历史版本持久化的 { account, password } 结构，直接丢弃，避免密码残留在本地存储
+    if (typeof loginAccount.value !== 'string') {
+      loginAccount.value = undefined
+      return ''
     }
-    return undefined
+    return loginAccount.value
   }
 
-  /** 设置记住的登录账号（密码加密后存储），不传则清除 */
-  function setLoginAccount(accountInfo?: LoginAccount): void {
-    if (!accountInfo) {
-      loginAccount.value = undefined
-      return
-    }
-    loginAccount.value = {
-      account: accountInfo.account,
-      password: encrypt(accountInfo.password) as string,
-    }
+  /** 设置记住的登录账号，不传则清除 */
+  function setLoginAccount(account?: string): void {
+    loginAccount.value = account || undefined
   }
 
   /** 清除缓存 */

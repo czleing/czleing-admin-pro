@@ -34,7 +34,7 @@
           </div>
         </a-form-item>
         <div class="flex-x-between">
-          <a-checkbox v-model:checked="checked">记住密码</a-checkbox>
+          <a-checkbox v-model:checked="checked">记住账号</a-checkbox>
           <a href="javascript:;">忘记密码</a>
         </div>
         <a-button
@@ -79,10 +79,10 @@ const cacheStore = useCacheStore()
 
 onMounted(() => {
   getCode()
-  const accountInfo = cacheStore.getLoginAccount()
-  if (accountInfo) {
-    form.account = accountInfo.account,
-    form.password = accountInfo.password
+  const account = cacheStore.getLoginAccount()
+  if (account) {
+    form.account = account
+    checked.value = true
   }
 })
 

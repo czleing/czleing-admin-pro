@@ -121,13 +121,9 @@ export const useAuthStore = defineStore('auth', {
       const result = await axios.post<LoginResult>('/login', data)
       // 保存登录令牌，会自动持久化
       this.token = result.token
-      // 加密持久化需要记住的账号
+      // 记住账号（仅保存账号，出于安全考虑不再保存密码）
       const cacheStore = useCacheStore()
-      if (remember) {
-        cacheStore.setLoginAccount({ account: account as string, password: password as string })
-      } else {
-        cacheStore.setLoginAccount()
-      }
+      cacheStore.setLoginAccount(remember ? account : undefined)
       // 登录成功后处理
       await this.loginSuccessHandle()
     },

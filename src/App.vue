@@ -21,7 +21,8 @@ watch(
   () => settingStore.locale,
   () => {
     dayjs.locale(settingStore.locale)
-  }
+  },
+  { immediate: true }
 )
 
 /** ant-design-vue 语言动态切换的 mapping */

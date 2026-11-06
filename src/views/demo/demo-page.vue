@@ -66,6 +66,7 @@ import type {
   AfterOpenModalContext,
   AfterSubmitContext,
   BeforeSubmitContext,
+  CrudFormData,
   CrudPageExpose,
   CrudRecord,
   FilterConfig,
@@ -79,7 +80,7 @@ import type {
   TreeConfig
 } from '@/components/crud/types'
 import { EControlType, EIsEnabled } from '@/enum/index'
-import { message } from 'ant-design-vue'
+import { message, Progress } from 'ant-design-vue'
 
 /** 列表行数据类型，按实际业务字段定义，配置中的 record 会自动推导为该类型 */
 type DemoRow = {
@@ -104,7 +105,7 @@ type DemoRow = {
 }
 
 /** CPage 实例，可获得 refresh / clearSelect / selectedIds 等方法的类型提示 */
-const cPage = ref<CrudPageExpose<DemoRow>>()
+// const cPage = ref<CrudPageExpose<DemoRow>>()
 const { t } = useI18n()
 defineOptions({ name: 'DemoPage' })
 
@@ -968,13 +969,15 @@ const modalConfig = computed<ModalConfig>(() => ({
         type: EControlType.eCustom,
         // singleLine: true,
         props: {
-          diyProp: '自定义属性',
-          // component：vue组件，对象或返回对象的函数 Object || (formData) => Object
-          component: {
-            render (ctx: { $attrs: Record<string, unknown> }) {
-              return h('span', {}, ['自定义组件8888', String(ctx.$attrs.diyProp)])
+          // component：vue组件，对象或返回对象的函数 Object || (formData: CrudFormData) => Object
+          component: (formData: CrudFormData) => ({
+            render () {
+              return h('div', {}, [
+                h(Progress, { percent: 50, size: 'small' }),
+                h('div', {}, ['自定义组件:::' + formData.int])
+              ])
             }
-          }
+          })
           // 或者 使用全局组件, import { resolveComponent } from 'vue'
           // component: resolveComponent('DictView'),
           // 或者 外部引入的单文件组件 import MyComponent from 'xxx'

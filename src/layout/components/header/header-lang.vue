@@ -25,7 +25,7 @@ import { langOptions } from '@/locales/index'
 import { useSettingStore } from '@/stores/setting-store'
 
 const settingStore = useSettingStore()
-const currLang = computed(() => langOptions.find(item => item.value === settingStore.locale))
+const currLang = computed(() => langOptions.find(item => item.value === settingStore.locale) ?? langOptions[0])
 
 function onLangChange (e) {
   settingStore.setLocale(e.key)

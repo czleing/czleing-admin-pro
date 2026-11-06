@@ -53,7 +53,6 @@ const props = defineProps({
   datasource: String
 })
 
-const _this = getCurrentInstance().proxy
 const cModal = ref()
 const activeKey = ref()
 const record = ref({}) // 从列表中带过来的列表项 item
@@ -70,8 +69,6 @@ async function getDetail () {
   detail.value = result
   activeKey.value = Object.keys(result)[0]
 }
-
-const emits = defineEmits(['completed'])
 
 function open (options) {
   record.value = options

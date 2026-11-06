@@ -68,6 +68,7 @@ import CForm from '@/components/crud/components/c-form.vue'
 import axios from '@/api/index'
 import { getFullUrl } from '@/utils/index'
 
+defineOptions({ name: 'PersonalCenter' })
 const authStore = useAuthStore()
 const userInfo = computed(() => authStore.userInfo)
 

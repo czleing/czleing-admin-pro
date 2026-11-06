@@ -103,9 +103,9 @@ const { token } = useThemeToken()
 const isAnimating = ref(false)
 const watermark = computed(() => {
   if (authStore.userInfo?.userName) {
-    return authStore.userInfo.nickName + ' ' + authStore.userInfo.userName
+    return `${authStore.userInfo.nickName || ''} ${authStore.userInfo.userName}`
   }
-  return '演示用户'
+  return '演示用户' // 仅为演示用
 })
 const showLeft = computed(() => menuStore.leftNavRoutes?.length > 0)
 

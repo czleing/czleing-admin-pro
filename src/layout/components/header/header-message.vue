@@ -49,7 +49,7 @@ import axios from '@/api/index'
 import { useRouter } from 'vue-router'
 import { watch, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth-store'
-import { useSSE } from '@/hooks/useSEE'
+import { useSSE } from '@/hooks/useSSE'
 import settings from '@/config/setting'
 
 const { connect, addSSEListener, disconnect } = useSSE()

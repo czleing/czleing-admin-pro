@@ -29,7 +29,9 @@
           <template #title="{ path, title, meta }">
             <div class="flex-x x-middle gap8 pl5 lh2_5">
               <a-icon v-if="meta?.icon" :type="meta.icon" />
-              <div v-if="title" class="" v-html="title.split(searchValue).join(`<span class='text-danger bold'>${searchValue}</span>`)" />
+              <div v-if="title">
+                <span v-for="(segment, index) in splitTitleByKeyword(String(title))" :key="`${index}_${segment.text}`" :class="{ 'text-danger bold': segment.matched }">{{ segment.text }}</span>
+              </div>
               <span class="text-gray em09">{{ path }}</span>
             </div>
           </template>
@@ -103,6 +105,34 @@
       }
       return result
     }, [])
+  }
+
+  /**
+   * 按搜索关键字将标题切分为片段数组，关键字片段标记 matched
+   * 以文本插值 + 片段样式替代 v-html 字符串拼接，避免用户输入注入 HTML 造成 XSS
+   * @param {string} title 菜单标题
+   * @returns {Array<{ text: string, matched: boolean }>} 渲染片段数组
+   */
+  function splitTitleByKeyword (title) {
+    const keyword = searchValue.value ?? ''
+    if (!keyword || !title) return [{ text: title, matched: false }]
+    const segments = []
+    const lowerTitle = title.toLowerCase()
+    const lowerKeyword = keyword.toLowerCase()
+    let start = 0
+    let index = lowerTitle.indexOf(lowerKeyword, start)
+    while (index > -1) {
+      if (index > start) {
+        segments.push({ text: title.slice(start, index), matched: false })
+      }
+      segments.push({ text: title.slice(index, index + keyword.length), matched: true })
+      start = index + keyword.length
+      index = lowerTitle.indexOf(lowerKeyword, start)
+    }
+    if (start < title.length) {
+      segments.push({ text: title.slice(start), matched: false })
+    }
+    return segments
   }
 
   function onSelectHandle (selectedKeys, { node }) {

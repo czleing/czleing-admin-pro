@@ -128,7 +128,7 @@ src/
      (e: 'delete', id: number): void;
    }>();
    ```
-4. 组件内超过 **500 行** 必须拆分子组件
+4. 组件内超过 **1000 行** 必须拆分子组件，特殊单一功能组件除外
 5. 异步数据加载使用 `onMounted`，禁止在 `<script setup>` 顶层直接发起请求
 6. `ref` / `reactive` 命名要有意义，禁止单字母变量（循环变量除外）
 7. 事件处理函数统一前缀 `handle`：`handleClick` / `handleSubmit`

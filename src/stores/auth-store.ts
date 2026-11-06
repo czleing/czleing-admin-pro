@@ -58,6 +58,53 @@ export interface LoginResult {
   token: string
 }
 
+/** 常见两段式域名后缀，辅助解析主域名（可按部署域名情况补充） */
+const TWO_LEVEL_DOMAIN_SUFFIXES = [
+  'com.cn', 'net.cn', 'org.cn', 'gov.cn', 'edu.cn', 'mil.cn',
+  'com.hk', 'org.hk', 'idv.hk', 'com.tw', 'org.tw',
+  'com.au', 'net.au', 'co.uk', 'org.uk', 'ac.uk',
+  'co.jp', 'or.jp', 'ne.jp', 'co.kr', 'com.sg', 'com.my', 'com.br',
+]
+
+/** 是否为外部绝对地址（http(s):// 开头或协议相对地址 // 开头） */
+function isAbsoluteUrl(url: string): boolean {
+  return /^(https?:)?\/\//i.test(url)
+}
+
+/**
+ * 解析主机名的主域名（近似 eTLD+1）
+ * @param hostname 主机名，如 admin.xxx.com => xxx.com，admin.xxx.com.cn => xxx.com.cn
+ */
+function getBaseDomain(hostname: string): string {
+  const parts = hostname.split('.')
+  if (parts.length <= 2) return hostname
+  const lastTwo = parts.slice(-2).join('.')
+  return TWO_LEVEL_DOMAIN_SUFFIXES.includes(lastTwo) ? parts.slice(-3).join('.') : lastTwo
+}
+
+/**
+ * 校验外部绝对地址是否可信（防开放重定向）
+ * 仅允许与当前系统主机名一致，或主域名一致的子域名之间的 http(s) 地址互跳
+ * @param url 待校验的跳转地址
+ * @returns true 可信，false 外部不可信地址
+ */
+function isTrustedExternalUrl(url: string): boolean {
+  let target: URL
+  try {
+    target = new URL(url, window.location.origin)
+  } catch {
+    return false
+  }
+  if (target.protocol !== 'http:' && target.protocol !== 'https:') return false
+  const currentHost = window.location.hostname.toLowerCase()
+  const targetHost = target.hostname.toLowerCase()
+  if (!targetHost) return false
+  if (targetHost === currentHost) return true
+  // IP 主机必须完全一致，不存在子域名信任关系
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(currentHost) || currentHost.startsWith('[')) return false
+  return getBaseDomain(targetHost) === getBaseDomain(currentHost)
+}
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     token: null as string | null,
@@ -145,14 +192,15 @@ export const useAuthStore = defineStore('auth', {
       await Promise.all([menuStore.loadMenuToRoute(true), this.getUserInfo(true)])
       // 跳转
       const redirect = router.currentRoute.value.query.redirect as string | undefined
-      if (redirect) {
-        if (redirect.startsWith('http')) {
-          window.location.href = redirect // 支持同域名其他系统授权登录跳回
-        } else {
-          router.replace(redirect) // 本系统登录跳回
-        }
-      } else {
+      if (!redirect) {
         // 跳转到首页
+        router.replace('/')
+      } else if (!isAbsoluteUrl(redirect)) {
+        router.replace(redirect) // 本系统登录跳回（相对路径走内部路由）
+      } else if (isTrustedExternalUrl(redirect)) {
+        window.location.href = new URL(redirect, window.location.origin).href // 支持同主域名其他系统授权登录跳回
+      } else {
+        // 外部不可信地址，禁止跳转，防止开放重定向攻击
         router.replace('/')
       }
     },

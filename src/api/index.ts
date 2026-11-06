@@ -57,10 +57,7 @@ instance.interceptors.response.use(
     } else {
       const resp = data as ApiResponse
       if (resp?.code === 401) {
-        message.error({ content: '未登录或会话已过期,请重新登录', key: '401' })
-        const authStore = useAuthStore()
-        authStore.authExpiredHandle()
-        return Promise.reject(new Error('未登录或会话已过期,请重新登录'))
+        return handleUnauthorized()
       } else if (resp?.code === 200) {
         let result: unknown = resp
         if (resp.list !== undefined) {
@@ -101,11 +98,23 @@ function handleDownload(response: AxiosResponse): void {
   }
 }
 
+// 会话失效统一处理：提示并走登录失效流程（业务 code 401 与 HTTP 401 共用）
+function handleUnauthorized(): Promise<never> {
+  message.error({ content: '未登录或会话已过期,请重新登录', key: '401' })
+  const authStore = useAuthStore()
+  authStore.authExpiredHandle()
+  return Promise.reject(new Error('未登录或会话已过期,请重新登录'))
+}
+
 // 统一处理错误
 function handleRequestError(error: AxiosError): Promise<never> {
   let msg = ''
   if (error.response) {
     const { status } = error.response
+    // HTTP 状态码 401 同样代表会话失效，统一登出并跳转登录
+    if (status === 401) {
+      return handleUnauthorized()
+    }
     msg = (error.response.data as { message?: string })?.message ?? ''
     switch (status) {
       case 400:

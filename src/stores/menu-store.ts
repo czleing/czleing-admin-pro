@@ -10,62 +10,35 @@ import axios from '@/api'
 import { isEmpty, isNotEmpty } from '@/utils'
 import { EMenuType } from '@/enum'
 import { useSettingStore } from './setting-store'
-import type { Router, RouteRecordRaw, RouteMeta } from 'vue-router'
+import { toRouteRecord } from '@/router/types'
+import type { Router, RouteMeta } from 'vue-router'
+import type { MenuNode, NavRoute } from '@/router/types'
 
-/** 后端返回的菜单节点 */
-export interface MenuNode {
-  path?: string
-  queryParam?: string
-  component?: string | ((...args: unknown[]) => unknown)
-  redirect?: string
-  name?: string
-  needLogin?: boolean
-  title?: string
-  menuName?: string
-  icon?: string
-  isHidden?: boolean
-  isCache?: boolean
-  menuType?: string
-  children?: MenuNode[]
+/** 菜单类型：菜单项（枚举 init 后 eMenu 即为字符串字面量类型 'C'，无需断言即可与 meta.menuType 比较） */
+const MENU_TYPE_MENU = EMenuType.eMenu
+
+/**
+ * 安全解析后端菜单的 queryParam（JSON 字符串）
+ * 单个菜单配置错误时仅告警并忽略，避免整个菜单树转换抛错、被外层 catch 吞掉后静默降级成本地路由，难以排查
+ * @param raw queryParam 原始 JSON 字符串
+ * @param menuName 菜单名称，用于告警定位
+ * @returns 解析出的查询参数对象，为空或格式非法时返回 undefined
+ */
+function parseQueryParam(raw: string | undefined, menuName = ''): Record<string, unknown> | undefined {
+  if (!raw) {
+    return undefined
+  }
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    if (parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as Record<string, unknown>
+    }
+  } catch {
+    // 非法 JSON，走下方统一告警
+  }
+  console.warn(`[menu-store] 菜单「${menuName}」的 queryParam 不是合法的 JSON 对象，已忽略：${raw}`)
+  return undefined
 }
-
-/** 菜单路由 meta（项目在 router meta 上扩展的字段） */
-export interface NavRouteMeta extends RouteMeta {
-  /** 是否需要登录，默认 true */
-  needLogin?: boolean
-  /** 菜单标题 */
-  title?: string
-  /** 菜单图标 */
-  icon?: string
-  /** 是否在菜单中隐藏 */
-  hidden?: boolean
-  /** 是否开启 keepalive 缓存 */
-  cache?: boolean
-  /** 菜单类型，M 目录, C 菜单, F 功能 */
-  menuType?: string
-  /** 父级路由链地址，从一级路由开始 */
-  matchedPaths?: string[]
-  /** 是否是一级路由 */
-  isFirst?: boolean
-  /** 是否是叶子节点 */
-  isLeaf?: boolean
-  /** 打开方式，如 _blank */
-  target?: string
-}
-
-/** 动态菜单路由 */
-export interface NavRoute {
-  path: string
-  name?: string
-  query?: Record<string, string>
-  component?: RouteRecordRaw['component'] | ''
-  redirect?: string
-  meta: NavRouteMeta
-  children?: NavRoute[]
-}
-
-/** 菜单类型：菜单项（枚举 init 后 eMenu 运行时值为 'C'，此处取枚举 id 以便与 menuType 做类型一致的比较） */
-const MENU_TYPE_MENU = EMenuType.eMenu as unknown as string
 
 /** 视图模块（用于懒加载后改写组件名） */
 interface ViewModule {
@@ -103,16 +76,17 @@ export const useMenuStore = defineStore('menu', {
           const tree = await this.getMenuTree()
           const routes = this.menuToRoute(tree)
           this.menuList = routes
-          const navRoute = createNavRoute(routes as unknown as RouteRecordRaw[])
-          this.navRoutes = navRoute.children as unknown as NavRoute[]
-          const navRoute2d = this.to2DRoutes(navRoute as unknown as NavRoute)
-          routers.addRoute(navRoute2d as unknown as RouteRecordRaw)
+          const navRoute = createNavRoute(routes)
+          this.navRoutes = navRoute.children ?? []
+          const navRoute2d = this.to2DRoutes(navRoute)
+          routers.addRoute(toRouteRecord(navRoute2d))
         } catch (e) {
-          // 接口服务无效时，只加载本地路由
+          // 接口服务无效时，只加载本地路由；打印原始错误，避免菜单转换异常被吞掉后无从排查
+          console.error('[menu-store] 动态菜单加载失败，已降级为仅本地路由：', e)
           const navRoute = createNavRoute([])
-          this.navRoutes = navRoute.children as unknown as NavRoute[]
-          const navRoute2d = this.to2DRoutes(navRoute as unknown as NavRoute)
-          routers.addRoute(navRoute2d as unknown as RouteRecordRaw)
+          this.navRoutes = navRoute.children ?? []
+          const navRoute2d = this.to2DRoutes(navRoute)
+          routers.addRoute(toRouteRecord(navRoute2d))
         }
       }
     },
@@ -133,18 +107,20 @@ export const useMenuStore = defineStore('menu', {
       /**
        * 获取菜单对应组件
        * @param component 后端配置的组件标识
+       * @param menuName 菜单名称，组件找不到时用于告警定位
        */
-      const getComponent = (component: MenuNode['component']): NavRoute['component'] => {
+      const getComponent = (component: MenuNode['component'], menuName = ''): NavRoute['component'] => {
         if (component === 'Layout') {
           return () => import('@/layout/index.vue')
         } else if (component === 'RouterView' || component === 'ParentView') {
-          return RouterView as unknown as RouteRecordRaw['component']
-        } else if (typeof component === 'function') {
-          return component as unknown as RouteRecordRaw['component']
+          return RouterView
         } else if (component) {
           const path = `/src/views/${component}.vue`
           const loader = views[path]
-          if (!loader) return ''
+          if (!loader) {
+            console.warn(`[menu-store] 菜单「${menuName}」配置的组件未找到：${path}，该页面将不渲染内容`)
+            return undefined
+          }
           // 返回按需加载函数
           return () => {
             const componentPromise = loader()
@@ -155,25 +131,25 @@ export const useMenuStore = defineStore('menu', {
             })
           }
         } else {
-          return ''
+          return undefined
         }
       }
 
       const transform = (list: MenuNode[], parentPaths: string[] = []): NavRoute[] => {
         return list.map((item) => {
-          let currPath = item.path
-          if (currPath && currPath.charAt(0) !== '/') {
-            currPath = '/' + currPath
-            currPath = (parentPaths.at(-1) ?? '') + currPath
-          }
+          const menuName = item.title || item.menuName || item.path || ''
+          const currPath = item.path
+            ? item.path.startsWith('/')
+              ? item.path
+              : `${parentPaths.at(-1) ?? ''}/${item.path}`
+            : ''
           return {
-            path: currPath as string,
-            query: item.queryParam ? JSON.parse(item.queryParam) : undefined,
-            component: getComponent(item.component),
+            path: currPath,
+            query: parseQueryParam(item.queryParam, menuName),
+            component: getComponent(item.component, menuName),
             redirect: item.redirect,
-            // name: item.name,
             meta: {
-              needLogin: item.needLogin || true,
+              needLogin: item.needLogin ?? true,
               title: item.title || item.menuName,
               icon: item.icon,
               hidden: item.isHidden,
@@ -181,13 +157,13 @@ export const useMenuStore = defineStore('menu', {
               // 菜单类型，M 目录, C 菜单, F 功能
               menuType: item.menuType,
               // 保存父级路由链地址，从一级路由开始，用于根据当前路由，获取一级路由，设置顶部菜单选中
-              matchedPaths: parentPaths.length > 0 ? parentPaths : [currPath as string],
+              matchedPaths: parentPaths.length > 0 ? parentPaths : [currPath],
               // 是否是一级路由
               isFirst: parentPaths.length === 0,
               // 是否是叶子节点
               isLeaf: isEmpty(item.children?.filter((c) => !c.isHidden)),
             },
-            children: (isNotEmpty(item.children) && transform(item.children as MenuNode[], [...parentPaths, currPath as string])) || undefined,
+            children: (isNotEmpty(item.children) && transform(item.children ?? [], [...parentPaths, currPath])) || undefined,
           }
         })
       }
@@ -240,13 +216,13 @@ export const useMenuStore = defineStore('menu', {
       }
     },
     /** 路由变化处理 */
-    handleRouteChange(routeFrom: { meta?: RouteMeta; fullPath?: string }, routeTo: { meta?: RouteMeta; fullPath?: string }): void {
+    handleRouteChange(routeFrom: { meta?: RouteMeta; fullPath: string }, routeTo: { meta?: RouteMeta }): void {
       const settingStore = useSettingStore()
       // 记录每个一级菜单最后一次打开的子菜单，用于下次切换一级菜单时，自动激活该子菜单
-      const firstPathFrom = (routeFrom?.meta as NavRouteMeta | undefined)?.matchedPaths?.[0]
-      const firstPathTo = (routeTo?.meta as NavRouteMeta | undefined)?.matchedPaths?.[0]
+      const firstPathFrom = routeFrom.meta?.matchedPaths?.[0]
+      const firstPathTo = routeTo.meta?.matchedPaths?.[0]
       if (firstPathFrom !== firstPathTo && settingStore.menuLayout === 'top-left' && settingStore.autoOpenChildMenu && firstPathFrom) {
-        this.latestChildPathMap[firstPathFrom] = routeFrom.fullPath as string
+        this.latestChildPathMap[firstPathFrom] = routeFrom.fullPath
       }
     },
   },

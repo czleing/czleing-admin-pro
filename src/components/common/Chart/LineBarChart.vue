@@ -70,7 +70,7 @@
     /** 是否加载中 */
     loading: { type: Boolean, default: false },
     /** 图表数据，对象数组 */
-    data: { type: Array<any> },
+    data: { type: Array<Record<string, string | boolean | number | undefined>>, default: () => [] },
     /** x轴字段名 */
     xField: { type: String, default: 'x' },
     /** y轴字段名, 多个表示有多个Y轴 */
@@ -94,9 +94,9 @@
     /** 增量配置，可对默认配置进行覆盖 */
     option: Object,
     /** 设置最大值，大于该值显示红色 */
-    maxValue: [Number, Function],
+    maxValue: Number,
     /** 设置最小值，小于该值显示红色 */
-    minValue: [Number, Function],
+    minValue: Number,
     /** 设置目标值，小于该值显示红色 */
     targetValue: Number,
     /** 目标值作用于哪个字段 */
@@ -155,7 +155,7 @@
   const isLight = computed(() => settingStore.mode === 'light')
   const isEmpty = computed(() => !props.data?.length)
   
-  function onChartClick (params: any) {
+  function onChartClick (params: unknown) {
     if (props.onItemClick) {
       props.onItemClick(params)
     }
@@ -208,7 +208,7 @@
           color: isLight.value ? 'black' : 'white',
           formatter: (value: number | string) => `${Number(value).toFixed(digit)}%    `,
         },
-        min: function (value: any) {
+        min: function (value: Record<string, number | undefined>) {
           let min = Math.min(
             ...[props.maxValue, value.min, props.targetValue].filter((v) => v !== undefined),
           )
@@ -216,7 +216,7 @@
           if (min < 1) min = 0
           return min.toFixed(digit)
         },
-        max: function (value: any) {
+        max: function (value: Record<string, number | undefined>) {
           let max = Math.max(
             ...[props.maxValue, value.max, props.targetValue].filter((v) => v !== undefined),
           )
@@ -256,8 +256,8 @@
       const yDatas = props.data?.map(item => item[yField]) ?? []
       let min: number, max: number
       if (yDatas.length && showLabel.value && props.showMinMaxLabel) {
-        min = Math.min(...yDatas)
-        max = Math.max(...yDatas)
+        min = Math.min(...yDatas.map(v => Number(v)))
+        max = Math.max(...yDatas.map(v => Number(v)))
       }
       return {
         name: props.seriesNames?.[index],
@@ -280,8 +280,8 @@
         barMaxWidth: 40,
         itemStyle: {
           color: ({ value }: { value: number | string }) => {
-            if (props.maxValue && value > props.maxValue) return props.errorColor
-            if (props.minValue && value < props.minValue) return props.errorColor
+            if (props.maxValue && Number(value) > Number(props.maxValue)) return props.errorColor
+            if (props.minValue && Number(value) < Number(props.minValue)) return props.errorColor
             if (props.targetFields && props.targetValue) {
               if (props.targetFields.includes(yField) && Number(value) < Number(props.targetValue))
                 return props.errorColor
@@ -395,7 +395,7 @@
         tooltip: {
           confine: true,
           show: true,
-          formatter: function (param: any): string {
+          formatter: function (param: { title: string }): string {
             return '<div>' + param.title + '</div>'
           },
         },

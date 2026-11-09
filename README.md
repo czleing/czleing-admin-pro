@@ -8,7 +8,7 @@
 ### 技术栈
 Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
 
-该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，更适合企业中多人团队合作开发及长期维护。
+该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，框架代码、公共库已使用 TS 重构，业务代码不强制，可以使用 JS 或 TS，适合企业中多人团队合作开发及长期维护。
 
 ## 相关项目
 | 项目 | 说明 | 地址 |

@@ -58,13 +58,13 @@ src/
 ```
 <业务名>/
 ├── index.vue              # 页面入口
-├── components/            # 本模块私有组件（超过 2 个才建目录）
+├── components/            # 本模块私有组件（需要时才建）
 ├── langs/                 # 本模块专属多语言（需要时才建）
 │   ├── en.ts
 │   ├── zh-cn.ts
 │   └── zh-hk.ts
-├── modal/                 # 弹窗组件
-├── enum/                  # 本模块枚举
+├── modal/                 # 弹窗组件（需要时才建）
+├── enum/                  # 本模块枚举（需要时才建）
 └── types.ts               # 本模块专属类型（需要时才建）
 ```
 
@@ -107,7 +107,7 @@ src/
 ```
 
 ### 3.2 `<script setup>` 铁律
-
+#### 业务代码可以使用 JS 或 TS
 1. **禁止** Options API（`data()`、`methods`、`export default` 对象）
 2. Props 必须使用 `defineProps<T>()` 泛型写法，禁止运行时校验写法，必须设默认值：
    ```ts
@@ -229,7 +229,7 @@ src/api/
 ## 六、Store（Pinia）规范
 
 ### 6.1 Store 模板
-
+#### Options API 或 Composition API 都可以使用，不强制
 ```ts
 // src/stores/user-store.ts
 import { defineStore } from 'pinia';
@@ -314,7 +314,7 @@ src/locales/langs/
 
 1. 禁止硬编码多语言字符串，统一使用 `$t('key')` 或 `const { t } = useI18n()`
 2. Key 分层级命名，点号分隔：`common.submit` / `system.user.title` / `user.form.username.placeholder`
-3. 三个语言文件 key 必须完全对齐，一个 key 都不能少
+3. 多个语言文件 key 必须完全对齐，一个 key 都不能少
 4. 禁止在资源文件中写变量替换以外的 JS 表达式
 
 ---

@@ -177,11 +177,8 @@ function getColDataIndex (column: ColumnType): string {
   return (getCol(column).dataIndex ?? '') as string
 }
 
-/** eHidden 控件类型的运行时值 */
-const HIDDEN_CONTROL_TYPE = EControlType.eHidden as unknown as string
-
 const currColumns = computed(() => ([
-  ...props.columns.filter(item => !item.hidden && item.type !== HIDDEN_CONTROL_TYPE).map(item => {
+  ...props.columns.filter(item => !item.hidden && item.type !== EControlType.eHidden).map(item => {
     return {
       ...item,
       type: undefined,

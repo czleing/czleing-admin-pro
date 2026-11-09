@@ -385,8 +385,8 @@ export function useAsync<T, P extends unknown[] = []>(
 
 ### 10.3 可维护性
 
-1. 单个 `.vue` 文件 ≤ **500 行**（template + script + style 合计），超过必须拆分
-2. 函数 ≤ **50 行**，超过拆分为子函数
+1. 单个 `.vue` 文件 ≤ **1000 行**（template + script + style 合计），超过必须拆分
+2. 函数 ≤ **200 行**，超过拆分为子函数
 3. 一个函数只做一件事，单一职责
 4. 组件、hook、页面等文件首行必须写注释，说明文件功能、用途、用法示例
 

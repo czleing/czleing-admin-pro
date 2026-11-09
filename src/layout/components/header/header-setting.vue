@@ -235,7 +235,7 @@ const { t } = useI18n()
 const { numFormat } = useNumFormat()
 const route = useRoute()
 
-const bgImageOptions = computed(() => [
+const bgImageOptions = [
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-1.jpg' },
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-2.jpg' },
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-3.jpg' },
@@ -244,61 +244,61 @@ const bgImageOptions = computed(() => [
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-6.jpg' },
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-7.jpg' },
   { src: '' },
-])
-const bgIsDiy = computed(() => !bgImageOptions.value.map(i => i.src).filter(Boolean).includes(settingStore.bgImage))
-const menuLayoutOptions = computed(() => [
+]
+const bgIsDiy = computed(() => !bgImageOptions.map(i => i.src).filter(Boolean).includes(settingStore.bgImage))
+const menuLayoutOptions = [
   { value: 'top', label: t('frame.top'), icon: Top },
   { value: 'left', label: t('frame.left'), icon: Left },
   { value: 'top-left', label: t('frame.topLeft'), icon: TopLeft },
-])
-const firstMenuModeOptions = computed(() => [
+]
+const firstMenuModeOptions = [
   { label: t('frame.firstMenuModeLine'), value: 'line' },
   { label: t('frame.firstMenuModeCard'), value: 'card' },
-])
-const firstMenuAlignOptions = computed(() => [
+]
+const firstMenuAlignOptions = [
   { label: t('frame.firstMenuAlignLeft'), value: 'start' },
   { label: t('frame.firstMenuAlignCenter'), value: 'center' },
   { label: t('frame.firstMenuAlignRight'), value: 'end' },
-])
+]
 const mode = ref(settingStore.useAutoMode ? 'auto' : settingStore.mode)
-const modeOptions = computed(() => [
+const modeOptions = [
   { value: 'light', payload: { label: t('frame.modeLight'), icon: '<svg t="1788400712642" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="14613" width="22" height="22"><path d="M501.48 493.55m-233.03 0a233.03 233.03 0 1 0 466.06 0 233.03 233.03 0 1 0-466.06 0Z" fill="#F9C626" p-id="14614"></path><path d="M501.52 185.35H478.9c-8.28 0-15-6.72-15-15V87.59c0-8.28 6.72-15 15-15h22.62c8.28 0 15 6.72 15 15v82.76c0 8.28-6.72 15-15 15zM281.37 262.76l-16 16c-5.86 5.86-15.36 5.86-21.21 0l-58.52-58.52c-5.86-5.86-5.86-15.36 0-21.21l16-16c5.86-5.86 15.36-5.86 21.21 0l58.52 58.52c5.86 5.86 5.86 15.35 0 21.21zM185.76 478.48v22.62c0 8.28-6.72 15-15 15H88c-8.28 0-15-6.72-15-15v-22.62c0-8.28 6.72-15 15-15h82.76c8.28 0 15 6.72 15 15zM270.69 698.63l16 16c5.86 5.86 5.86 15.36 0 21.21l-58.52 58.52c-5.86 5.86-15.36 5.86-21.21 0l-16-16c-5.86-5.86-5.86-15.36 0-21.21l58.52-58.52c5.85-5.86 15.35-5.86 21.21 0zM486.41 794.24h22.62c8.28 0 15 6.72 15 15V892c0 8.28-6.72 15-15 15h-22.62c-8.28 0-15-6.72-15-15v-82.76c0-8.28 6.72-15 15-15zM706.56 709.31l16-16c5.86-5.86 15.36-5.86 21.21 0l58.52 58.52c5.86 5.86 5.86 15.36 0 21.21l-16 16c-5.86 5.86-15.36 5.86-21.21 0l-58.52-58.52c-5.86-5.85-5.86-15.35 0-21.21zM802.17 493.59v-22.62c0-8.28 6.72-15 15-15h82.76c8.28 0 15 6.72 15 15v22.62c0 8.28-6.72 15-15 15h-82.76c-8.28 0-15-6.72-15-15zM717.24 273.44l-16-16c-5.86-5.86-5.86-15.36 0-21.21l58.52-58.52c5.86-5.86 15.36-5.86 21.21 0l16 16c5.86 5.86 5.86 15.36 0 21.21l-58.52 58.52c-5.86 5.86-15.35 5.86-21.21 0z" fill="#F9C626" p-id="14615"></path></svg>' } },
   { value: 'dark', payload: { label: t('frame.modeDark'), icon: '<svg t="1788400799046" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="16187" width="22" height="22"><path d="M505.4 878.6c-196.7 0-358-150.9-374.9-343.1 1-18.6 16.1-33.4 34.9-33.4 10.8 0 20.5 4.8 26.9 12.4 0.2 0.3 0.5 0.1 0.5-0.7 41.6 44.2 100.5 71.9 166.1 71.9 127.1 0 230.1-103 230.1-230.1 0-66.1-28-125.1-72.6-166.8 0.1-0.1 0.5-0.1 0.3-0.3-7-6.5-11.4-15.7-11.4-26.1 0-19 14.9-34.1 33.7-35.3 192.1 17.1 342.9 178.3 342.9 375 0 208-168.5 376.5-376.5 376.5z" fill="#03E8F7" p-id="16188"></path></svg>' } },
   { value: 'auto', payload: { label: t('frame.modeAuto'), icon: '<svg t="1788400895717" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="18278" width="22" height="22"><path d="M91.83 661.86c1.87 34.09 30.28 60.65 64.43 60.22h331.23v91.74H360.74c-13.34 0-24.16 10.82-24.16 24.16s10.82 24.16 24.16 24.16h302.53c13.34 0 24.16-10.82 24.16-24.16s-10.82-24.16-24.16-24.16H536.51v-91.74h331.24c34.14 0.43 62.55-26.13 64.43-60.22v-55.32H91.83v55.32zM867.74 161.86H156.26c-34.93-0.39-63.66 27.41-64.43 62.33v328.43h840.34V224.19c-0.77-34.93-29.5-62.72-64.43-62.33z" fill="#707070" p-id="18279"></path></svg>' }},
-])
-const modeAniOptions = computed(() => [
+]
+const modeAniOptions = [
   { label: t('frame.modeAnimateFade'), value: 'fade' },
   { label: t('frame.modeAnimateCircle'), value: 'circle' },
   { label: t('frame.modeAnimateLine'), value: 'line' },
-])
-const sizeOptions = computed(() => [
+]
+const sizeOptions = [
   { label: t('frame.small'), value: 'small' },
   { label: t('frame.middle'), value: 'middle' },
   { label: t('frame.large'), value: 'large' },
-])
-const layoutDivideOptions = computed(() => [
+]
+const layoutDivideOptions = [
   { label: t('frame.layoutDivideNone'), value: '' },
   { label: t('frame.layoutDivideLine'), value: 'line' },
   { label: t('frame.layoutDivideShadow'), value: 'shadow' },
   { label: t('frame.layoutDivideRound'), value: 'round' },
-])
-const tabAniOptions = computed(() => [
+]
+const tabAniOptions = [
   { label: t('frame.tabAnimateNone'), value: '' },
   { label: t('frame.tabAnimateSlideRight'), value: 'slide-right' },
   { label: t('frame.tabAnimateFade'), value: 'fade' },
   { label: t('frame.tabAnimateScale'), value: 'scale' },
-])
-const tabTypeOptions = computed(() => [
+]
+const tabTypeOptions = [
   { label: t('frame.tabTypeTab'), value: 'tab' },
   { label: t('frame.tabTypeCard'), value: 'card' },
   { label: t('frame.tabTypeLine'), value: 'line' },
-])
+]
 const settingTab = ref('theme')
-const settingTabs = computed(() => [
+const settingTabs = [
   { label: t('frame.theme'), value: 'theme' },
   { label: t('frame.layout'), value: 'layout' },
   { label: t('frame.other'), value: 'other' },
-])
+]
 
 const openSetting = () => {
   settingModal.value.open()

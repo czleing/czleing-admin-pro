@@ -1,7 +1,7 @@
 <div align="center">
   <h1>czleing-admin-pro</h1>
   <h3>中后台管理系统快速开发框架</h3>
-  <h4>主打工程化能力 + 配置化 + 代码生成</h4>
+  <h4>主打工程化能力 + 轻量 + 配置化 + 代码生成</h4>
 </div>
 
 ## 简介
@@ -13,9 +13,9 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 ## 相关项目
 | 项目 | 说明 | 地址 |
 | --- | --- | --- |
-| czleing-admin | js 版本前端，简单快速，约束少，开发更快 | [gitee](https://gitee.com/czleing/czleing-admin.git) \| [github](https://github.com/czleing/czleing-admin.git) |
-| czleing-admin-pro(当前项目) | ts 版本前端，工程化能力强，约束多，更易维护 | [gitee](https://gitee.com/czleing/czleing-admin-pro.git) \| [github](https://github.com/czleing/czleing-admin-pro.git) |
-| czleing-admin-api | java 版本后端，spring-boot 单体服务 | [gitee](https://gitee.com/czleing/czleing-admin-api.git) \| [github](https://github.com/czleing/czleing-admin-api.git) |
+| czleing-admin | JS 版本前端，简单高效，约束少，开发更快 | [gitee](https://gitee.com/czleing/czleing-admin.git) \| [github](https://github.com/czleing/czleing-admin.git) |
+| czleing-admin-pro(当前项目) | TS 版本前端，工程化能力强，约束多，代码提示更强，更易维护 | [gitee](https://gitee.com/czleing/czleing-admin-pro.git) \| [github](https://github.com/czleing/czleing-admin-pro.git) |
+| czleing-admin-api | Java 版本后端，Spring-Boot 单体服务 | [gitee](https://gitee.com/czleing/czleing-admin-api.git) \| [github](https://github.com/czleing/czleing-admin-api.git) |
 
 ## 环境要求
 - node: 22+
@@ -54,9 +54,12 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 - 使用 TypeScript, 提供类型检查、智能提示、代码补全等功能
 - 最新技术栈、前后端分离
 - 线上自动检测版本更新（客户第一时间收到新版本更新提醒）
+- 系统管理基础功能（用户、角色、菜单、部门、字典、岗位、登录/错误日志、定时任务/日志、通知公告）
 - 带CRUD、多种表单、弹窗、图表等使用示例
 - 集成SSE消息通知
-- 一个CRUD页面只有一个文件，不用到处跳，开发不割裂，代码简短
+- CRUD 可视化代码生成，一键生成前后端全部代码及菜单权限，配置化告别传统大量DOM重复堆砌及UI不统一问题
+- CRUD 可视化代码生成，一键生成前后端全部代码及菜单权限，配置化告别传统大量DOM重复堆砌及UI不统一问题
+- 一个CRUD页面只有一个文件，不用到处跳，代码简短，开发不割裂
 - ==========================
 - 未来持续更新
 
@@ -65,6 +68,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 - 数据管理、运营、统计分析类业务
 - 学习、项目交付
 - 追求轻量化、快速落地
+- 多人团队合作开发、长期维护、迭代
 
 ## 初始化
 ### 1. 克隆本项目

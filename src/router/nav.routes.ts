@@ -2,10 +2,10 @@
  * 导航路由构建工具
  * 将动态菜单路由 + 开发中心路由 + 错误页路由 合并成最终的路由表
  */
-import type { RouteRecordRaw } from 'vue-router'
+import type { NavRoute } from './types'
 
 /** 错误页静态路由 */
-const errorRoutes: RouteRecordRaw[] = [
+const errorRoutes: NavRoute[] = [
   {
     path: '/403',
     component: () => import('@/views/exception/403-page.vue'),
@@ -35,7 +35,7 @@ const errorRoutes: RouteRecordRaw[] = [
 ]
 
 /** 开发中心 / 工具 静态路由 */
-const developerRoutes: RouteRecordRaw[] = [
+const developerRoutes: NavRoute[] = [
   {
     path: '/developer',
     redirect: '/developer/demo',
@@ -142,11 +142,12 @@ const developerRoutes: RouteRecordRaw[] = [
  * 根据子菜单路由生成导航页路由信息
  * @param routes 后端接口返回的动态路由数组
  */
-export function createNavRoute(routes: RouteRecordRaw[]): RouteRecordRaw {
+export function createNavRoute(routes: NavRoute[]): NavRoute {
   return {
     path: '/',
     redirect: { name: 'index' },
     component: () => import('@/layout/index.vue'),
+    meta: {},
     children: [...routes, ...developerRoutes, ...errorRoutes],
   }
 }

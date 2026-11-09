@@ -33,8 +33,13 @@ export interface EnumItem<Id extends string | number = string | number> {
   [key: string]: unknown
 }
 
-/** 枚举初始化后的增强对象（init 之后会被 Object.freeze） */
-export interface EnumObject<T extends Record<string, EnumItem>> {
+/**
+ * 枚举初始化后的增强对象（init 之后会被 Object.freeze）
+ * 注意：不要在此加 [key: string]: unknown 兜底索引签名，
+ * 否则任意拼错的枚举 key 都会被静默推导为 unknown，迫使调用方逐处断言；
+ * 枚举 key 的字面量类型由 EnumIdMap 提供
+ */
+export interface EnumObject {
   /** 枚举条目列表 */
   _list: EnumItem[]
   /** 根据 id 获取 name，找不到时返回默认值或 '-' */
@@ -43,8 +48,6 @@ export interface EnumObject<T extends Record<string, EnumItem>> {
   _objectOf: (id: string | number, useDefault?: boolean) => EnumItem | undefined
   /** 根据 id 获取 class 字段 */
   _classOf: (id: string | number) => string | undefined
-  /** 原始枚举对象的所有 key 值（init 后会被 id 覆盖） */
-  [key: string]: unknown
 }
 
 /**
@@ -90,14 +93,14 @@ export type EnumIdMap<T extends Record<string, EnumItem>> = {
  */
 export function init<T extends Record<string, EnumItem>>(
   enumObj: T
-): EnumObject<T> & EnumIdMap<T> {
+): EnumObject & EnumIdMap<T> {
   const keys = Object.keys(enumObj).filter((key) => (enumObj[key] as unknown as EnumItem).isEnum)
   const _list: EnumItem[] = keys.map((key) => ({ ...(enumObj[key] as unknown as EnumItem) }))
   // 为了简化大部分使用情况，用 ID 覆盖原本的对象，要获取对象请用 _objectOf 方法
   for (const i in keys) {
     ;(enumObj as unknown as Record<string, unknown>)[keys[i]] = _list[i].id
   }
-  const result = enumObj as unknown as EnumObject<T>
+  const result = enumObj as unknown as EnumObject
   result._list = _list
   result._of = (id, defaultValue = '-') => {
     const item = result._objectOf(id)
@@ -116,5 +119,5 @@ export function init<T extends Record<string, EnumItem>>(
   if (Object.freeze) {
     Object.freeze(result)
   }
-  return result as EnumObject<T> & EnumIdMap<T>
+  return result as EnumObject & EnumIdMap<T>
 }

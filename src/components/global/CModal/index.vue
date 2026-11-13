@@ -15,8 +15,10 @@
       <template v-if="$attrs.footer !== null" #footer>
         <slot name="footer">
           <div class="tr">
-            <a-button v-if="currShowCancel" :loading="closeLoading" @click="close">{{ currCancelText }}</a-button>
-            <a-button v-if="currShowConfirm" type="primary" :loading="confirmLoading" :disabled="confirmLoading || confirmDisabled" @click="onOkHandle">{{ currConfirmText }}</a-button>
+            <a-space>
+              <a-button v-if="currShowCancel" :loading="closeLoading" @click="close">{{ currCancelText }}</a-button>
+              <a-button v-if="currShowConfirm" type="primary" :loading="confirmLoading" :disabled="confirmLoading || confirmDisabled" @click="onOkHandle">{{ currConfirmText }}</a-button>
+            </a-space>
           </div>
         </slot>
       </template>
@@ -36,8 +38,10 @@
       <template v-if="$attrs.footer !== null && (currShowCancel || currShowConfirm)" #footer>
         <slot name="footer">
           <div class="tr">
-            <a-button v-if="currShowCancel" :loading="closeLoading" @click="close">{{ currCancelText }}</a-button>
-            <a-button v-if="currShowConfirm" type="primary" :loading="confirmLoading" :disabled="confirmLoading || confirmDisabled" @click="onOkHandle">{{ currConfirmText }}</a-button>
+            <a-space>
+              <a-button v-if="currShowCancel" :loading="closeLoading" @click="close">{{ currCancelText }}</a-button>
+              <a-button v-if="currShowConfirm" type="primary" :loading="confirmLoading" :disabled="confirmLoading || confirmDisabled" @click="onOkHandle">{{ currConfirmText }}</a-button>
+            </a-space>
           </div>
         </slot>
       </template>

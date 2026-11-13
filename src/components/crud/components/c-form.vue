@@ -41,8 +41,10 @@
     </a-form>
     <!-- 提交按钮，单独使用表单组件时使用 -->
     <div v-if="$attrs.footer !== null && !isView && (showConfirm || showCancel)" class="mt20" :class="alignClass">
-      <a-button v-if="showCancel" type="default" :disabled="loading" @click="cancel">{{ cancelText || $t('crud.cancel') }}</a-button>
-      <a-button v-if="showConfirm" type="primary" :loading="loading" @click="submit">{{ confirmText || $t('crud.submit') }}</a-button>
+      <a-space>
+        <a-button v-if="showCancel" type="default" :disabled="loading" @click="cancel">{{ cancelText || $t('crud.cancel') }}</a-button>
+        <a-button v-if="showConfirm" type="primary" :loading="loading" @click="submit">{{ confirmText || $t('crud.submit') }}</a-button>
+      </a-space>
     </div>
   </div>
 </template>

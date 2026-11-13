@@ -1,28 +1,30 @@
 <!-- 表格操作按钮组件 -->
 <template>
   <div class="c-table-action" @click.stop>
-    <template v-for="action in showActions" :key="action.name">
-      <CTableActionItem :action="action" :record="record" />
-    </template>
-    <template v-if="moreActions && moreActions.length > 0">
-      <!-- 更多 -->
-      <a-dropdown>
-        <a v-permission="morePermissions" href="javascript:;">
-          {{ column.actionMoreText ?? $t('crud.more') }}
-          <DownOutlined />
-        </a>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item
-              v-for="action in moreActions"
-              :key="action.name"
-            >
-              <CTableActionItem :action="action" :record="record" />
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
-    </template>
+    <a-space>
+      <template v-for="action in showActions" :key="action.name">
+        <CTableActionItem :action="action" :record="record" />
+      </template>
+      <template v-if="moreActions && moreActions.length > 0">
+        <!-- 更多 -->
+        <a-dropdown>
+          <a v-permission="morePermissions" href="javascript:;">
+            {{ column.actionMoreText ?? $t('crud.more') }}
+            <DownOutlined />
+          </a>
+          <template #overlay>
+            <a-menu>
+              <a-menu-item
+                v-for="action in moreActions"
+                :key="action.name"
+              >
+                <CTableActionItem :action="action" :record="record" />
+              </a-menu-item>
+            </a-menu>
+          </template>
+        </a-dropdown>
+      </template>
+    </a-space>
   </div>
 </template>
 

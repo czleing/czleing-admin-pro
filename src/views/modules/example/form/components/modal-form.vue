@@ -10,10 +10,10 @@
     </div>
     <div class="mt20" />
     <CModal ref="modal" title="弹窗+表单" :footer="null">
-      <c-form :form-config="{ ...formConfig, autoReset: true }" @submit-handle="handleSubmit" />
+      <c-form :form-config="formConfig" @submit-handle="handleSubmit" />
     </CModal>
     <CModal ref="drawer" title="抽屉+自由控制表单">
-      <c-form ref="drawerForm" :form-config="{ ...formConfig, autoReset: true }" :footer="null" />
+      <c-form ref="drawerForm" :form-config="formConfig" :footer="null" />
     </CModal>
   </div>
 </template>
@@ -38,6 +38,7 @@ const emit = defineEmits<{
 }>()
 
 const formConfig: FormConfig = {
+  labelCol: { flex: '80px' },
   fields: [
     {
       label: '姓名',

@@ -50,31 +50,11 @@ const developerRoutes: NavRoute[] = [
         path: '/developer/demo',
         component: () => import('@/views/demo/demo-page.vue'),
         meta: {
-          title: 'Demo',
+          title: 'CRUD示例',
           icon: 'ExperimentOutlined',
           isLeaf: true,
           matchedPaths: ['/developer', '/developer/demo'],
           cache: true,
-        },
-      },
-      {
-        path: '/tool/gen',
-        component: () => import('@/views/modules/tool/gen/index.vue'),
-        meta: {
-          title: '代码生成',
-          icon: 'CodeOutlined',
-          isLeaf: true,
-          matchedPaths: ['/developer', '/tool/gen'],
-          cache: true,
-        },
-      },
-      {
-        path: import.meta.env.VITE_APP_BASE_API + '/swagger-ui/index.html',
-        component: () => import('@/views/exception/404-page.vue'),
-        meta: {
-          title: '接口文档',
-          icon: 'ApiOutlined',
-          target: '_blank',
         },
       },
       {
@@ -97,6 +77,26 @@ const developerRoutes: NavRoute[] = [
           isLeaf: true,
           matchedPaths: ['/developer', '/developer/chart'],
           cache: true,
+        },
+      },
+      {
+        path: '/tool/gen',
+        component: () => import('@/views/modules/tool/gen/index.vue'),
+        meta: {
+          title: '代码生成',
+          icon: 'CodeOutlined',
+          isLeaf: true,
+          matchedPaths: ['/developer', '/tool/gen'],
+          cache: true,
+        },
+      },
+      {
+        path: import.meta.env.VITE_APP_BASE_API + '/swagger-ui/index.html',
+        component: () => import('@/views/exception/404-page.vue'),
+        meta: {
+          title: '接口文档',
+          icon: 'ApiOutlined',
+          target: '_blank',
         },
       },
     ],

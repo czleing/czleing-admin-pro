@@ -4,7 +4,7 @@
     <div class="lh2">
       <div>表单提交时会自动对日期、日期范围的数据进行格式化，转为时间戳格式</div>
     </div>
-    <div class="flex-x flex-wrap gap10 mt10">
+    <div class="flex-x flex-wrap gap10 mt10 border-bottom pb10">
       <a-button @click="handleValidate">校验</a-button>
       <a-button @click="handleSetData">设置数据</a-button>
       <a-button @click="handleToggleView">{{ isView ? '编辑模式' : '查看模式' }}</a-button>

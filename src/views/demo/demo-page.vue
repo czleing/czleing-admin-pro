@@ -351,7 +351,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
       customRender: ({ value, record, index, column }) => { // 自定义渲染函数
         return h('span', {
           class: 'text-success'
-        }, '状态:' + String(value))
+        }, '状态:' + value)
       }
     },
     {
@@ -362,7 +362,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
         return h(resolveComponent('a-tag'), {
           bordered: false,
           color: record.color as string
-        }, String(value))
+        }, () => value)
       }
     },
     {

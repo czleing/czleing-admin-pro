@@ -16,7 +16,6 @@
         :max-value="1000"
         height="200px"
         :colors="[token.colorPrimary]"
-        :error-color="token.colorError"
       />
       <LineBarChart
         title="目标值"
@@ -26,7 +25,6 @@
         units="万"
         height="200px"
         :colors="[token.colorPrimary]"
-        :error-color="token.colorError"
       />
     </div>
     <h3 class="mt20">混合线柱图</h3>

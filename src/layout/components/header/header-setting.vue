@@ -35,15 +35,21 @@
           </Field>
           <div v-if="settingStore.theme.isDiy">
             <div class="theme-diy flex-y pl15">
-              <label v-for="[key, value] in Object.entries(settingStore.theme.token)" :key="key" class="theme-diy__item flex-x-between gap10">
-                <div class="label">
+              <div class="flex-x-around gap2 mb8">
+                <span v-for="color in colorsRainbow" :key="color" class="color-box pointer" :style="{ backgroundColor: color }" @click="settingStore.theme.token.colorPrimary = color" />
+              </div>
+              <div class="flex-x-around gap2 mb8">
+                <span v-for="color in colorsTypeBar" :key="color" class="color-box pointer" :style="{ backgroundColor: color }" @click="settingStore.theme.token.colorPrimary = color" />
+              </div>
+              <div v-for="[key, value] in Object.entries(settingStore.theme.token)" :key="key" class="theme-diy__item flex-x-between gap10">
+                <div class="label flex-x x-middle gap5">
                   <span>{{ $t(`frame.${key}`) }}</span>
                   <span v-if="key === 'colorInfo'" class="em09 ml text-primary pointer" @click.prevent="settingStore.theme.token[key] = settingStore.theme.token.colorPrimary">
                     {{ $t('frame.usePrimaryColor') }}
                   </span>
                 </div>
                 <input type="color" :value="settingStore.theme.token[key]" class="value" @input="e => handleColorInput(e, key)">
-              </label>
+              </div>
             </div>
           </div>
           <Field :label="$t('frame.themeMode')" item-padding="3px 10px">
@@ -224,6 +230,7 @@ import Field from './field.vue'
 import Left from './icons/left.vue'
 import TopLeft from './icons/top-left.vue'
 import Top from './icons/top.vue'
+import { colorsGolden, colorsGreen, colorsRainbow, colorsTypeBar } from '@/utils/color.constants.js'
 
 
 const settingStore = useSettingStore()

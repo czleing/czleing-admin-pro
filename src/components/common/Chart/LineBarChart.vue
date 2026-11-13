@@ -45,11 +45,11 @@
   import { Empty } from 'ant-design-vue'
   import { useSettingStore } from '@/stores/setting-store'
   import { InfoCircleFilled, ReloadOutlined } from '@ant-design/icons-vue'
-  // import useThemeToken from '@/hooks/useThemeToken';
+  import useThemeToken from '@/hooks/useThemeToken'
 
   use([LineChart, BarChart, CanvasRenderer, GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent])
 
-  // const { token } = useThemeToken()
+  const { token } = useThemeToken()
   /**
    * 线形、柱形图通用组件
    * 全局统一默认配置，支持自定义配置增量覆盖
@@ -121,8 +121,6 @@
     showDownload: { type: Boolean, default: true },
     /** 图表高度 */
     height: { type: String, default: '100%' },
-    /** 错误颜色 */
-    errorColor: { type: String, default: '#fa5050' },
     /** 数据为空展示的文本 */
     emptyText: { type: String, default: 'No data' },
     /** 加载中相关配置，参考：https://echarts.apache.org/en/api.html#echartsInstance.showLoading opts */
@@ -280,13 +278,13 @@
         barMaxWidth: 40,
         itemStyle: {
           color: ({ value }: { value: number | string }) => {
-            if (props.maxValue && Number(value) > Number(props.maxValue)) return props.errorColor
-            if (props.minValue && Number(value) < Number(props.minValue)) return props.errorColor
+            if (props.maxValue && Number(value) > Number(props.maxValue)) return token.value.colorWarning
+            if (props.minValue && Number(value) < Number(props.minValue)) return token.value.colorWarning
             if (props.targetFields && props.targetValue) {
               if (props.targetFields.includes(yField) && Number(value) < Number(props.targetValue))
-                return props.errorColor
+                return token.value.colorError
             } else if (props.targetValue && Number(value) < Number(props.targetValue)) {
-              return props.errorColor
+              return token.value.colorError
             }
             return props.colors?.[index % props.colors?.length] ?? '#5470c6'
           },
@@ -309,10 +307,10 @@
                   yAxis: props.targetValue,
                   lineStyle: {
                     type: 'dashed',
-                    color: props.errorColor,
+                    color: token.value.colorError,
                   },
                   label: {
-                    color: props.errorColor,
+                    color: token.value.colorError,
                     formatter: '目标值：{c}',
                   },
                 }
@@ -323,10 +321,10 @@
                   yAxis: props.maxValue,
                   lineStyle: {
                     type: 'dashed',
-                    color: 'orange',
+                    color: token.value.colorWarning,
                   },
                   label: {
-                    color: 'orange',
+                    color: token.value.colorWarning,
                     formatter: 'MAX：{c}',
                   },
                 }
@@ -337,10 +335,10 @@
                   yAxis: props.minValue,
                   lineStyle: {
                     type: 'dashed',
-                    color: 'orange',
+                    color: token.value.colorWarning,
                   },
                   label: {
-                    color: 'orange',
+                    color: token.value.colorWarning,
                     formatter: 'MIN：{c}',
                   },
                 }

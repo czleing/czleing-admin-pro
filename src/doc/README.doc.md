@@ -20,18 +20,17 @@
 
 ### 3、样式
 - 框架中自带了一套基础样式库(原子样式)：`@/assets/css/base.less`，基本可以覆盖90%的场景，无法覆盖的单独写样式即可
-- less、组件中可使用 ant-design 的全局静态变量 @colorPrimary 等，但此变量不会跟随主题动态切换而变化，
-需要跟随变化请使用动态方式获取或使用全局 css 变量，token 内部的变量名参考[官网](https://www.antdv.com/docs/vue/customize-theme-cn)，如下：
+- less、组件中可使用基于 ant-design token 实时变化的全局 CSS 变量，如：`color: var(--ant-colorPrimary);` 参考 `src/layout/index.vue`
 ```js
 import { useThemeToken } from '@/hooks/useThemeToken.js'
 const { token } = useThemeToken()
-// 获取动态颜色
+// JS 中获取动态颜色
 token.value.colorPrimary
 token.value.colorWarning
 token.value.colorSuccess
 ...
 ```
-或者使用全局 css 变量，css 变量根据主题切换动态变化，变量参考 `layout/index.vue`
+或者使用全局 css 变量，css 变量根据主题切换动态变化
 ```
 --ant-colorText
 --ant-borderRadius
@@ -59,7 +58,7 @@ console.log('当前登录用户：', authStore.userInfo)
 <a-button v-permission="['xxx:xxx:xxx1', 'xxx:xxx:xxx2']">新增</a-button>
 ```
 
-使用 hook
+JS 中使用权限控制
 ```javascript
 import usePermission from '@/hooks/usePermission'
 const { hasPermission, hasRole } = usePermission()
@@ -69,7 +68,9 @@ if (hasPermission('system:user:add')) {
 ```
 
 ### 6、字典使用
-- CRUD 配置中使用，系统CRUD各部分组件已经深度集成了字典功能，在首次需要时加载，加载过的字典会缓存在内存中，避免频繁、重复加载，更新策略：刷新页面、手动点击刷新按钮、通过 useDict 第三个参数配置强制加载，dict-store 中提供了手动刷新方法：getDatasByType
+- CRUD 配置中使用，系统CRUD各部分组件已经深度集成了字典功能，配置 dictType 即可
+- 在首次需要时加载，加载过的字典会缓存在内存中，避免频繁、重复加载，更新策略：刷新页面、手动点击刷新按钮、通过 useDict 第三个参数配置强制加载
+- dict-store 中提供了手动刷新方法：getDatasByType
 ```javascript
   // 表单组件中使用
   {
@@ -98,7 +99,7 @@ const { dict, errors } = useDict(['is_delete', 'audit_status'])
 dict['audit_status'] // 异步赋值 reactive 响应式对象 dict
 errors['audit_status'] // 加载失败时的错误信息，加载成功则无该 key
 
-// 用法二：
+// 用法二：回调函数
 useDict(['audit_status'], (dict, errors) => {
   console.log(dict['audit_status'])
 })
@@ -109,7 +110,7 @@ useDict(['audit_status'], (dict, errors) => {
 
 
 ### 7、弹出模态框（简化版）
-全局组件 `/global/CModal` 对 a-modal、a-drawer 进行了合并封装，简化了使用，属性设置支持标签上设置和调用时设置
+全局组件 `/global/CModal` 对 a-modal、a-drawer 进行了合并封装，简化了使用，属性设置支持标签上设置和弹出前设置
 ```html
 <template>
   <div>

@@ -24,7 +24,7 @@
 ```js
 import { useThemeToken } from '@/hooks/useThemeToken.js'
 const { token } = useThemeToken()
-// JS 中获取动态颜色
+// JS 中获取动态值
 token.value.colorPrimary
 token.value.colorWarning
 token.value.colorSuccess

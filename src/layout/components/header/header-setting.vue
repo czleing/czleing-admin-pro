@@ -35,20 +35,23 @@
           </Field>
           <div v-if="settingStore.theme.isDiy">
             <div class="theme-diy flex-y pl15">
+              <!-- 主色选择 -->
               <div class="flex-x-around gap2 mb8">
                 <span v-for="color in colorsRainbow" :key="color" class="color-box pointer" :style="{ backgroundColor: color }" @click="settingStore.theme.token.colorPrimary = color" />
               </div>
               <div class="flex-x-around gap2 mb8">
                 <span v-for="color in colorsTypeBar" :key="color" class="color-box pointer" :style="{ backgroundColor: color }" @click="settingStore.theme.token.colorPrimary = color" />
               </div>
-              <div v-for="[key, value] in Object.entries(settingStore.theme.token)" :key="key" class="theme-diy__item flex-x-between gap10">
-                <div class="label flex-x x-middle gap5">
-                  <span>{{ $t(`frame.${key}`) }}</span>
-                  <span v-if="key === 'colorInfo'" class="em09 ml text-primary pointer" @click.prevent="settingStore.theme.token[key] = settingStore.theme.token.colorPrimary">
-                    {{ $t('frame.usePrimaryColor') }}
-                  </span>
+              <div v-for="[key, value] in Object.entries(settingStore.theme.token)" :key="key" class="">
+                <div class="theme-diy__item flex-x-between gap10">
+                  <div class="label flex-x x-middle gap5">
+                    <span>{{ $t(`frame.${key}`) }}</span>
+                    <span v-if="key === 'colorInfo'" class="em09 ml text-primary pointer" @click.prevent="settingStore.theme.token[key] = settingStore.theme.token.colorPrimary">
+                      {{ $t('frame.usePrimaryColor') }}
+                    </span>
+                  </div>
+                  <input :type="key.startsWith('color') ? 'color' : 'text'" :value="value" class="value" @input="e => handleTokenChange(e, key)">
                 </div>
-                <input type="color" :value="settingStore.theme.token[key]" class="value" @input="e => handleColorInput(e, key)">
               </div>
             </div>
           </div>
@@ -324,7 +327,7 @@ const onSwitchPageTitleChange = (checked) => {
   document.title = (checked ? route.meta?.title + ' | ' : '') + settings.websiteInfo.systemName
 }
 let timer = null
-const handleColorInput = (e, key) => {
+const handleTokenChange = (e, key) => {
   clearTimeout(timer)
   timer = setTimeout(() => {
     settingStore.theme.token[key] = e.target.value

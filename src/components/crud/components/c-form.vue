@@ -560,10 +560,10 @@ defineExpose<CrudFormExpose>({
 .c-form {
   padding-top: 10px;
   &.is-view {
-    ::v-deep(.ant-form-item) {
+    :deep(.ant-form-item) {
       margin-bottom: 10px;
     }
-    ::v-deep(.ant-form-item-label) {
+    :deep(.ant-form-item-label) {
       opacity: .8;
     }
   }

@@ -96,6 +96,10 @@ defineExpose({
     top: 130px;
     right: 30px;
   }
+  :deep(.hljs) {
+    color: var(--ant-colorText);
+    background-color: var(--ant-colorBgLayout);
+  }
 }
 :deep(.ant-tabs-nav) {
   margin-bottom: 0 !important;

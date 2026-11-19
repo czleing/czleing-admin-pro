@@ -208,7 +208,7 @@
       transition: margin-top .3s;
       line-height: 1.2;
       .search-input {
-        // ::v-deep(.ant-input, .ant-btn) {
+        // :deep(.ant-input, .ant-btn) {
         //   background-color: transparent !important;
         // }
       }

@@ -7,7 +7,7 @@
     <div v-show="expanded" class="code-preview__code scroll">
       <highlightjs language="vue" :code="code" />
     </div>
-    <div class="code-preview__toolbar">
+    <div class="code-preview__toolbar" :class="{ 'is-expanded': expanded }">
       <a-tooltip :title="expanded ? '收起源码' : '展开源码'">
         <a-button type="text" size="small" class="code-preview__action" @click="handleToggle">
           <CodeOutlined />
@@ -59,26 +59,35 @@ export default {
 
 <style lang="less" scoped>
 .code-preview {
-  overflow: hidden;
   border: 0.5px solid var(--ant-colorBorderSecondary);
   border-radius: 10px;
-
   &__demo {
     padding: 20px;
   }
 
   &__code {
-    max-height: 520px;
     border-top: 0.5px solid var(--ant-colorBorderSecondary);
   }
-  pre { margin-bottom: 0; }
+  pre {
+    margin-bottom: 0;
+    :deep(.hljs) {
+      color: var(--ant-colorText);
+      background-color: var(--ant-colorBgLayout);
+    }
+  }
 
   &__toolbar {
     display: flex;
     justify-content: flex-end;
     padding: 4px 8px;
-    background: var(--ant-colorFillQuaternary);
+    background: var(--ant-colorBgContainer);
     border-top: 0.5px solid var(--ant-colorBorderSecondary);
+    border-radius: 0 0 10px 10px;
+    &.is-expanded {
+      position: sticky;
+      bottom: -15px;
+      z-index: 1;
+    }
   }
 
   &__action {

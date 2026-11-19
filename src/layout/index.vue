@@ -166,7 +166,7 @@ useWindowSize((width) => {
 })
 </script>
 <style scoped lang="less">
-::v-deep(.ant-layout-content.no-radius) {
+:deep(.ant-layout-content.no-radius) {
   background: var(--ant-colorBgContainer) !important;
 }
 .layout {

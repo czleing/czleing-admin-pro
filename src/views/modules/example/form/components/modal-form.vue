@@ -25,17 +25,11 @@ import { Modal } from 'ant-design-vue'
 import { EControlType } from '@/enum'
 import type { CrudFormExpose, CrudModalExpose, CrudRecord, FormConfig } from '@/components/crud/types'
 
-defineOptions({ name: 'ExampleModalForm' })
-
 /** 岗位接口返回项 */
 interface PostItem {
   postId: number
   postName: string
 }
-
-const emit = defineEmits<{
-  (e: 'submit', submitData: CrudRecord): void
-}>()
 
 const formConfig: FormConfig = {
   labelCol: { flex: '80px' },
@@ -96,7 +90,10 @@ const drawerForm = useTemplateRef<CrudFormExpose>('drawerForm')
 
 /** 提交表单，交由父组件统一提示 */
 function handleSubmit(submitData: CrudRecord): void {
-  emit('submit', submitData)
+  Modal.success({
+    title: '提交的数据',
+    content: JSON.stringify(submitData)
+  })
 }
 
 /** 居中弹窗打开表单 */

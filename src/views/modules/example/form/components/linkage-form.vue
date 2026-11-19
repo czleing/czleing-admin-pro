@@ -8,12 +8,7 @@ import cForm from '@/components/crud/components/c-form.vue'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 import { EControlType, EMenuType } from '@/enum'
 import type { CrudRecord, FormConfig } from '@/components/crud/types'
-
-defineOptions({ name: 'ExampleLinkageForm' })
-
-const emit = defineEmits<{
-  (e: 'submit', submitData: CrudRecord): void
-}>()
+import { Modal } from 'ant-design-vue'
 
 const formConfig = computed<FormConfig>(() => ({
   labelCol: { flex: '120px' },
@@ -88,6 +83,9 @@ const formConfig = computed<FormConfig>(() => ({
 
 /** 提交表单，交由父组件统一提示 */
 function handleSubmit(submitData: CrudRecord): void {
-  emit('submit', submitData)
+  Modal.success({
+    title: '提交的数据',
+    content: JSON.stringify(submitData)
+  })
 }
 </script>

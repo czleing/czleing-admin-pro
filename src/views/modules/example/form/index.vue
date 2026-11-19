@@ -8,27 +8,27 @@
 
     <h3>基础使用</h3>
     <CodePreview :code="codeBase">
-      <BaseForm @submit="handleSubmit" />
+      <BaseForm />
     </CodePreview>
 
     <h3 class="mt20">自由控制</h3>
     <CodePreview :code="codeFree">
-      <FreeForm @submit="handleSubmit" />
+      <FreeForm />
     </CodePreview>
 
     <h3 class="mt20">弹窗表单</h3>
     <CodePreview :code="codeModal">
-      <ModalForm @submit="handleSubmit" />
+      <ModalForm />
     </CodePreview>
 
     <h3 class="mt20">分组表单</h3>
     <CodePreview :code="codeGroup">
-      <GroupForm @submit="handleSubmit" />
+      <GroupForm />
     </CodePreview>
 
     <h3 class="mt20">联动表单</h3>
     <CodePreview :code="codeLinkage">
-      <LinkageForm @submit="handleSubmit" />
+      <LinkageForm />
     </CodePreview>
 
     <h3 class="mt20">更多用法请查看：demo-page.vue</h3>
@@ -36,8 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { Modal } from 'ant-design-vue'
-import type { CrudRecord } from '@/components/crud/types'
 import BaseForm from './components/base-form.vue'
 import CodePreview from './components/code-preview.vue'
 import FreeForm from './components/free-form.vue'
@@ -52,11 +50,4 @@ import codeLinkage from './components/linkage-form.vue?raw'
 
 defineOptions({ name: 'FormExample' })
 
-/** 各示例表单提交后的统一提示 */
-function handleSubmit(submitData: CrudRecord): void {
-  Modal.success({
-    title: '提交的数据',
-    content: JSON.stringify(submitData)
-  })
-}
 </script>

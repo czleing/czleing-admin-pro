@@ -69,9 +69,9 @@ export default {
 
   &__code {
     max-height: 520px;
-    padding: 10px 14px;
     border-top: 0.5px solid var(--ant-colorBorderSecondary);
   }
+  pre { margin-bottom: 0; }
 
   &__toolbar {
     display: flex;

@@ -4,22 +4,17 @@
 </template>
 
 <script setup lang="ts">
-import cForm from '@/components/crud/components/c-form.vue'
 import ProvinceCityAreaSelect from '@/components/common/ProvinceCityAreaSelect/index.vue'
-import { EControlType } from '@/enum'
+import cForm from '@/components/crud/components/c-form.vue'
 import type { CrudRecord, FormConfig } from '@/components/crud/types'
-
-defineOptions({ name: 'ExampleBaseForm' })
+import { EControlType } from '@/enum'
+import { Modal } from 'ant-design-vue'
 
 /** 岗位接口返回项 */
 interface PostItem {
   postId: number
   postName: string
 }
-
-const emit = defineEmits<{
-  (e: 'submit', submitData: CrudRecord): void
-}>()
 
 const formConfig: FormConfig = {
   autoReset: false,
@@ -76,6 +71,9 @@ const formConfig: FormConfig = {
 
 /** 提交表单，交由父组件统一提示 */
 function handleSubmit(submitData: CrudRecord): void {
-  emit('submit', submitData)
+  Modal.success({
+    title: '提交的数据',
+    content: JSON.stringify(submitData)
+  })
 }
 </script>

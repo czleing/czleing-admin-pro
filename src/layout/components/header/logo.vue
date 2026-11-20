@@ -21,7 +21,7 @@ const { websiteInfo: info } = settings
 const settingStore = useSettingStore()
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .header-logo {
   position: relative;
   &__img {

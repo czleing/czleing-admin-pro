@@ -243,5 +243,3 @@ function refreshCache () {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>

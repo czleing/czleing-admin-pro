@@ -179,5 +179,3 @@ function isArrArr(value: CascaderValue): value is (string | number)[][] {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>

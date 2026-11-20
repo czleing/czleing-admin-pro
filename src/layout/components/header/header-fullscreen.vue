@@ -17,5 +17,3 @@ const { isFullscreen, toggle } = useFullscreen()
 
 </script>
 
-<style lang="scss" scoped>
-</style>

@@ -76,7 +76,7 @@ function setValue(value: unknown): void {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .a-tag + .a-tag {
   margin-left: 10px;
 }

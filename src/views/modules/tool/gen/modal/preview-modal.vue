@@ -86,7 +86,7 @@ defineExpose({
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .scroll-container {
   height: calc(100vh - 164px);
   overflow: auto;

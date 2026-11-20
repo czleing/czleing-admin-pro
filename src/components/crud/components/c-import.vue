@@ -142,5 +142,3 @@ const emits = defineEmits<{
 defineExpose<CrudImportExpose>({ open })
 </script>
 
-<style lang="scss" scoped>
-</style>

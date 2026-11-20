@@ -18,7 +18,7 @@ const { token } = useThemeToken()
 
 </script>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .title {
   .text {
     padding-left: 18px;

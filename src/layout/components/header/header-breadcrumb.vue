@@ -21,5 +21,3 @@ const routes = computed(() => route.matched.filter(item => item.path !== '/').ma
 })))
 </script>
 
-<style lang="scss" scoped>
-</style>

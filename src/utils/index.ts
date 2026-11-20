@@ -328,7 +328,7 @@ export function getImageSrcData(text: Nullable<string>): string {
 export function getFullUrl(path: Nullable<string>): string {
   if (!path) return ''
   const resourceApi = import.meta.env.VITE_APP_RESOURCE_API
-  if (/http.*/.test(path) || path.indexOf(resourceApi) === 0) {
+  if (/http.*/.test(path) || path.indexOf(resourceApi) === 0 || /\/assets\/.*/.test(path)) {
     return path
   }
   return resourceApi + path

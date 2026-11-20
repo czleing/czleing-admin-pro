@@ -61,6 +61,7 @@
 </template>
 
 <script setup lang="ts">
+import avatar from '@/assets/images/avatar.jpeg'
 import CPage from '@/components/crud/c-page.vue'
 import type {
   AfterOpenModalContext,
@@ -105,7 +106,7 @@ type DemoRow = {
 }
 
 /** CPage 实例，可获得 refresh / clearSelect / selectedIds 等方法的类型提示 */
-// const cPage = ref<CrudPageExpose<DemoRow>>()
+const cPage = ref<CrudPageExpose<DemoRow>>()
 const { t } = useI18n()
 defineOptions({ name: 'DemoPage' })
 
@@ -999,8 +1000,8 @@ function getMockData (searchParams: SearchParams): ListResult<DemoRow> {
   console.log('searchParams', searchParams)
   return {
     list: [
-      { id: 1, nickName: '张静', age: '24', avatar: 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/doubao_avatar_new.png', image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 12345, withUnit: 33, name2: '对对对', dict: '2', status: 1, diy: 'd', color: 'red', isEnabled: true, phonenumber: '13112341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 2, nickName: '顾云绡', age: '22', avatar: 'https://lf-flow-web-cdn.doubao.com/obj/flow-doubao/doubao/web/doubao_avatar_new.png', image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 1357.66, withUnit: 22, name2: '是是是', dict: '2', status: 2, diy: 'u', color: 'green', isEnabled: false, phonenumber: '15512341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 1, nickName: '张静', age: '24', avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 12345, withUnit: 33, name2: '对对对', dict: '2', status: 1, diy: 'd', color: 'red', isEnabled: true, phonenumber: '13112341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 2, nickName: '顾云绡', age: '22', avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 1357.66, withUnit: 22, name2: '是是是', dict: '2', status: 2, diy: 'u', color: 'green', isEnabled: false, phonenumber: '15512341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
       { id: 3, nickName: '温桃纾', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
       { id: 4, nickName: '楚晚棠', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
       { id: 5, nickName: '沈知绯', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
@@ -1065,6 +1066,3 @@ function transformDetail (detail: CrudRecord, { isEdit, isView }: TransformDetai
   return detail
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

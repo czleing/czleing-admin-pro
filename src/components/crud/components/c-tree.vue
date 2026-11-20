@@ -108,5 +108,3 @@ const emits = defineEmits<{
 }>()
 </script>
 
-<style lang="scss" scoped>
-</style>

@@ -278,6 +278,8 @@ const toolsConfig = computed<ToolsConfig<UserRow>>(() => ({
 | 属性 | 类型 | 说明 |
 |---|---|---|
 | name | String | 操作按钮文本 |
+| class | String | 操作按钮样式类名 |
+| icon | String | 操作按钮图标(@/components/global/a-icon 中列举的图标名称) |
 | callback | String\|Function | 点击回调，'edit'\|'detail'\|'delete'\|'toggle' 或 自定义函数 |
 | permission | String | 权限标识，如：'system:user:add' |
 | confirm | Boolean | 该操作是否需要确认弹窗 |
@@ -336,12 +338,12 @@ const toolsConfig = computed<ToolsConfig<UserRow>>(() => ({
 | type | String | 控件类型，EControlType 指定的类型或全局组件名 | EControlType.eInput |
 | required | Boolean \| formData => Boolean | 是否必填 | false |
 | hidden | Boolean \| formData => Boolean | 是否隐藏该字段，数据仍在表单中 | false |
-| none | Boolean\ | formData => Boolean | 是否不需要该字段，数据不在表单中 | false |
+| none | Boolean \| formData => Boolean | 是否不需要该字段，数据不在表单中 | false |
 | disabled | Boolean \| formData => Boolean | 是否禁用 | false |
 | singleLine | Boolean | 是否单独占一行 | false |
 | col | Object | 表单项(包含文本和控件)栅格设置，固定宽度可以设置为 { flex: '280px' }，参照 a-col 属性 | 默认根据列数计算 |
-| labelCol | Object | 表单项文本部分栅格设置，参照 a-col，{ flex: '120px' }、{ span: 6 } | - |
-| wrapperCol | Object | 表单项控件部分栅格设置，参照 a-col，{ flex: '1 1 0' }、{ span: 18 } | - |
+| labelCol | Object | 表单项文本部分栅格设置，参照 a-col，如：{ flex: '120px' }、{ span: 6 } | - |
+| wrapperCol | Object | 表单项控件部分栅格设置，参照 a-col，如：{ flex: '1 1 0' }、{ span: 18 } | - |
 | defaultValue | any | 初始值 | - |
 | rules | Object \| Array \| formData => { return {} \|\| [] } | 校验规则，与 \<a-form-item> rules 一致 | - |
 | tooltip | String \| Function | 额外浮窗提示 | - |
@@ -430,11 +432,27 @@ fields: [
 自定义组件特有属性（type: EControlType.eCustom）：
 | 属性 | 说明 |
 |---|---|
-| props.component | 可传 render 函数、全局组件名 或 单文件组件对象 |
+| props.component | 可vue函数组件、VNode、全局组件名 或 单文件组件对象 |
 | props.modelProps | 自定义 v-model 字段与事件映射，默认 'value' |
 | props.modelEvent | 自定义 v-model 字段与事件映射，默认 'onUpdate:value' |
 | props.modelData | 自定义数据源字段名，默认 'dataSource' |
 | props.renderNeedDataSource | 是否需要有数据源数据才渲染 |
+
+示例：
+```javascript
+{
+  label: '自定义组件',
+  fieldName: 'customField',
+  type: EControlType.eCustom,
+  props: {
+    component: 'a-tree',
+    modelProps: 'value',
+    modelEvent: 'onUpdate:value',
+    modelData: 'treeData',
+    renderNeedDataSource: true
+  }
+}
+```
 
 ---
 
@@ -454,8 +472,9 @@ fields: [
 
 ## 八、建议与注意事项（精简）
 - remote 配置常用于动态数据源，支持 converter 转换返回结果为 {id,name} 格式。
-- 设置字段 defaultValue 会在页面初始化时触发一次查询（表单会自动提交）。
+- filterConfig 字段设置默认值 defaultValue 会在页面初始化时触发一次查询（表单会自动提交，同时表格组件取消默认自动查询）。
 - formConfig 可为函数，以便根据 isAdd/isEdit/isView/detail 返回不同字段配置。
+- Field.props 可为函数，以便根据上下文返回不同属性。
 - 动态表格校验仅支持在列内使用 validator 或 required 标识。
 - 操作列 callback 可返回 async 函数并在执行后调用 cPage.value.refresh() 刷新列表。
 

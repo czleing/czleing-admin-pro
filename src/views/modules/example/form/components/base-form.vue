@@ -69,7 +69,7 @@ const formConfig: FormConfig = {
   ]
 }
 
-/** 提交表单，交由父组件统一提示 */
+/** 提交表单 */
 function handleSubmit(submitData: CrudRecord): void {
   Modal.success({
     title: '提交的数据',

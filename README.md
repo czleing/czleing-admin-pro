@@ -10,7 +10,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + antdv-next + axios + vue-router + pnpm
 
 个人利用业余时间使用最新技术栈封装的一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，精简、优雅，没有个人的包名、前缀、广告，拿来免改，干净整洁，易懂易用易扩展，将常用的功能进行了灵活的封装，不再需要编写繁琐的表单、控件、校验、联动逻辑、获取数据逻辑、表单回填逻辑、数据转换逻辑、列表、弹窗等重复性代码，通过简单配置即可使用，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，让开发尽量简单
 
-> 分支 `ant-design-vue` 由于 UI 库 ant-design-vue 已停止维护，不再更新（ant-design-vue 目前运行比较稳定）
+> 分支 `ant-design-vue` 由于 UI 库 ant-design-vue 已停止维护，停止维护期间分支不再更新（ant-design-vue 目前运行比较稳定）
 
 > 分支 `antdv-next` 已全量迁移至 [`antdv-next`](https://www.antdv-next.com/)，图标库同步切换为 `@antdv-next/icons`（目前和 antdv-next 还存在一些水土不服的bug）。
 

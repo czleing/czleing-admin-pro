@@ -34,8 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import { ImportOutlined, InboxOutlined } from '@ant-design/icons-vue'
-import type { UploadFile } from 'ant-design-vue'
+import { ImportOutlined, InboxOutlined } from '@antdv-next/icons'
+import type { UploadFile } from 'antdv-next'
 import { h } from 'vue'
 import axiosService from '@/api/index'
 import { loadingRequest } from '@/utils/index'

@@ -8,7 +8,7 @@
       :rowKey="primaryKey"
       :row-class-name="`striped-row ${config.props?.rowClick ? 'pointer' : ''}`"
       :row-selection="currentRowSelection"
-      :custom-row="customRow"
+      :on-row="customRow"
       :showSorterTooltip="config.props?.showSorterTooltip ?? false"
       v-bind="{ ...defaultProps, ...config.props }"
       @resizeColumn="resizeColumn"
@@ -16,12 +16,13 @@
     >
       <template #headerCell="{ column }">
         <template v-if="asColumn(column).tooltip">
-          <span>
+          <div class="flex-x x-inline x-middle gap5">
             <a-tooltip :title="asColumn(column).tooltip">
-              <QuestionCircleOutlined />
+              <QuestionCircleOutlined class="relative" style="z-index: 1;" @click.stop />
             </a-tooltip>
-            {{ column.title }}
-          </span>
+            <component v-if="column.title.__v_isVNode" :is="column.title" />
+            <span v-else>{{ column.title }}</span>
+          </div>
         </template>
       </template>
       <template #bodyCell="{ text, record, index, column }">
@@ -53,15 +54,15 @@
         </template>
         <!-- 图片转换 -->
         <template v-else-if="asColumn(column).isImage && text">
-          <a-image :src="getImageSrcData(text)" :height="30" />
+          <a-image :src="getImageSrcData(text)" :height="30" :preview="{ mask: { blur: true } }" />
         </template>
         <!-- 类型转换 -->
         <template v-else-if="asColumn(column).type">
           <template v-if="asColumn(column).type === 'isEnabled'">
-            <a-tag :color="text ? 'success' : 'error'" :bordered="false">{{ $t(EIsEnabled._of(text ? 1 : 0)) }}</a-tag>
+            <a-tag :color="text ? 'success' : 'error'" variant="filled">{{ $t(EIsEnabled._of(text ? 1 : 0)) }}</a-tag>
           </template>
           <template v-if="asColumn(column).type === 'Boolean'">
-            <a-tag :color="text ? 'success' : 'error'" :bordered="false">{{ EYesNo._of(text ? 1 : 0) }}</a-tag>
+            <a-tag :color="text ? 'success' : 'error'" variant="filled">{{ EYesNo._of(text ? 1 : 0) }}</a-tag>
           </template>
         </template>
         <!-- 带单位、带默认值、字符串脱敏 -->
@@ -79,12 +80,13 @@
       <template v-if="useTotal" #summary>
         <a-table-summary fixed>
           <a-table-summary-row>
-            <a-table-summary-cell>
+            <a-table-summary-cell :index="0">
               <div class="bold nowrap">{{ $t('crud.count') }}</div>
             </a-table-summary-cell>
             <a-table-summary-cell
-              v-for="(column, index) in currColumns"
+              v-for="(column, index) in currColumns.filter((col) => !col.hidden)"
               :key="getColumnKey(column)"
+              :index="index + 1"
               :col-span="index === 0 && noSelect ? 0 : 1"
               class="tc"
             >
@@ -101,9 +103,9 @@
 </template>
 
 <script setup lang="ts" generic="Row extends CrudRecord = CrudRecord">
-import { QuestionCircleOutlined } from '@ant-design/icons-vue'
-import type { TableColumnType, TablePaginationConfig, TableProps } from 'ant-design-vue'
-import type { TableRowSelection, SorterResult } from 'ant-design-vue/es/table/interface'
+import { QuestionCircleOutlined } from '@antdv-next/icons'
+import type { TableColumnType, TablePaginationConfig, TableProps } from 'antdv-next'
+import type { TableRowSelection, SorterResult } from 'antdv-next/dist/table/interface'
 import dayjs from 'dayjs'
 import CTableAction from './c-table-action.vue'
 import { EIsEnabled, EYesNo } from '@/enum'
@@ -180,9 +182,11 @@ const defaultProps = computed<Pick<TableProps, 'size' | 'bordered'>>(() => ({
   bordered: useTableBorder.value === 0 ? settingStore.useTableBorder : useTableBorder.value === 1
 }))
 const currColumns = computed<CrudTableColumn<Row>[]>(() =>
-  props.config.columns
-    .filter((column) => column.action || checkedFieldNames.value.includes(getColumnKey(column)))
-    .map((column) => ({ ...column, align: column.align ?? 'center' }))
+  props.config.columns.map((column) => ({
+    ...column,
+    hidden: !checkedFieldNames.value.includes(getColumnKey(column)),
+    align: column.align ?? 'center'
+  }))
 )
 // 表格行选择器定义
 const currentRowSelection = computed<TableRowSelection<Row> | undefined>(() => {

@@ -23,7 +23,7 @@ export const EUserType = init({
 export const EControlType = init({
   eInput: Enum('a-input', '文本框', { htmlType: 'eInput', defaultProps: { maxlength: 50 } }),
   eHidden: Enum('a-hidden', '隐藏域', { htmlType: 'eHidden' }),
-  eAutoComplete: Enum('a-auto-complete', '自动补全文本框', { htmlType: 'eAutoComplete', defaultProps: { dropdownMatchSelectWidth: false } }),
+  eAutoComplete: Enum('a-auto-complete', '自动补全文本框', { htmlType: 'eAutoComplete', defaultProps: { popupMatchSelectWidth: false } }),
   eNumber: Enum('a-input-number', '数字框', { htmlType: 'eNumber', defaultProps: { style: 'width: 100%;' } }),
   eNumberRange: Enum('a-input-number-range', '数字范围框', { htmlType: 'eNumberRange', defaultProps: { style: 'width: 100%;' } }),
   eTextarea: Enum('a-textarea', '文本域', { htmlType: 'eTextarea', defaultProps: { maxlength: 200, showCount: true, rows: 4 } }),
@@ -36,7 +36,7 @@ export const EControlType = init({
   eFileUpload: Enum('FileUpload', '文件上传', { htmlType: 'eFileUpload' }),
   eImageUpload: Enum('ImageUpload', '图片上传', { htmlType: 'eImageUpload' }),
   eEditor: Enum('WangEditor', '富文本', { htmlType: 'eEditor' }),
-  eTreeSelect: Enum('a-tree-select', '树形选择', { htmlType: 'eTreeSelect', defaultProps: { treeDefaultExpandAll: true, dropdownMatchSelectWidth: false } }),
+  eTreeSelect: Enum('a-tree-select', '树形选择', { htmlType: 'eTreeSelect', defaultProps: { treeDefaultExpandAll: true, popupMatchSelectWidth: false } }),
   eUserSelect: Enum('UserSelect', '用户选择', { htmlType: 'eUserSelect' }),
   eTable: Enum('DynamicTable', '动态表格', { htmlType: 'eTable', defaultProps: { bordered: true, size: 'small' } }),
   eCustom: Enum('Custom', '自定义', { htmlType: 'eCustom' }),

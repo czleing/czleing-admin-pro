@@ -1,7 +1,7 @@
 /**
  * CRUD 新增/修改/详情弹窗（c-modal）配置类型
  */
-import type { DrawerProps, ModalProps } from 'ant-design-vue'
+import type { DrawerProps, ModalProps } from 'antdv-next'
 import type { CrudFormData, CrudRecord, MaybeFn } from './common'
 import type { FormConfig } from './form'
 
@@ -47,8 +47,15 @@ export interface NormalizedModalButtonConfig {
   confirmAlign: 'left' | 'center' | 'right'
 }
 
-/** 弹窗透传属性，兼容 a-modal 与 a-drawer */
-export type ModalWrapperProps = Partial<ModalProps> & Partial<DrawerProps>
+/** 弹窗透传属性，兼容 a-modal 与 a-drawer（对 CModal 同名属性做类型收窄，保持原有字符串用法） */
+export type ModalWrapperProps = Omit<
+  Partial<ModalProps> & Partial<DrawerProps>,
+  'title' | 'cancelText' | 'okText'
+> & {
+  title?: string
+  cancelText?: string
+  okText?: string
+}
 
 /** 弹窗配置 */
 export interface ModalConfig {

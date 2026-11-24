@@ -1,7 +1,7 @@
 /**
  * CRUD 内部组件（c-component / c-form / c-import）的公开类型
  */
-import type { ColProps } from 'ant-design-vue'
+import type { ColProps } from 'antdv-next'
 import type { Ref } from 'vue'
 import type { CrudFormData, CrudRecord } from './common'
 import type { CrudControlProps, FormRule } from './form'

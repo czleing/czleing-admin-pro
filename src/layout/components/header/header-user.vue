@@ -11,7 +11,7 @@
         </span>
         <CaretDownOutlined />
       </a-space>
-      <template #overlay>
+      <template #popupRender>
         <a-menu>
           <a-menu-item @click="toPersonalCenter">
             <span>
@@ -34,7 +34,7 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth-store'
-import { CaretDownOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
+import { CaretDownOutlined, LogoutOutlined, UserOutlined } from '@antdv-next/icons'
 import DefaultAvatar from '@/assets/images/avatar.jpeg'
 import { getFullUrl } from '@/utils/index'
 

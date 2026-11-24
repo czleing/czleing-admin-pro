@@ -9,7 +9,7 @@
     </div>
     <div class="bold mt20">语音转文字</div>
     <div class="mt10 flex-x gap10">
-      <a-input-group compact>
+      <a-space-compact>
         <a-input v-model:value="text" placeholder="请输入或录入" style="width: auto;" />
         <a-button type="primary" :disabled="!isSupport" @click="start">
           <template v-if="isSupport">
@@ -25,7 +25,7 @@
             </a-popover>
           </template>
         </a-button>
-      </a-input-group>
+      </a-space-compact>
     </div>
     <div class="bold mt20">录音</div>
     <div class="mt">
@@ -39,7 +39,7 @@
 import useVoiceInput from '@/hooks/useVoiceInput'
 import useSpeak from '@/hooks/useSpeak'
 import useRecordAudio from '@/hooks/useRecordAudio'
-import { AudioFilled, ExclamationCircleOutlined, PauseCircleFilled } from '@ant-design/icons-vue'
+import { AudioFilled, ExclamationCircleOutlined, PauseCircleFilled } from '@antdv-next/icons'
 
 /** 文字转语音 */
 const { speak, isPlaying } = useSpeak()

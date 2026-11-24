@@ -3,7 +3,7 @@
  *
  * 设计说明：
  * 1. 字段配置按控件类型拆分为独立接口，通过 `type` 字段做可辨识联合（Discriminated Union），
- *    编写配置时能获得对应 ant-design-vue 组件的属性提示；
+ *    编写配置时能获得对应 antdv-next 组件的属性提示；
  * 2. `props` 支持对象或 `(formData) => object` 的函数形式；
  * 3. 框架内部会把动态属性解析为静态值，使用 `NormalizedFormField` 承载解析后的结构。
  */
@@ -19,17 +19,17 @@ import type {
   SwitchProps,
   TextAreaProps,
   TreeSelectProps,
-  UploadProps
-} from 'ant-design-vue'
-import type { Rule } from 'ant-design-vue/es/form/interface'
+  UploadProps,
+  Rule
+} from 'antdv-next'
 import type { Component, VNodeChild } from 'vue'
 import type { Dayjs } from 'dayjs'
 import type { CrudFormData, CrudRecord, FieldNames, MaybeFn, OptionItem } from './common'
 import type { CrudRequestMethod } from './api'
 import { EControlType } from '@/enum'
 
-/** 表单校验规则，与 a-form-item 的 rules 一致 */
-export type FormRule = Rule
+/** 表单校验规则，与 a-form-item 的 rules 一致（排除函数式 RuleRender，保证业务侧 rules 函数参数可正确推导） */
+export type FormRule = Exclude<Rule, Function>
 
 /** 远程数据源配置 */
 export interface RemoteConfig {

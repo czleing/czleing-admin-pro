@@ -55,7 +55,7 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth-store'
 import { useCacheStore } from '@/stores/cache-store'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 
 
 const loading = ref(false)

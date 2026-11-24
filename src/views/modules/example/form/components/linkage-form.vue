@@ -8,7 +8,7 @@ import cForm from '@/components/crud/components/c-form.vue'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 import { EControlType, EMenuType } from '@/enum'
 import type { CrudRecord, FormConfig } from '@/components/crud/types'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 
 const formConfig = computed<FormConfig>(() => ({
   labelCol: { flex: '120px' },

@@ -7,21 +7,20 @@ import {
   Checkbox,
   CheckboxGroup,
   DatePicker,
-  FormItemRest,
+  DateRangePicker,
   Input,
-  InputGroup,
   InputNumber,
   InputPassword,
   Radio,
   RadioGroup,
-  RangePicker,
   Select,
+  SpaceCompact,
   Switch,
   Tag,
-  Textarea,
+  TextArea,
   Tree,
   TreeSelect,
-} from 'ant-design-vue'
+} from 'antdv-next'
 import type { App, Component } from 'vue'
 import { AIcon } from './global/a-icon'
 
@@ -30,12 +29,12 @@ const componentModules = import.meta.glob<{ default: Component }>('./global/**/*
 export default function install(app: App): void {
   const componentNames: string[] = []
   const isDebug = import.meta.env.VITE_APP_DEBUG_MODE === 'true'
-  // 注册全局 ant-design 组件，用于通过 h(resolvecomponent('a-xxx')) 创建
+  // 注册全局 antdv-next 组件，用于通过 h(resolvecomponent('a-xxx')) 创建
   const antComponents: Record<string, Component> = {
     'a-input': Input,
-    'a-textarea': Textarea,
+    'a-textarea': TextArea,
     'a-select': Select,
-    'a-input-group': InputGroup,
+    'a-space-compact': SpaceCompact,
     'a-input-number': InputNumber,
     'a-input-password': InputPassword,
     'a-button': Button,
@@ -47,8 +46,7 @@ export default function install(app: App): void {
     'a-auto-complete': AutoComplete,
     'a-tree-select': TreeSelect,
     'a-date-picker': DatePicker,
-    'a-range-picker': RangePicker,
-    'a-form-item-rest': FormItemRest,
+    'a-range-picker': DateRangePicker,
     'a-tag': Tag,
     'a-tree': Tree,
   }

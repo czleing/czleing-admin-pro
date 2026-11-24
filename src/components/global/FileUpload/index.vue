@@ -27,11 +27,11 @@
 </template>
 
 <script setup lang="ts">
-import { UploadOutlined} from '@ant-design/icons-vue'
+import { UploadOutlined} from '@antdv-next/icons'
 import { useAuthStore } from '@/stores/auth-store'
 import { byteFormat, getFullUrl } from '@/utils/index'
-import { message, Upload } from 'ant-design-vue'
-import type { UploadFile, UploadProps } from 'ant-design-vue'
+import { message, Upload } from 'antdv-next'
+import type { UploadFile, UploadProps } from 'antdv-next'
 // import axios from '@/api/index'
 
 /** 上传文件项，额外保存文件路径 */

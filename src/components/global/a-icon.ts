@@ -1,5 +1,5 @@
 /**
- * ant-design-vue 4.x 图标组件 a-icon 实现
+ * antdv-next 图标组件 a-icon 实现
  * <a-icon type="PlusOutlined" />
  */
 import { createVNode } from 'vue'
@@ -55,7 +55,7 @@ import {
   PhoneFilled, PictureFilled, PrinterFilled, ProfileFilled, PropertySafetyFilled, CheckCircleOutlined,
   SafetyCertificateFilled, SettingFilled, ShopFilled, ShoppingFilled, SignalFilled, SkinFilled,
   SoundFilled, StarFilled, TagFilled, TagsFilled, WalletFilled, DeleteOutlined, StopOutlined,
-} from '@ant-design/icons-vue'
+} from '@antdv-next/icons'
 
 /** 图标名称与图标组件的映射表 */
 export const icons: Record<string, Component> = {

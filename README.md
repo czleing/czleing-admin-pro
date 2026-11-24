@@ -6,9 +6,13 @@
 
 ## 简介
 ### 技术栈
-Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
+Vue3.5 + TypeScript + Vite8 + Pinia3 + antdv-next + axios + vue-router + pnpm
 
-该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，框架代码、公共库已使用 TS 重构，业务代码不强制，可以使用 JS 或 TS，适合企业中多人团队合作开发及长期维护。
+个人利用业余时间使用最新技术栈封装的一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，精简、优雅，没有个人的包名、前缀、广告，拿来免改，干净整洁，易懂易用易扩展，将常用的功能进行了灵活的封装，不再需要编写繁琐的表单、控件、校验、联动逻辑、获取数据逻辑、表单回填逻辑、数据转换逻辑、列表、弹窗等重复性代码，通过简单配置即可使用，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，让开发尽量简单
+
+> 分支 `ant-design-vue` 由于 UI 库 ant-design-vue 已停止维护，不再更新（ant-design-vue 目前运行比较稳定）
+
+> 分支 `master` 已全量迁移至 [`antdv-next`](https://www.antdv-next.com/)，图标库同步切换为 `@antdv-next/icons`（antdv-next 还存在一些bug）。
 
 ## 相关项目
 | 项目 | 说明 | 地址 |
@@ -25,11 +29,11 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 - Vue 3.5+ 开发框架
 - Vite 8+ 打包构建工具
 - [pinia](https://pinia.web3doc.top/) 全局状态管理
-- ant-design-vue 4+ UI库，ant-design-vue 最新版，体验与颜值并存
+- [antdv-next](https://www.antdv-next.com/) UI库，ant-design-vue 的官方继任版本，体验与颜值并存
 - vue-router 路由管理
 - [VueUse](https://vueuse.org/) 集成了很多组合式API的库
 - axios 服务请求
-- dayjs 日期处理(moment的简化版, ant-design-vue 4 默认的日期处理工具)
+- dayjs 日期处理(moment的简化版, antdv-next 默认的日期处理工具)
 - pinia-plugin-persistedstate pinia持久化插件，
 - unplugin-auto-import 常用API免导入插件，如使用 ref, reactive 不在需要写 import { ref, reactive } from 'vue'
 - eslint 代码规范检查工具

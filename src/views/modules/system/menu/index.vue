@@ -58,9 +58,9 @@ const tableConfig = computed(() => ({
       align: 'left',
       slot: 'table_menuName'
     },
-    { title: '权限标识', dataIndex: 'permission', customRender: ({ value }) => value || '-' },
-    { title: '路由地址', width: 140, dataIndex: 'path', customRender: ({ value }) => value || '-' },
-    { title: '组件地址', dataIndex: 'component', customRender: ({ value }) => value || '-' },
+    { title: '权限标识', dataIndex: 'permission', render: value => value || '-' },
+    { title: '路由地址', width: 140, dataIndex: 'path', render: value => value || '-' },
+    { title: '组件地址', dataIndex: 'component', render: value => value || '-' },
     { title: '是否启用', dataIndex: 'isEnabled', width: 90, type: 'isEnabled' },
     { title: '更新时间', width: 140, dataIndex: 'updateTime', isDateTime: true },
     {

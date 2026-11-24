@@ -16,7 +16,7 @@
   import CPage from '@/components/crud/c-page.vue'
   import { EControlType } from '@/enum/index'
   import axios from '@/api'
-  import { Modal, message } from 'ant-design-vue'
+  import { Modal, message } from 'antdv-next'
   import { EOperateType } from './enum'
   import dayjs from 'dayjs'
 

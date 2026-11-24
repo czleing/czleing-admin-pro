@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TreeProps } from 'ant-design-vue'
+import type { TreeProps } from 'antdv-next'
 import { isNotEmpty } from '@/utils/index'
 import { crudRequest } from '../utils/request'
 import type { CrudRecord, TreeConfig } from '../types'

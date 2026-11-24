@@ -1,105 +1,103 @@
 <!-- 动态表格，用于表单中动态添加多条数据，或动态展示多条数据 -->
 <template>
   <div class="dynamic-table">
-    <a-form-item-rest>
-      <a-table
-        :columns="currColumns"
-        :data-source="modelValue"
-        :pagination="false"
-        v-bind="$attrs"
-        :rowKey="primaryKey"
-      >
-        <template #headerCell="{ column }">
-          <template v-if="column.title">
-            <span>
-              <a-tooltip v-if="getCol(column).tooltip" :title="getCol(column).tooltip">
-                <QuestionCircleOutlined />
-              </a-tooltip>
-              {{ column.title }}
-            </span>
-          </template>
-        </template>
-        <template #bodyCell="{ text, record, index, column }">
-          <template v-if="getCol(column).field">
-            <div class="flex-x x-middle gap2">
-              <span v-if="getFnValue(getCol(column).required, record, modelValue)" class="text-danger">*</span>
-              <CComponent
-                v-model:value="record[getColDataIndex(column)]"
-                :field="getFinalField(getCol(column).field, record)"
-                :is-view="getCol(column).isView || disabled"
-                :cellInfo="{ text, record, index, column }"
-                class="flex-auto"
-                @update:value="(val: unknown) => handleChange(val, record, getCol(column).field)"
-              />
-            </div>
-          </template>
-          <!-- 操作列 -->
-          <template v-else-if="useDelete && modelValue.length > minCount && getCol(column).type === 'action' && !disabled">
-            <a-popconfirm
-              placement="left"
-              title="确认要删除该行吗？"
-              @confirm="deleteHandle(index)"
-            >
-              <span class="text-danger pointer">删除</span>
-            </a-popconfirm>
-          </template>
-        </template>
-      </a-table>
-      <div v-if="!disabled && modelValue.length <= maxCount" class="add-row tc py8 em09 flex-x-center">
-        <a class="" href="javascript:;" @click="addHandle">
-          <PlusCircleOutlined />
-          新增一行
-        </a>
-        <!-- 文本OCR -->
-        <template v-if="useTextOCR">
-          <!-- <span class="text-gray2 mx20">|</span> -->
-          <a-divider type="vertical" />
-          <span class="flex-x x-middle gap10">
-            <a-popover v-model:open="textOcrOpen">
-              <template #content>
-                <div style="width:500px;">
-                  <div class="bold">文本识别：</div>
-                  <a-textarea v-model:value="textContent" :rows="8" :placeholder="`请输入内容，如：\n1,2,3\n4,5,6\n`" class="mt10" />
-                  <div class="mt10 flex-x-between">
-                    <div>* 每行不同列之间用 <a-tag>|</a-tag><a-tag>,</a-tag><a-tag>，</a-tag> 或空格、制表符间隔，回车结束</div>
-                    <a-button type="primary" :loading="textOcring" @click="textOcrHandle">识别</a-button>
-                  </div>
-                </div>
-              </template>
-              <a href="javascript:;">
-                <FormOutlined /> {{ textOcring ? '识别中...' : '从文本中识别' }}
-              </a>
-            </a-popover>
+    <a-table
+      :columns="currColumns"
+      :data-source="modelValue"
+      :pagination="false"
+      v-bind="$attrs"
+      :rowKey="primaryKey"
+    >
+      <template #headerCell="{ column }">
+        <template v-if="column.title">
+          <span>
+            <a-tooltip v-if="getCol(column).tooltip" :title="getCol(column).tooltip">
+              <QuestionCircleOutlined />
+            </a-tooltip>
+            {{ column.title }}
           </span>
         </template>
-        <!-- 清空 -->
-        <template v-if="useClear && value.length > 0">
+      </template>
+      <template #bodyCell="{ text, record, index, column }">
+        <template v-if="getCol(column).field">
+          <div class="flex-x x-middle gap2">
+            <span v-if="getFnValue(getCol(column).required, record, modelValue)" class="text-danger">*</span>
+            <CComponent
+              v-model:value="record[getColDataIndex(column)]"
+              :field="getFinalField(getCol(column).field, record)"
+              :is-view="getCol(column).isView || disabled"
+              :cellInfo="{ text, record, index, column }"
+              class="flex-auto"
+              @update:value="(val: unknown) => handleChange(val, record, getCol(column).field)"
+            />
+          </div>
+        </template>
+        <!-- 操作列 -->
+        <template v-else-if="useDelete && modelValue.length > minCount && getCol(column).type === 'action' && !disabled">
           <a-popconfirm
-            title="确认要清空所有数据？"
-            @confirm="clearHandle"
+            placement="left"
+            title="确认要删除该行吗？"
+            @confirm="deleteHandle(index)"
           >
-            <a-divider type="vertical" />
-            <span class="text-danger pointer"><ClearOutlined /> 清空</span>
+            <span class="text-danger pointer">删除</span>
           </a-popconfirm>
         </template>
-      </div>
-    </a-form-item-rest>
+      </template>
+    </a-table>
+    <div v-if="!disabled && modelValue.length <= maxCount" class="add-row tc py8 em09 flex-x-center">
+      <a class="" href="javascript:;" @click="addHandle">
+        <PlusCircleOutlined />
+        新增一行
+      </a>
+      <!-- 文本OCR -->
+      <template v-if="useTextOCR">
+        <!-- <span class="text-gray2 mx20">|</span> -->
+        <a-divider orientation="vertical" />
+        <span class="flex-x x-middle gap10">
+          <a-popover v-model:open="textOcrOpen">
+            <template #content>
+              <div style="width:500px;">
+                <div class="bold">文本识别：</div>
+                <a-textarea v-model:value="textContent" :rows="8" :placeholder="`请输入内容，如：\n1,2,3\n4,5,6\n`" class="mt10" />
+                <div class="mt10 flex-x-between">
+                  <div>* 每行不同列之间用 <a-tag>|</a-tag><a-tag>,</a-tag><a-tag>，</a-tag> 或空格、制表符间隔，回车结束</div>
+                  <a-button type="primary" :loading="textOcring" @click="textOcrHandle">识别</a-button>
+                </div>
+              </div>
+            </template>
+            <a href="javascript:;">
+              <FormOutlined /> {{ textOcring ? '识别中...' : '从文本中识别' }}
+            </a>
+          </a-popover>
+        </span>
+      </template>
+      <!-- 清空 -->
+      <template v-if="useClear && value.length > 0">
+        <a-popconfirm
+          title="确认要清空所有数据？"
+          @confirm="clearHandle"
+        >
+          <a-divider orientation="vertical" />
+          <span class="text-danger pointer"><ClearOutlined /> 清空</span>
+        </a-popconfirm>
+      </template>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { QuestionCircleOutlined, PlusCircleOutlined, ClearOutlined, FormOutlined } from '@ant-design/icons-vue'
+import { QuestionCircleOutlined, PlusCircleOutlined, ClearOutlined, FormOutlined } from '@antdv-next/icons'
 import CComponent from '@/components/crud/components/c-component'
 import type { CrudComponentField, CrudControlProps, MaybeFn } from '@/components/crud/types'
 import { getFnValue } from '@/utils'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 import type { PropType } from 'vue'
-import type { ColumnType, ColumnsType } from 'ant-design-vue/es/table/interface'
+import type { ColumnType, ColumnsType } from 'antdv-next/dist/table/interface'
 
 /** 表格行数据 */
 type TableRow = Record<string, unknown>
 
-/** 扩展列配置，在 ant-design-vue 列配置基础上增加自定义属性 */
+/** 扩展列配置，在 antdv-next 列配置基础上增加自定义属性 */
 interface DynamicColumn {
   title?: string
   tooltip?: string
@@ -134,7 +132,7 @@ const props = defineProps({
   // 最大条数限制
   maxCount: { type: Number, default: 10 },
   /**
-   * 列信息，对象数组，在 ant-design-vue 的 columns 基础上增加了一些属性配置项(以下带++标识的为新增配置)
+   * 列信息，对象数组，在 antdv-next 的 columns 基础上增加了一些属性配置项(以下带++标识的为新增配置)
    * title: 表头名称
    * tooltip: 表头提示说明（++）
    * dataIndex: 该列对应字段名
@@ -227,7 +225,7 @@ function setData(val: unknown[]) {
 function getFinalField (field: DynamicColumn['field'], record: TableRow): CrudComponentField {
   // 模板中已通过 v-if 保证 field 存在，此处仅做类型收敛
   const target = field as CrudComponentField
-  const fieldProps = (getFnValue(target.props, record, modelValue.value) ?? {}) as CrudControlProps
+  const fieldProps = (getFnValue({ ...target.props }, record, modelValue.value) ?? {}) as CrudControlProps
   const disabled = getFnValue(
     target.disabled as MaybeFn<boolean, [TableRow, TableRow[]]>,
     record,

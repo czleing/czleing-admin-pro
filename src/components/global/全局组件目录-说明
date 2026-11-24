@@ -7,4 +7,4 @@
 2. /global/组件名.vue
 
 v-model规则
-为了与 ant-design-vue 的组件使用方式一致，使用 v-model:value   update:value 模式实现双向绑定
+为了与 antdv-next 的组件使用方式一致，使用 v-model:value   update:value 模式实现双向绑定

@@ -68,7 +68,7 @@
       <!-- 筛选列 -->
       <a-dropdown placement="bottomLeft">
         <a-button title="列设置" :icon="h(FilterOutlined)" class="em09" />
-        <template #overlay>
+        <template #popupRender>
           <a-checkbox-group :value="checkedFieldNames" @change="onFieldsFilterChange">
             <div class="c-tools__overlay">
               <div class="border-bottom flex-x-center pt5 pb10 mb10" @click.stop>
@@ -95,9 +95,9 @@
 </template>
 
 <script setup lang="ts" generic="Row extends CrudRecord = CrudRecord">
-import { PlusOutlined, DeleteOutlined, ExportOutlined, RollbackOutlined, SyncOutlined, FilterOutlined, SearchOutlined, HolderOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined, DeleteOutlined, ExportOutlined, RollbackOutlined, SyncOutlined, FilterOutlined, SearchOutlined, HolderOutlined, FullscreenOutlined, FullscreenExitOutlined } from '@antdv-next/icons'
 import CImport from './c-import.vue'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 import { h } from 'vue'
 import type { Ref } from 'vue'
 import { getFnValue } from '@/utils'

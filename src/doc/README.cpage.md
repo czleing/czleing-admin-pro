@@ -251,7 +251,7 @@ const toolsConfig = computed<ToolsConfig<UserRow>>(() => ({
 | width / minWidth / maxWidth | Number\|String | 宽度\|最小宽度\|最大宽度 |
 | resizable | Boolean | 是否可拖拽调整宽度，默认 false |
 | sorter | Boolean \| Function | 服务端排序或本地排序函数，为 true 表示服务端排序，为函数则表示本地排序：(a, b) => Number(a.xxx) - Number(b.xxx)；中文/英文排序：(a, b) => String(a.xxx ?? '').localeCompare(String(b.xxx ?? ''), 'zh-CN')。TS 下 a、b 为 CrudRecord，字段取值为 unknown，需先 String()/Number() 转换 |
-| customRender | Function | 自定义渲染 (ctx) => vnode/string |
+| render | Function | 自定义渲染 (value, record, index) => vnode/string |
 | ellipsis | Boolean | 是否超出省略 |
 | fixed | String | 固定列 'left'\|'right' |
 | tooltip | String | * 标题提示 |

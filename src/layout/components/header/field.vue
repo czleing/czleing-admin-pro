@@ -24,7 +24,7 @@
   </div>
 </template>
 <script setup>
-import { InfoCircleFilled } from '@ant-design/icons-vue'
+import { InfoCircleFilled } from '@antdv-next/icons'
 
 const props = defineProps({
   title: String,

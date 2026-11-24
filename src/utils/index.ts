@@ -1,8 +1,8 @@
 /**
  * 通用工具函数
  */
-import { Modal, message as Message } from 'ant-design-vue'
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { Modal, message as Message } from 'antdv-next'
+import { ExclamationCircleOutlined } from '@antdv-next/icons'
 import { createVNode, type Ref } from 'vue'
 
 /** 可空值（null / undefined 统称为 nullish） */

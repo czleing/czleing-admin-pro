@@ -119,7 +119,7 @@ onMounted(() => {
 })
 
 watchSyncEffect(() => {
-  // 动态设置css变量，跟随 ant-design 主题，可根据需要扩展，参考： https://www.antdv.com/docs/vue/customize-theme-cn#api
+  // 动态设置css变量，跟随 antdv-next 主题，可根据需要扩展，参考： https://www.antdv.com/docs/vue/customize-theme-cn#api
   setRootCssVars('--ant-', {
     colorText: token.value.colorText,
     colorInfo: token.value.colorInfo,

@@ -61,7 +61,7 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/auth-store'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 import DefaultAvatar from '@/assets/images/avatar.jpeg'
 import { EUserType, EControlType } from '@/enum/index'
 import CForm from '@/components/crud/components/c-form.vue'

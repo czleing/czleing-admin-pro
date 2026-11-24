@@ -21,7 +21,7 @@
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
 import DictData from './components/dict-data.vue'
-import { CopyOutlined } from '@ant-design/icons-vue'
+import { CopyOutlined } from '@antdv-next/icons'
 
 const cModal = ref()
 const currDictType = ref()

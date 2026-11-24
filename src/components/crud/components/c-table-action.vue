@@ -12,7 +12,7 @@
             {{ column.actionMoreText ?? $t('crud.more') }}
             <DownOutlined />
           </a>
-          <template #overlay>
+          <template #popupRender>
             <a-menu>
               <a-menu-item
                 v-for="action in moreActions"
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { DownOutlined } from '@ant-design/icons-vue'
+import { DownOutlined } from '@antdv-next/icons'
 import { getFnValue } from '@/utils/index'
 import CTableActionItem from './c-table-action-item.vue'
 import type {

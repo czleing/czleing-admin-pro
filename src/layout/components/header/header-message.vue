@@ -43,8 +43,8 @@
 </template>
 
 <script setup>
-import { notification, message } from 'ant-design-vue'
-import { MessageOutlined, SmileOutlined, BellOutlined } from '@ant-design/icons-vue'
+import { notification, message } from 'antdv-next'
+import { MessageOutlined, SmileOutlined, BellOutlined } from '@antdv-next/icons'
 import axios from '@/api/index'
 import { useRouter } from 'vue-router'
 import { watch, onMounted, onUnmounted } from 'vue'
@@ -79,7 +79,7 @@ const initSSE = async (token) => {
 // 处理SSE消息
 const handleSSEMessage = (resp) => {
   notification.open({
-    message: '收到新消息',
+    title: '收到新消息',
     description: resp?.data,
     icon: () => h(SmileOutlined, { style: 'color: #108ee9' }),
   })

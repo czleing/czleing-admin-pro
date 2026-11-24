@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import cForm from '@/components/crud/components/c-form.vue'
 import ProvinceCityAreaSelect from '@/components/common/ProvinceCityAreaSelect/index.vue'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 import { EControlType } from '@/enum'
 import type { CrudFormExpose, CrudModalExpose, CrudRecord, FormConfig } from '@/components/crud/types'
 

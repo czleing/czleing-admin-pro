@@ -8,7 +8,7 @@ import ProvinceCityAreaSelect from '@/components/common/ProvinceCityAreaSelect/i
 import cForm from '@/components/crud/components/c-form.vue'
 import type { CrudRecord, FormConfig } from '@/components/crud/types'
 import { EControlType } from '@/enum'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 
 /** 岗位接口返回项 */
 interface PostItem {

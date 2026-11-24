@@ -2,7 +2,7 @@
  * CRUD 通用基础类型
  * 被 api / tree / filter / tools / table / form / modal / page / component 等类型复用
  */
-import type { TablePaginationConfig } from 'ant-design-vue'
+import type { TablePaginationConfig } from 'antdv-next'
 
 /** CRUD 中的通用数据记录（表格行、详情、提交数据等） */
 export type CrudRecord = Record<string, unknown>
@@ -21,7 +21,7 @@ export type MaybeFn<T, Args extends unknown[] = []> = T | ((...args: Args) => T)
 
 /**
  * 业务侧选项数据（系统内部统一格式）
- * 同时兼容 { id, name } 与 ant-design 的 { value, label } 两种写法
+ * 同时兼容 { id, name } 与 antdv-next 的 { value, label } 两种写法
  */
 export interface OptionItem {
   id?: string | number
@@ -32,7 +32,7 @@ export interface OptionItem {
   [key: string]: unknown
 }
 
-/** 转换后的 ant-design 选项 */
+/** 转换后的 antdv-next 选项 */
 export interface CrudOption {
   value: string | number | null
   label: string | number
@@ -40,7 +40,7 @@ export interface CrudOption {
   [key: string]: unknown
 }
 
-/** 分页状态，继承 ant-design-vue 的分页配置 */
+/** 分页状态，继承 antdv-next 的分页配置 */
 export interface CrudPagination extends TablePaginationConfig {
   current: number
   pageSize: number

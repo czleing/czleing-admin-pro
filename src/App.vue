@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { theme } from 'ant-design-vue'
-import zhCN from 'ant-design-vue/es/locale/zh_CN'
-import zhHK from 'ant-design-vue/es/locale/zh_HK'
-import enUs from 'ant-design-vue/es/locale/en_US'
-import type { Locale } from 'ant-design-vue/es/locale'
+import { theme } from 'antdv-next'
+import zhCN from 'antdv-next/locale/zh_CN'
+import zhHK from 'antdv-next/locale/zh_HK'
+import enUs from 'antdv-next/locale/en_US'
+import type { Locale } from 'antdv-next/dist/locale'
 import { useSettingStore } from '@/stores/setting-store'
 import { useCheckUpdate } from './hooks/useCheckUpdate'
 import dayjs from 'dayjs'
@@ -25,7 +25,7 @@ watch(
   { immediate: true }
 )
 
-/** ant-design-vue 语言动态切换的 mapping */
+/** antdv-next 语言动态切换的 mapping */
 const localeMap: Record<string, Locale> = {
   'en': enUs,
   'zh-cn': zhCN,

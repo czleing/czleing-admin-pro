@@ -30,7 +30,7 @@ import ImportTableModal from './modal/import-table-modal.vue'
 import EditModal from './modal/edit-modal.vue'
 import PreviewModal from './modal/preview-modal.vue'
 import axios from '@/api/index'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 
 const cPage = ref()
 const importTableModal = ref()

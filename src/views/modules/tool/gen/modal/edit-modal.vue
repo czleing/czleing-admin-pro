@@ -464,7 +464,7 @@ const columnFormConfig = computed(() => ({
             width: 110,
             props: {
               size: 'small',
-              dropdownMatchSelectWidth: false,
+              popupMatchSelectWidth: false,
               options: EControlType._list.map(type => ({ id: type.data.htmlType, name: type.name }))
             }
           },
@@ -477,7 +477,7 @@ const columnFormConfig = computed(() => ({
             props: {
               size: 'small',
               options: dictTypeList.value,
-              dropdownMatchSelectWidth: false,
+              popupMatchSelectWidth: false,
               allowClear: true
             }
           }

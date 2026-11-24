@@ -3,7 +3,7 @@
   <div class="header-lang pointer">
     <a-dropdown placement="bottom">
       <img :src="currLang.image" class="curr-lang radius3">
-      <template #overlay>
+      <template #popupRender>
         <a-menu @click="onLangChange">
           <a-menu-item
             v-for="lang in langOptions"

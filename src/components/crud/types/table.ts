@@ -1,8 +1,8 @@
 /**
  * CRUD 表格（c-table / c-table-action）配置类型
  */
-import type { TableColumnType, TableProps } from 'ant-design-vue'
-import type { TableRowSelection } from 'ant-design-vue/es/table/interface'
+import type { TableColumnType, TableProps } from 'antdv-next'
+import type { TableRowSelection } from 'antdv-next/dist/table/interface'
 import type { Ref, VNodeChild } from 'vue'
 import type { CrudRecord, MaybeFn } from './common'
 
@@ -18,7 +18,7 @@ export interface TableActionContext<Row = CrudRecord> {
 export interface TableActionConfig<Row = CrudRecord> {
   /** 按钮名称，与 icon 至少设置一个 */
   name?: string
-  /** 图标（已注册的 ant-design 图标名） */
+  /** 图标（已注册的 antdv-next 图标名） */
   icon?: string
   /** 按钮样式类名 */
   class?: string
@@ -49,24 +49,12 @@ export interface NormalizedTableAction<Row = CrudRecord> {
 /** 表格列的预处理类型 */
 export type TableColumnPresetType = 'isEnabled' | 'Boolean' | (string & {})
 
-/** 表格自定义渲染参数 */
-export interface TableCustomRenderContext<Row = CrudRecord> {
-  text: unknown
-  value: unknown
-  record: Row
-  index: number
-  renderIndex: number
-  column: TableColumnType<CrudRecord>
-}
-
 /**
  * 表格列配置
- * 继承 ant-design-vue 的 ColumnType，并扩展 CRUD 业务属性
- * 说明：title、dataIndex、customRender 之外的标准列属性均沿用 ant-design-vue 的定义，保证与 a-table 完全兼容
+ * 继承 antdv-next 的 ColumnType，并扩展 CRUD 业务属性
+ * 说明：title、dataIndex、render 之外的标准列属性均沿用 antdv-next 的定义，保证与 a-table 完全兼容
  */
 export interface CrudTableColumn<Row = CrudRecord> extends TableColumnType<CrudRecord> {
-  /** 自定义渲染函数 */
-  customRender?: (ctx: TableCustomRenderContext) => VNodeChild
   /** 表头 Tooltip */
   tooltip?: string
   /** 单位，拼接在单元格内容后面 */
@@ -123,7 +111,7 @@ export interface RowClickContext<Row = CrudRecord> {
 
 /**
  * 表格属性
- * 继承 ant-design-vue 的 TableProps，并扩展 CRUD 业务属性
+ * 继承 antdv-next 的 TableProps，并扩展 CRUD 业务属性
  */
 export interface CrudTableProps<Row = CrudRecord>
   extends Omit<TableProps<Row>, 'columns' | 'dataSource' | 'pagination' | 'rowKey' | 'rowSelection'> {

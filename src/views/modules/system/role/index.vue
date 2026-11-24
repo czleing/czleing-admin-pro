@@ -24,7 +24,7 @@
 <script setup>
 import CPage from '@/components/crud/c-page.vue'
 import axios from '@/api/index'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 
 const { t } = useI18n()
 const filterConfig = computed(() => ({

@@ -3,7 +3,7 @@
  * 对外导出 axiosService（类实例）以及 $axios 别名
  */
 import axios, { type AxiosInstance, type AxiosResponse, type InternalAxiosRequestConfig, type AxiosError } from 'axios'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 import { useAuthStore } from '@/stores/auth-store'
 
 /** 统一响应结构（后端返回） */

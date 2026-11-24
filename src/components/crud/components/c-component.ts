@@ -9,8 +9,8 @@ import { isEmpty } from '@/utils/index'
 import type { IsEmptyValue } from '@/utils/index'
 import { crudRequest } from '@/components/crud/utils/request'
 import { EControlType } from '@/enum'
-import { SyncOutlined } from '@ant-design/icons-vue'
-import { message } from 'ant-design-vue'
+import { SyncOutlined } from '@antdv-next/icons'
+import { message } from 'antdv-next'
 import { h } from 'vue'
 import type { PropType, Ref, VNode } from 'vue'
 import type {
@@ -169,8 +169,8 @@ export default defineComponent({
       useRefresh = props.field.props.useRefresh ?? useRefresh
       if (triggerRemote && useRefresh !== false && !props.isView) {
         return h(
-          resolveComponent('a-input-group'),
-          { compact: true, class: 'nowrap' },
+          resolveComponent('a-space-compact'),
+          { block: true, class: 'nowrap' },
           {
             default: () => [
               h(vNode as VNode, { style: 'width: calc(100% - 32px)' }),

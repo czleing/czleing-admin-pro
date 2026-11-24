@@ -13,7 +13,7 @@
 | 构建 | Vite 8 | Webpack / Rollup |
 | 包管理 | pnpm ≥ 9.2 | npm / yarn |
 | Node | ≥ 20.19 | 低于此版本 |
-| UI 库 | Ant Design Vue 4 | Element Plus / 自造轮子 |
+| UI 库 | antdv-next | Element Plus / 自造轮子 |
 | 状态 | Pinia 3（persistedstate 插件持久化） | Pinia Options Store 之外的模式 |
 | 路由 | vue-router 5 | —— |
 | 国际化 | vue-i18n 11 | 硬编码多语言字符串 |
@@ -379,7 +379,7 @@ export function useAsync<T, P extends unknown[] = []>(
 
 ### 10.2 构建性能
 
-1. 第三方库按需引入（ant-design-vue 已配自动导入，lodash-es 手动按需）
+1. 第三方库按需引入（antdv-next 已配自动导入，lodash-es 手动按需）
 2. 路由和动态组件必须懒加载
 3. 图片放 `public/assets/`，禁止超大图片（> 500KB 需压缩）
 

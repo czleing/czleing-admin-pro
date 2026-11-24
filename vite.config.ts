@@ -1,10 +1,36 @@
 import { defineConfig, loadEnv, type ConfigEnv, type UserConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Components from 'unplugin-vue-components/vite'
-import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
+import type { ComponentResolver } from 'unplugin-vue-components'
 import { fileURLToPath, URL } from 'node:url'
 import AutoImport from 'unplugin-auto-import/vite'
 
+/**
+ * antdv-next 按需自动导入解析器
+ * - 模板中的 <a-xxx> 自动映射为 antdv-next 的具名导出
+ * - 图标自动从 @antdv-next/icons 导入
+ * - AIcon 为项目自定义组件，需排除，避免被误解析为 antdv-next 的 Icon
+ */
+function AntdvNextResolver(): ComponentResolver {
+  // antdv-next 中组件导出名与旧版存在差异的映射
+  const componentNameMap: Record<string, string> = {
+    Textarea: 'TextArea',
+    RangePicker: 'DateRangePicker',
+  }
+  return {
+    type: 'component',
+    resolve: (name: string) => {
+      if (name === 'AIcon') return
+      if (/(?:Outlined|Filled|TwoTone)$/.test(name)) {
+        return { name, from: '@antdv-next/icons' }
+      }
+      if (/^A[A-Z]/.test(name)) {
+        const componentName = name.slice(1)
+        return { name: componentNameMap[componentName] ?? componentName, from: 'antdv-next' }
+      }
+    },
+  }
+}
 
 // 配置项参考：https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
@@ -24,11 +50,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       Components({
         dts: 'src/types/components.d.ts',
         resolvers: [
-          // ant-design-vue 4.x 的自动按需引入
-          AntDesignVueResolver({
-            importStyle: false, // css in js, 4.x 不需要
-            resolveIcons: true, // ant 图标也自动导入，<SettingOutlined /> 直接用
-          }),
+          // antdv-next 的自动按需引入
+          AntdvNextResolver(),
         ],
       }),
     ],
@@ -54,7 +77,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             groups: [
               {
                 name: 'antdv',
-                test: /node_modules[\\/]ant-design-vue/,
+                test: /node_modules[\\/]antdv-next/,
                 priority: 20,
               },
               {
@@ -69,7 +92,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
               },
               {
                 name: 'ant-icons',
-                test: /node_modules[\\/]@ant-design[\\/]icons-vue/,
+                test: /node_modules[\\/]@antdv-next[\\/]icons/,
                 priority: 10,
               },
               {

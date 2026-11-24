@@ -30,11 +30,11 @@ import { CanvasRenderer } from 'echarts/renderers'
 import { PieChart } from 'echarts/charts'
 import { TitleComponent, TooltipComponent, LegendComponent, ToolboxComponent } from 'echarts/components'
 import { merge } from 'lodash-es'
-import { Empty } from 'ant-design-vue'
+import { Empty } from 'antdv-next'
 import { colorsTypeBar } from '@/utils/color.constants'
 import { useSettingStore } from '@/stores/setting-store'
 import { useNumFormat } from '@/hooks/useNumFormat'
-import { InfoCircleFilled } from '@ant-design/icons-vue'
+import { InfoCircleFilled } from '@antdv-next/icons'
 
 use([CanvasRenderer, PieChart, TitleComponent, TooltipComponent, LegendComponent, ToolboxComponent])
 

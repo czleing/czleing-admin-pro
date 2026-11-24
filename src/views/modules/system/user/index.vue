@@ -18,7 +18,7 @@
 import CPage from '@/components/crud/c-page.vue'
 import { EControlType, EIsEnabled } from '@/enum/index'
 import axios from '@/api'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 
 const treeConfig = {
   url: '/system/user/deptTree',
@@ -40,7 +40,7 @@ const tableConfig = computed(() => ({
     { title: '用户姓名', dataIndex: 'nickName' },
     {
       title: '所属部门', dataIndex: 'deptName', resizable: true, width: 150,
-      customRender: ({ record }) => record.dept?.deptName ?? '-'
+      render: (_value, record) => record.dept?.deptName ?? '-'
     },
     { title: '手机号码', dataIndex: 'phonenumber', hideChar: [3, 4] },
     { title: '是否启用', dataIndex: 'isEnabled', type: 'isEnabled' },

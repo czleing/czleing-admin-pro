@@ -2,7 +2,7 @@
  * 检测是否有版本更新
  * 仅在生产环境生效，每 2 分钟轮询一次 last-modified 头
  */
-import { notification, Button } from 'ant-design-vue'
+import { notification, Button } from 'antdv-next'
 import { h } from 'vue'
 
 export function useCheckUpdate(): void {
@@ -32,14 +32,14 @@ export function useCheckUpdate(): void {
     setTimeout(async () => {
       const hasUpdate = await needUpdate()
       if (hasUpdate) {
-        notification.close(key)
+        notification.destroy(key)
         notification.open({
           key,
-          message: t('frame.versionUpdate'),
+          title: t('frame.versionUpdate'),
           description: t('frame.versionUpdateConfirm'),
           duration: 0,
           placement: 'bottomRight',
-          btn: () =>
+          actions: () =>
             h(Button, {
               type: 'primary',
               size: 'small',

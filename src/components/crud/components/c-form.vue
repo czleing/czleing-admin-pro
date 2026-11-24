@@ -53,7 +53,7 @@
 import CComponent from './c-component'
 import dayjs from 'dayjs'
 import type { ConfigType, Dayjs } from 'dayjs'
-import type { FormInstance } from 'ant-design-vue'
+import type { FormInstance } from 'antdv-next'
 import { getFnValue, loadingRequest } from '@/utils/index'
 import type { IsEmptyValue } from '@/utils'
 import { EControlType } from '@/enum'
@@ -194,7 +194,16 @@ function normalizeField(field: CrudFormField): NormalizedFormField {
     // 表格类型，根据 columns 自动生成 rules
     setTableRules(merged as DynamicTableFormField)
   }
+  const required = props.isView ? false : resolveMaybe(merged.required)
   const rules = props.isView ? undefined : resolveMaybe(merged.rules)
+  const fieldRules: FormRule[] = Array.isArray(rules) ? [...rules] : rules ? [rules] : []
+  // antdv-next 的 a-form-item required 仅用于展示必填星号，不再自动生成校验规则，这里根据 required 补齐
+  if (required && !fieldRules.some((rule) => rule?.required)) {
+    fieldRules.push({
+      required: true,
+      message: t('crud.notNull', { label: resolveMaybe(merged.label) ?? merged.fieldName })
+    })
+  }
   return {
     fieldName: merged.fieldName,
     type: merged.type,
@@ -204,8 +213,8 @@ function normalizeField(field: CrudFormField): NormalizedFormField {
     wrapperCol: merged.wrapperCol,
     singleLine: merged.singleLine,
     defaultValue: merged.defaultValue,
-    rules: Array.isArray(rules) ? rules : rules ? [rules] : undefined,
-    required: props.isView ? false : resolveMaybe(merged.required),
+    rules: fieldRules.length ? fieldRules : undefined,
+    required,
     disabled: props.isView ? false : resolveMaybe(merged.disabled),
     hidden: resolveMaybe(merged.hidden),
     none: resolveMaybe(merged.none),
@@ -489,7 +498,8 @@ async function getSubmitData(): Promise<CrudRecord> {
   if (import.meta.env.VITE_APP_DEBUG_MODE === 'true') {
     console.log('formData', formData)
   }
-  await inputForm.value?.validate()
+  const rs = await inputForm.value?.validate()
+  console.log('rs', rs)
   let submitData: CrudRecord = { ...formData }
   // 日期统一转成时间戳
   transferDate(submitData)

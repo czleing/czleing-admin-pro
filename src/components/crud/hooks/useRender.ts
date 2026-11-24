@@ -43,7 +43,7 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
   const { t, te } = useI18n()
 
   const emitUpdate = (...args: unknown[]): void => {
-    // 统一使用 value 作为双向绑定的 props（为了与 ant-design 一致）
+    // 统一使用 value 作为双向绑定的 props（为了与 antdv-next 一致）
     ctx.$emit('update:value', ...args)
   }
 
@@ -62,7 +62,7 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
     return resolveComponent(field.type ?? '')
   }
 
-  /** 将本系统风格的 options 转成 ant-design 风格的 options，适用于 a-radio、a-select、a-checkbox、a-auto-complete 等 */
+  /** 将本系统风格的 options 转成 antdv-next 风格的 options，适用于 a-radio、a-select、a-checkbox、a-auto-complete 等 */
   function transformOptions(options?: OptionItem[], useAll = false): CrudOption[] | undefined {
     const result = options?.map((item) => {
       let label = item.name ?? item.label
@@ -129,7 +129,7 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
       return fn(field)
     }
     // 2.没有自定义的，尝试当全局组件渲染
-    // 上面所有的 ant-design 组件都可以走这里，只是查看模式时不会渲染成文本，而是渲染成禁用的组件
+    // 上面所有的 antdv-next 组件都可以走这里，只是查看模式时不会渲染成文本，而是渲染成禁用的组件
     return h(resolveByType(field), {
       ...getDefaultProps(field),
       ...field.props,
@@ -276,24 +276,21 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
         props2[prop] = propValue[1]
       }
     }
-    return h(resolveComponent('a-form-item-rest'), null, {
-      default: () =>
-        h(
-          resolveComponent('a-input-group'),
-          { compact: true, style: 'white-space:nowrap;display:flex;' },
-          {
-            default: () => [
-              h(resolveComponent('a-input-number'), { ...props1, style: 'flex: 45;' }),
-              h(resolveComponent('a-input'), {
-                disabled: true,
-                placeholder: '~',
-                style: 'width:30px;pointer-events:none;'
-              }),
-              h(resolveComponent('a-input-number'), { ...props2, style: 'flex: 45' })
-            ]
-          }
-        )
-    })
+    return h(
+      resolveComponent('a-space-compact'),
+      { block: true, style: 'white-space:nowrap;' },
+      {
+        default: () => [
+          h(resolveComponent('a-input-number'), { ...props1, style: 'flex: 45;' }),
+          h(resolveComponent('a-input'), {
+            disabled: true,
+            placeholder: '~',
+            style: 'width:30px;pointer-events:none;'
+          }),
+          h(resolveComponent('a-input-number'), { ...props2, style: 'flex: 45' })
+        ]
+      }
+    )
   }
 
   /** 渲染文本域组件 */
@@ -570,7 +567,7 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
     }
     // 自定义数据源字段
     controlProps[props.modelData ?? 'dataSource'] = dataSource
-    // 需要有数据源才渲染，解决 ant-design-vue 4 异步数据源导致部分属性失效问题
+    // 需要有数据源才渲染，解决 antdv-next 异步数据源导致部分属性失效问题
     if (props.renderNeedDataSource && isEmpty(dataSource)) {
       return
     }

@@ -32,7 +32,7 @@
 <script setup>
 import LoginForm from './components/login-page-form.vue'
 import settings from '@/config/setting'
-import { theme } from 'ant-design-vue'
+import { theme } from 'antdv-next'
 
 const setting = settings.websiteInfo
 </script>

@@ -28,7 +28,7 @@
     @deleted="refreshCache"
   >
     <template #table_dictLabel="{ text, record }">
-      <a-tag :bordered="false" :color="record.tagType" :class="record.cssClass">{{ text }}</a-tag>
+      <a-tag variant="filled" :color="record.tagType" :class="record.cssClass">{{ text }}</a-tag>
     </template>
   </CPage>
 </template>

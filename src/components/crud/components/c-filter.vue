@@ -30,30 +30,30 @@
               <a-button type="primary" :loading="loading" :disabled="loading" :icon="h(SearchOutlined)" html-type="submit">{{ $t('crud.search') }}</a-button>
               <a-button v-if="currFields.length > 0" :icon="h(UndoOutlined)" @click="onResetHandle">{{ $t('crud.reset') }}</a-button>
               <!-- 记住查询 及 历史查询 -->
-              <a-dropdown-button v-if="config.useCache && currFields.length > 0" placement="bottomLeft" @click="onRememberHandle">
-                {{ config.cacheBtnText || $t('crud.rememberSearch') }}
-                <template #overlay>
-                  <a-menu>
-                    <a-menu-item
-                      v-for="cache in cacheList"
-                      :key="cache.id"
-                      @click="onSelectCache(cache.id)"
-                    >
-                      <div class="flex-x-between">
-                        <span class="mr15 flex-auto">{{ cache.name }}</span>
-                        <a-divider type="vertical" />
-                        <DeleteOutlined class="text-danger" @click.stop="onDeleteCache(cache.id)" />
-                      </div>
-                    </a-menu-item>
-                    <a-menu-item v-if="!cacheList || cacheList.length === 0">
-                      <span class="text-gray">{{ $t('crud.notLog') }}</span>
-                    </a-menu-item>
-                  </a-menu>
-                </template>
-                <template v-if="cacheList && cacheList.length > 0" #icon>
-                  ···
-                </template>
-              </a-dropdown-button>
+              <a-space-compact v-if="config.useCache && currFields.length > 0">
+                <a-button @click="onRememberHandle">{{ config.cacheBtnText || $t('crud.rememberSearch') }}</a-button>
+                <a-dropdown placement="bottomLeft" :trigger="['click']">
+                  <a-button>···</a-button>
+                  <template #popupRender>
+                    <a-menu>
+                      <a-menu-item
+                        v-for="cache in cacheList"
+                        :key="cache.id"
+                        @click="onSelectCache(cache.id)"
+                      >
+                        <div class="flex-x-between">
+                          <span class="mr15 flex-auto">{{ cache.name }}</span>
+                          <a-divider orientation="vertical" />
+                          <DeleteOutlined class="text-danger" @click.stop="onDeleteCache(cache.id)" />
+                        </div>
+                      </a-menu-item>
+                      <a-menu-item v-if="!cacheList || cacheList.length === 0">
+                        <span class="text-gray">{{ $t('crud.notLog') }}</span>
+                      </a-menu-item>
+                    </a-menu>
+                  </template>
+                </a-dropdown>
+              </a-space-compact>
             </a-space>
           </a-form-item>
         </a-col>
@@ -77,10 +77,10 @@ import { useSearchCache } from '@/components/crud/hooks/useSearchCache'
 import { EControlType } from '@/enum'
 import { isAllFieldEmpty, isDayjs, isEmpty, isNotEmpty } from '@/utils/index'
 import type { IsEmptyValue } from '@/utils/index'
-import { DeleteOutlined, DownOutlined, SearchOutlined, UndoOutlined, UpOutlined } from '@ant-design/icons-vue'
+import { DeleteOutlined, DownOutlined, SearchOutlined, UndoOutlined, UpOutlined } from '@antdv-next/icons'
 import type { Dayjs } from 'dayjs'
-import { message } from 'ant-design-vue'
-import type { FormInstance } from 'ant-design-vue'
+import { message } from 'antdv-next'
+import type { FormInstance } from 'antdv-next'
 import { h } from 'vue'
 import CComponent from './c-component'
 import type { CrudControlProps, CrudFilterExpose, FilterConfig, ResolvedFilterField, SearchParams, CrudModalExpose } from '../types'
@@ -183,9 +183,10 @@ function getTransformedFormData(): SearchParams {
 function onSubmitHandle(): void {
   emits('search')
 }
-function onResetHandle(): void {
+async function onResetHandle(): Promise<void> {
   searchForm.value?.resetFields()
   setDefault()
+  await nextTick()
   emits('search')
 }
 

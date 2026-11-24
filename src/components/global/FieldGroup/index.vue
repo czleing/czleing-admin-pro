@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { RightCircleOutlined } from '@ant-design/icons-vue'
+import { RightCircleOutlined } from '@antdv-next/icons'
 import { useThemeToken } from '@/hooks/useThemeToken'
 
 const props = defineProps({

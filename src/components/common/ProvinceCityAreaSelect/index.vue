@@ -131,7 +131,7 @@ watch(
 )
 
 function setValue(val: string | undefined): void {
-  // 将只有最后一层还原成 ant-design 组件需要的三层格式，此处特殊的直辖市、经济特区只有两层，需排除中间一层
+  // 将只有最后一层还原成 antdv-next 组件需要的三层格式，此处特殊的直辖市、经济特区只有两层，需排除中间一层
   // '1011' => [1000, 1011] // 选择的是第二级，还原时只需还原两级
   // '110000' => [110000] // 选择的是第一级，还原时只还原一级
   // '101102' => [100000,101100,101102] // 选择的是第三级，还原时需还原三级
@@ -157,10 +157,12 @@ function setValue(val: string | undefined): void {
   }
 }
 
-/** cascader 绑定值类型，与 ant-design-vue 的 ValueType 保持一致 */
+/** cascader 绑定值类型，与 antdv-next 的 ValueType 保持一致 */
 type CascaderValue = (string | number)[] | (string | number)[][]
 
-async function handleChange(val: CascaderValue): Promise<void> {
+async function handleChange(value: unknown): Promise<void> {
+  // antdv-next 的 Cascader change 值类型为 (string | AreaNode[])，这里统一按编码字符串处理
+  const val = value as CascaderValue
   // cascader 回传的值可能含数字，统一转为字符串编码，后续逻辑按字符串处理
   const codes = isArrArr(val) ? val.map(arr => arr.map(String)) : val.map(String)
   selectedValue.value = codes

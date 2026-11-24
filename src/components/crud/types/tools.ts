@@ -1,7 +1,7 @@
 /**
  * CRUD 工具栏（c-tools）配置类型
  */
-import type { ButtonProps } from 'ant-design-vue'
+import type { ButtonProps } from 'antdv-next'
 import type { Component } from 'vue'
 import type { CrudPagination, CrudRecord, MaybeFn } from './common'
 
@@ -14,7 +14,7 @@ export interface ToolsContext<Row = CrudRecord> {
 
 /** 工具栏按钮属性，继承 a-button 属性，并对 icon / disabled / onClick 做业务扩展 */
 export interface ToolButtonProps<Row = CrudRecord> extends Omit<ButtonProps, 'icon' | 'disabled' | 'onClick'> {
-  /** 已注册的 ant-design 图标名 */
+  /** 已注册的 antdv-next 图标名 */
   icon?: string
   /** 是否禁用，支持函数动态计算 */
   disabled?: MaybeFn<boolean, [ToolsContext<Row>]>

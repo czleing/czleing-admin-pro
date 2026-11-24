@@ -1,4 +1,4 @@
-import 'ant-design-vue/dist/reset.css'
+import 'antdv-next/dist/reset.css'
 import '@/assets/css/index.less'
 import components from '@/components/index'
 import i18n from '@/locales/index'

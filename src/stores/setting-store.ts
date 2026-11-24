@@ -5,7 +5,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { SizeType } from 'ant-design-vue/es/config-provider/context'
+import type { SizeType } from 'antdv-next'
 
 /** 主题色 token */
 export interface ThemeToken {
@@ -29,7 +29,7 @@ export interface ThemeConfig {
   }
 }
 
-// ant-design-vue4.x 主题定义
+// antdv-next 主题定义
 const themes: ThemeConfig[] = [
   {
     name: 'frame.themeGreen', // 薄荷清新

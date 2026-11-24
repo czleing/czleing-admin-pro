@@ -42,9 +42,9 @@
   import { merge } from 'lodash-es'
   import { ref, watchEffect, type PropType } from 'vue'
   import VChart, { THEME_KEY } from 'vue-echarts'
-  import { Empty } from 'ant-design-vue'
+  import { Empty } from 'antdv-next'
   import { useSettingStore } from '@/stores/setting-store'
-  import { InfoCircleFilled, ReloadOutlined } from '@ant-design/icons-vue'
+  import { InfoCircleFilled, ReloadOutlined } from '@antdv-next/icons'
   import useThemeToken from '@/hooks/useThemeToken'
 
   use([LineChart, BarChart, CanvasRenderer, GridComponent, TooltipComponent, TitleComponent, LegendComponent, ToolboxComponent, DataZoomComponent, MarkLineComponent])

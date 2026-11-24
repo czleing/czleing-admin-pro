@@ -2,7 +2,7 @@
 <template>
   <div class="w60p">
     <div class="mb20 lh2">
-      <div>表单可以使用 c-form 组件，通过传入配置自动渲染表单项，也可以使用 ant-design-vue 原生的 a-form，按传统方式编写表单</div>
+      <div>表单可以使用 c-form 组件，通过传入配置自动渲染表单项，也可以使用 antdv-next 原生的 a-form，按传统方式编写表单</div>
       <div>c-form 内置确认取消按钮，可以隐藏，组件向外暴露了表单操作相关方法</div>
     </div>
 

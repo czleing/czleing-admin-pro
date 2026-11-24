@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { CodeOutlined, DownOutlined } from '@ant-design/icons-vue'
+import { CodeOutlined, DownOutlined } from '@antdv-next/icons'
 
 interface Props {
   /** 要展示的源码字符串，通过 `import code from './xxx.vue?raw'` 获取 */

@@ -22,22 +22,22 @@
               {{ tab.meta.title }}
               <CloseOutlined v-if="settingStore.useTabClose" class="close-icon em08 ml5" @click.stop="tabsStore.closeTab(index)" />
             </div>
-            <template #overlay>
+            <template #popupRender>
               <a-menu>
-                <a-menu-item @click="tabsStore.closeTab(index)">
+                <a-menu-item key="closeTab" @click="tabsStore.closeTab(index)">
                   <CloseCircleFilled class="text-primary" />
                   <span class="ml8">{{ $t('frame.closeTab') }}</span>
                 </a-menu-item>
                 <a-menu-divider />
-                <a-menu-item :disabled="currentTab !== tab.fullPath" @click="tabsStore.refreshTab()">
+                <a-menu-item key="refreshTab" :disabled="currentTab !== tab.fullPath" @click="tabsStore.refreshTab()">
                   <SyncOutlined class="text-primary" />
                   <span class="ml8">{{ $t('frame.refreshTab') }}</span>
                 </a-menu-item>
-                <a-menu-item @click="openInNewWindow(tab.fullPath, tab.path)">
+                <a-menu-item key="openInNewWindow" @click="openInNewWindow(tab.fullPath, tab.path)">
                   <SubnodeOutlined class="text-primary" />
                   <span class="ml8">{{ $t('frame.openInNewWindow') }}</span>
                 </a-menu-item>
-                <a-menu-item v-if="settingStore.useTabFavorite" @click="tabsStore.toogleFavorite(index)">
+                <a-menu-item key="favorite" v-if="settingStore.useTabFavorite" @click="tabsStore.toogleFavorite(index)">
                   <template v-if="tabsStore.favoriteKeys.includes(tab.fullPath)">
                     <HeartFilled class="text-primary" />
                     <span class="ml8">{{ $t('frame.removeFavorite') }}</span>
@@ -48,19 +48,19 @@
                   </template>
                 </a-menu-item>
                 <a-menu-divider />
-                <a-menu-item @click="tabsStore.clearLeftTabs(index)" :disabled="index === 0">
+                <a-menu-item key="closeLeft" @click="tabsStore.clearLeftTabs(index)" :disabled="index === 0">
                   <ArrowLeftOutlined class="text-primary" />
                   <span class="ml8">{{ $t('frame.closeLeft') }}</span>
                 </a-menu-item>
-                <a-menu-item @click="tabsStore.clearRightTabs(index)" :disabled="index === tabsStore.tabList.length - 1">
+                <a-menu-item key="closeRight" @click="tabsStore.clearRightTabs(index)" :disabled="index === tabsStore.tabList.length - 1">
                   <ArrowRightOutlined class="text-primary" />
                   <span class="ml8">{{ $t('frame.closeRight') }}</span>
                 </a-menu-item>
-                <a-menu-item @click="tabsStore.clearOtherTabs(index)" :disabled="tabsStore.tabList.length === 1">
+                <a-menu-item key="closeOther" @click="tabsStore.clearOtherTabs(index)" :disabled="tabsStore.tabList.length === 1">
                   <SwapOutlined class="text-primary" />
                   <span class="ml8">{{ $t('frame.closeOther') }}</span>
                 </a-menu-item>
-                <a-menu-item @click="tabsStore.clearAllTabs()">
+                <a-menu-item key="closeAll" @click="tabsStore.clearAllTabs()">
                   <CloseCircleTwoTone :twoToneColor="token.colorPrimary" />
                   <span class="ml8">{{ $t('frame.closeAll') }}</span>
                 </a-menu-item>
@@ -72,36 +72,38 @@
       <template #rightExtra>
         <div class="pr8 flex-x x-middle">
           <template v-if="settingStore.useTabFavorite">
-            <a-divider type="vertical" />
+            <a-divider orientation="vertical" />
             <a-dropdown placement="bottomRight" arrow @click="tabsStore.toogleFavorite()">
               <div class="pointer">
                 <HeartFilled v-if="tabsStore.currTab && tabsStore.favoriteKeys.includes(tabsStore.currTab.fullPath)" class="text-primary" :title="$t('frame.removeFavorite')" style="margin-right:0;" />
                 <HeartOutlined v-else :title="$t('frame.favorite')" style="margin-right:0;" />
               </div>
-              <template v-if="tabsStore.favoriteTabs.length" #overlay>
-                <a-menu ref="listContainer" class="sortable">
-                  <a-menu-item
-                    v-for="(item, index) in tabsStore.favoriteTabs"
-                    :key="item.path"
-                  >
-                    <div class="flex-x-between">
-                      <span class="flex-auto" @click="router.push(item.path)">
-                        <HeartFilled class="text-primary mr4" />
-                        {{ item.meta.title }}
-                      </span>
-                      <a-divider type="vertical" />
-                      <div class="draggable" @click.stop>
-                        <HolderOutlined />
+              <template v-if="tabsStore.favoriteTabs.length" #popupRender>
+                <div ref="listContainer" class="sortable">
+                  <a-menu>
+                    <a-menu-item
+                      v-for="(item, index) in tabsStore.favoriteTabs"
+                      :key="item.path"
+                    >
+                      <div class="flex-x-between">
+                        <span class="flex-auto" @click="router.push(item.path)">
+                          <HeartFilled class="text-primary mr4" />
+                          {{ item.meta.title }}
+                        </span>
+                        <a-divider orientation="vertical" />
+                        <div class="draggable" @click.stop>
+                          <HolderOutlined />
+                        </div>
+                        <a-divider orientation="vertical" />
+                        <DeleteFilled class="text-danger" :title="$t('frame.remove')" @click.stop="tabsStore.removeFavorite(index)" />
                       </div>
-                      <a-divider type="vertical" />
-                      <DeleteFilled class="text-danger" :title="$t('frame.remove')" @click.stop="tabsStore.removeFavorite(index)" />
-                    </div>
-                  </a-menu-item>
-                </a-menu>
+                    </a-menu-item>
+                  </a-menu>
+                </div>
               </template>
             </a-dropdown>
           </template>
-          <a-divider type="vertical" />
+          <a-divider orientation="vertical" />
           <span class="pointer" @click="toggleFullScreen">
             <FullscreenExitOutlined v-if="isFullscreen" :title="$t('frame.exitFullscreen')" style="margin:0;" />
             <FullscreenOutlined v-else :title="$t('frame.fullscreen')" style="margin:0;" />
@@ -115,8 +117,8 @@
 import { useSortable } from '@/hooks/useSortable'
 import { useSettingStore } from '@/stores/setting-store'
 import { useTabsStore } from '@/stores/tabs-store'
-import { FullscreenExitOutlined, FullscreenOutlined, HeartOutlined } from '@ant-design/icons-vue'
-import { theme } from 'ant-design-vue'
+import { FullscreenExitOutlined, FullscreenOutlined, HeartOutlined } from '@antdv-next/icons'
+import { theme } from 'antdv-next'
 
 const props = defineProps({
   isFullscreen: Boolean,
@@ -153,7 +155,9 @@ function openInNewWindow (fullPath, path) {
 
 // 拖拽排序
 const listContainer = ref(null)
-const { setEnabled } = useSortable(listContainer, tabsStore.favoriteTabs, {
+// antdv-next 的 Menu 根节点为 Fragment，组件实例的 $el 不是真实 DOM，因此取菜单内部的 ul 作为拖拽容器
+const sortableContainer = computed(() => listContainer.value?.querySelector('ul') ?? null)
+const { setEnabled } = useSortable(sortableContainer, tabsStore.favoriteTabs, {
   handle: '.draggable',
   direction: 'vertical',
   animation: 180,

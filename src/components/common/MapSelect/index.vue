@@ -1,8 +1,8 @@
-<!-- 地图选择位置组件（基于高德地图 JSAPI），支持 v-model:value 经纬度数组 / v-model:lng / v-model:lat 双向绑定，属性命名与 ant-design-vue 保持一致 -->
+<!-- 地图选择位置组件（基于高德地图 JSAPI），支持 v-model:value 经纬度数组 / v-model:lng / v-model:lat 双向绑定，属性命名与 antdv-next 保持一致 -->
 <!-- 用法：<MapSelect v-model:value="formData.location" :full-address="formData.address" /> -->
 <script setup lang="ts">
 import { load as loadAMap } from '@amap/amap-jsapi-loader'
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 import { stringStar } from '@/utils'
 import type { AMapAutoComplete, AMapMapClickEvent, AMapMapInstance, AMapMarker, AMapNamespace, AMapPlaceSearch, AMapPoi } from './types'
 

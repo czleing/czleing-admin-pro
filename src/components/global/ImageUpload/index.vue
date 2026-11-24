@@ -34,11 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import { PlusOutlined } from '@ant-design/icons-vue'
+import { PlusOutlined } from '@antdv-next/icons'
 import { useAuthStore } from '@/stores/auth-store'
 import { byteFormat, getFullUrl } from '@/utils/index'
-import { message, Upload } from 'ant-design-vue'
-import type { UploadFile, UploadProps } from 'ant-design-vue'
+import { message, Upload } from 'antdv-next'
+import type { UploadFile, UploadProps } from 'antdv-next'
 
 /** 上传文件项，额外保存文件路径 */
 interface UploadItem extends UploadFile {

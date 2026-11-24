@@ -1,7 +1,7 @@
 /**
  * CRUD 查询条件（c-filter）配置类型
  */
-import type { ColProps } from 'ant-design-vue'
+import type { ColProps } from 'antdv-next'
 import type { CrudFormField, CrudControlProps, FormFieldGroup } from './form'
 
 /** 查询条件字段配置（复用表单字段配置，但不允许分组） */

@@ -9,7 +9,7 @@
       >{{ item.label }}</span>
       <a-tag
         v-else-if="item.label"
-        :bordered="false"
+        variant="filled"
         :color="item.tagType"
         :class="item.cssClass"
       >
@@ -29,7 +29,7 @@ import { useDict } from '@/hooks/useDict'
 interface DictItem {
   value: string | number
   label?: string
-  tagType?: import('ant-design-vue').TagProps['color']
+  tagType?: import('antdv-next').TagProps['color']
   cssClass?: string
 }
 

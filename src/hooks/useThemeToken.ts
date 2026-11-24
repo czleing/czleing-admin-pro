@@ -1,7 +1,7 @@
 /**
- * ant-design-vue 主题 token hook
+ * antdv-next 主题 token hook
  */
-import { theme } from 'ant-design-vue'
+import { theme } from 'antdv-next'
 
 export function useThemeToken(): { token: ReturnType<typeof theme.useToken>['token'] } {
   const { useToken } = theme

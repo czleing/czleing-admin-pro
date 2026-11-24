@@ -81,7 +81,7 @@ import type {
   TreeConfig
 } from '@/components/crud/types'
 import { EControlType, EIsEnabled } from '@/enum/index'
-import { message, Progress } from 'ant-design-vue'
+import { message, Progress } from 'antdv-next'
 
 /** 列表行数据类型，按实际业务字段定义，配置中的 record 会自动推导为该类型 */
 type DemoRow = {
@@ -136,7 +136,7 @@ const filterConfig = computed<FilterConfig>(() => ({
       fieldName: 'key',
       // type: EControlType.eInput, // 默认 eInput 可以不设置
       // col: { flex: '280px' }, // 表单项(包含文本和控件)栅格设置，默认响应式分配：{ sm: 8, lg: 6, xxl: 4 }
-      // 每个字段的宽度可以很灵活控制，固定宽度、同宽、自适应等 参照 ant-design-vue a-col 的属性
+      // 每个字段的宽度可以很灵活控制，固定宽度、同宽、自适应等 参照 antdv-next a-col 的属性
       // labelCol: { span: 7 }, // 表单项文本部分栅格设置，参照 a-col，默认继承 filterConfig.labelCol
       // wrapperCol: { span: 17 }, // 表单项控件部分栅格设置，参照 a-col，默认继承 filterConfig.wrapperCol
       props: {
@@ -281,9 +281,10 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
   // initSearch: true, // 默认 true，初始化时查询，如果查询条件中有默认值，则默认 false
   columns: [
     {
-      title: t('demo.name'), // 姓名
+      title: '123', // t('demo.name'), // 姓名
       tooltip: t('demo.userRealName'), // '用户真实姓名',
       dataIndex: 'nickName',
+      key: 'nickName',
       resizable: true,
       width: 100,
       // sorter: true, // 服务端排序
@@ -349,7 +350,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
       dataIndex: 'status',
       resizable: true,
       width: 100,
-      customRender: ({ value, record, index, column }) => { // 自定义渲染函数
+      render: (value, record, index) => { // 自定义渲染函数
         return h('span', {
           class: 'text-success'
         }, '状态:' + value)
@@ -359,9 +360,9 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
       title: '自定义组件',
       dataIndex: 'diy',
       width: 120,
-      customRender: ({ value, record, index, column }) => {
+      render: (value, record, index) => {
         return h(resolveComponent('a-tag'), {
-          bordered: false,
+          variant: 'filled',
           color: record.color as string
         }, () => value)
       }
@@ -384,7 +385,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
       hidden: true,
       width: 180,
       default: '-', // 设置默认值，支持html，如：default: '<div class="text-gray">xxx</div>'
-      ellipsis: true // ant-design 自带的超出宽度隐藏
+      ellipsis: true // antdv-next 自带的超出宽度隐藏
     },
     {
       title: '插槽',
@@ -414,7 +415,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
           // 名称和图标至少设置一个
           {
             name: t('crud.detail'), // 详情，按钮名称，可选，
-            icon: 'SearchOutlined', // 图标，可选，仅限 /src/components/global/a-icon.js 中已导入的 ant-design 图标
+            icon: 'SearchOutlined', // 图标，可选，仅限 /src/components/global/a-icon.js 中已导入的 antdv-next 图标
             callback: 'detail' // 可以使用预设的字符串，也可以使用自定义函数，自定义则代表不使用系统自带的详情弹窗
           },
           {
@@ -495,8 +496,8 @@ const modalConfig = computed<ModalConfig>(() => ({
   formConfig: ({ isAdd, isEdit, isView, detail }) => ({
     // layout: 'horizontal', // 表单布局 horizontal | vertical | inline 默认 horizontal
     // cols: 2, // 一行显示几列，默认 2 列
-    // labelCol: { span: 6 }, // 如果需要固定label宽度，可设为 { flex: '120px' }, 默认 { flex: '0 0 100px' }，参考 ant-design-vue a-col 的属性设置
-    // wrapperCol: { span: 18 }, // 如果需要固定控件宽度，可设为 { flex: '280px' }, 默认 撑满剩余空间={ flex: '1 1 0' }, 不会溢出换行，参考 ant-design-vue a-col 的属性设置
+    // labelCol: { span: 6 }, // 如果需要固定label宽度，可设为 { flex: '120px' }, 默认 { flex: '0 0 100px' }，参考 antdv-next a-col 的属性设置
+    // wrapperCol: { span: 18 }, // 如果需要固定控件宽度，可设为 { flex: '280px' }, 默认 撑满剩余空间={ flex: '1 1 0' }, 不会溢出换行，参考 antdv-next a-col 的属性设置
     // 表单字段
     fields: [ // 表单字段数组，可分组
       {
@@ -516,7 +517,7 @@ const modalConfig = computed<ModalConfig>(() => ({
         // labelCol: { span: 3 }, // 当前表单项文本部分栅格设置，会覆盖 formConfig.labelCol, 参照 a-col，默认继承 formConfig.labelCol
         // wrapperCol: { span: 21 }, // 当前表单项控件部分栅格设置，会覆盖 formConfig.wrapperCol, 参照 a-col，默认继承 formConfig.wrapperCol
         props: formData => ({ // 控件属性配置，Object | formData => Object, 没有属性可以不配
-          // 根据 type 继承自对应 ant-design-vue 控件的属性和事件
+          // 根据 type 继承自对应 antdv-next 控件的属性和事件
           // placeholder 会默认生成，可以不配
           allowClear: true
         })
@@ -588,7 +589,8 @@ const modalConfig = computed<ModalConfig>(() => ({
             type: EControlType.eNumber,
             // required: true,
             props: {
-              addonAfter: '%',
+              // prefix: '%', // 前缀
+              suffix: '%', // 后缀
               precision: 2,
               min: 0,
               max: 100
@@ -601,7 +603,7 @@ const modalConfig = computed<ModalConfig>(() => ({
             // required: true,
             tooltip: '描述XXXXXXXX',
             props: {
-              addonAfter: '元',
+              suffix: '元',
               precision: 2,
               max: 100,
               min: 0
@@ -901,12 +903,13 @@ const modalConfig = computed<ModalConfig>(() => ({
               align: 'center',
               ocrIgnore: true, // 在 OCR 识别时，忽略这一列
               props: {
-                component: { // table 内的组件拥有单元格相关信息： cellInfo = { text, record, index, column }
-                  render ({ $attrs }) {
+                // 静态组件对象会随列配置进入响应式数据，需用 markRaw 跳过代理，避免 Vue 性能告警
+                component: markRaw({
+                  render ({ $attrs }: unknown) {
                     const cellInfo = $attrs.cellInfo as { index: number }
                     return h('span', cellInfo.index + 1)
                   }
-                }
+                })
               },
             },
             {
@@ -946,8 +949,8 @@ const modalConfig = computed<ModalConfig>(() => ({
               props: {
                 useAll: true,
                 options: [
-                  { id: 1, name: 1 },
-                  { id: 2, name: 2 }
+                  { id: '1', name: '1' },
+                  { id: '2', name: '2' }
                 ],
                 // dictType: 'xxx_xxx' // 或者使用字典为数据源
                 // remote: {...} // 或者使用远程数据源

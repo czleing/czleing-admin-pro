@@ -7,7 +7,7 @@
 import cForm from '@/components/crud/components/c-form.vue'
 import { EControlType } from '@/enum'
 import type { CrudRecord, FormConfig } from '@/components/crud/types'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 
 const formConfig: FormConfig = {
   cols: 2,

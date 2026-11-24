@@ -27,7 +27,7 @@
       v-if="currMode === 'drawer'"
       :title="currTitle"
       :open="visible"
-      :width="currWidth"
+      :size="currWidth"
       v-bind="$attrs"
       @close="close"
     >

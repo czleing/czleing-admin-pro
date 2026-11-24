@@ -1,8 +1,8 @@
 /**
  * 处理表格操作、预设操作（新增/编辑/详情/删除/启停）及提交
  */
-import { message, Modal } from 'ant-design-vue'
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { message, Modal } from 'antdv-next'
+import { ExclamationCircleOutlined } from '@antdv-next/icons'
 import { createVNode } from 'vue'
 import { crudRequest } from '../utils/request'
 import type {

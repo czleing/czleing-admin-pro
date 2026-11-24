@@ -15,7 +15,7 @@
       :disabled="disabled"
       :mode="multiple ? 'multiple' : undefined"
       :allowClear="allowClear"
-      :dropdownStyle="{ width: 0, overflow: 'hidden' }"
+      :styles="{ popup: { root: { width: 0, overflow: 'hidden' } } }"
       :getPopupContainer="() => UserSelectPopupContainer"
       v-bind="$attrs"
       @click="open({ value: selectedUserIds })"
@@ -35,30 +35,27 @@
     <!-- 渲染到body上 -->
     <Teleport to="body">
       <CModal v-if="!isView" ref="cModal" title="选择用户" width="1200" v-bind="modalProps">
-        <!-- 避免表单校验收集 -->
-        <a-form-item-rest>
-          <CPage
-            ref="cPage"
-            noAdd
-            noDelete
-            noSelect
-            noFullscreen
-            primary-key="userId"
-            :api-config="{
-              list: '/system/user/selectUser'
-            }"
-            :tree-config="treeConfig"
-            :filter-config="filterConfig"
-            :tools-config="toolsConfig"
-            :table-config="tableConfig"
-            :before-search="beforeSearch"
-            :after-search="afterSearch"
-          >
-            <template #table_checkbox="{ text, record, index, column }">
-              <a-checkbox :checked="selectUserIds.includes(text)" />
-            </template>
-          </CPage>
-        </a-form-item-rest>
+        <CPage
+          ref="cPage"
+          noAdd
+          noDelete
+          noSelect
+          noFullscreen
+          primary-key="userId"
+          :api-config="{
+            list: '/system/user/selectUser'
+          }"
+          :tree-config="treeConfig"
+          :filter-config="filterConfig"
+          :tools-config="toolsConfig"
+          :table-config="tableConfig"
+          :before-search="beforeSearch"
+          :after-search="afterSearch"
+        >
+          <template #table_checkbox="{ text, record, index, column }">
+            <a-checkbox :checked="selectUserIds.includes(text)" />
+          </template>
+        </CPage>
       </CModal>
     </Teleport>
   </div>
@@ -299,7 +296,7 @@ const tableConfig = computed<TableConfig<SelectUser>>(() => ({
       dataIndex: 'deptName',
       resizable: true,
       width: 150,
-      customRender: ({ record }: { record: SelectUser }) => record.dept?.deptName ?? '-'
+      render: (_value, record) => (record as SelectUser).dept?.deptName ?? '-'
     },
     {
       title: '手机号码',

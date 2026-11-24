@@ -1,7 +1,7 @@
 /**
  * v-copy 自定义指令：点击时复制内容到剪贴板
  */
-import { message } from 'ant-design-vue'
+import { message } from 'antdv-next'
 import type { Directive } from 'vue'
 
 /** 项目自定义的指令模块结构：{ name, directive } */

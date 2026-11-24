@@ -28,7 +28,7 @@
 import cForm from '@/components/crud/components/c-form.vue'
 import IconSelect from '@/components/common/IconSelect/index.vue'
 import dayjs from 'dayjs'
-import { Modal } from 'ant-design-vue'
+import { Modal } from 'antdv-next'
 import { EControlType } from '@/enum'
 import type { CrudFormExpose, CrudRecord, FormConfig } from '@/components/crud/types'
 

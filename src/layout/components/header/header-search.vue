@@ -58,7 +58,7 @@
   import { useCacheStore } from '@/stores/cache-store'
   import { useMenuStore } from '@/stores/menu-store'
   import { useTabsStore } from '@/stores/tabs-store'
-  import { CloseOutlined, SearchOutlined } from '@ant-design/icons-vue'
+  import { CloseOutlined, SearchOutlined } from '@antdv-next/icons'
   import { useDebounceFn } from '@vueuse/core'
 
   defineOptions({ inheritAttrs: false })

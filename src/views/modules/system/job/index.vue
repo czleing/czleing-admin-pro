@@ -11,7 +11,7 @@
 <script setup>
   import CPage from '@/components/crud/c-page.vue'
   import { EControlType, EIsEnabled } from '@/enum/index'
-  import { message } from 'ant-design-vue'
+  import { message } from 'antdv-next'
 
   const cPage = ref()
   const { t } = useI18n()
@@ -71,7 +71,7 @@
       {
         title: '失火策略',
         dataIndex: 'misfirePolicy',
-        customRender: ({ text }) => EMisfirePolicy._of(text)
+        render: value => EMisfirePolicy._of(value)
       },
       {
         title: '是否并发执行',

@@ -3,8 +3,8 @@
  */
 import { defineStore } from 'pinia'
 import { createVNode } from 'vue'
-import { Modal } from 'ant-design-vue'
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue'
+import { Modal } from 'antdv-next'
+import { ExclamationCircleOutlined } from '@antdv-next/icons'
 import router from '@/router'
 import axios from '@/api'
 import { useMenuStore } from '@/stores/menu-store'

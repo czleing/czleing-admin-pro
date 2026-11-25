@@ -12,7 +12,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + antdv-next + axios + vue-router + pnpm
 
 > 分支 `ant-design-vue` 由于 UI 库 ant-design-vue 已停止维护，停止维护期间分支不再更新（ant-design-vue 目前运行比较稳定）
 
-> 分支 `antdv-next` 已全量迁移至 [`antdv-next`](https://www.antdv-next.com/)，图标库同步切换为 `@antdv-next/icons`（目前和 可能还存在一些水土不服的bug）。
+> 分支 `antdv-next` 已全量迁移至 [`antdv-next`](https://www.antdv-next.com/)，图标库同步切换为 `@antdv-next/icons`（目前和 antdv-next 可能还存在一些水土不服的bug，后续会逐步修复）。
 
 > 分支 `master` 当前仍为 `ant-design-vue` 版本，后续会根据需求迁移至 `antdv-next` 版本。
 
@@ -31,7 +31,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + antdv-next + axios + vue-router + pnpm
 - Vue 3.5+ 开发框架
 - Vite 8+ 打包构建工具
 - [pinia](https://pinia.web3doc.top/) 全局状态管理
-- [antdv-next](https://www.antdv-next.com/) UI库，ant-design-vue 的官方继任版本，体验与颜值并存
+- [antdv-next](https://www.antdv-next.com/) UI库，ant-design-vue 的官方继任版本
 - vue-router 路由管理
 - [VueUse](https://vueuse.org/) 集成了很多组合式API的库
 - axios 服务请求

@@ -227,7 +227,7 @@ function setData(val: unknown[]) {
 function getFinalField (field: DynamicColumn['field'], record: TableRow): CrudComponentField {
   // 模板中已通过 v-if 保证 field 存在，此处仅做类型收敛
   const target = field as CrudComponentField
-  const fieldProps = (getFnValue(target.props, record, modelValue.value) ?? {}) as CrudControlProps
+  const fieldProps = (getFnValue({ ...target.props }, record, modelValue.value) ?? {}) as CrudControlProps
   const disabled = getFnValue(
     target.disabled as MaybeFn<boolean, [TableRow, TableRow[]]>,
     record,

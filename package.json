@@ -24,7 +24,7 @@
     "@vueuse/core": "^14.3.0",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^5.1.12",
-    "antdv-next": "^1.8.2",
+    "antdv-next": "^1.8.3",
     "axios": "^1.18.0",
     "dayjs": "^1.11.21",
     "echarts": "^6.1.0",

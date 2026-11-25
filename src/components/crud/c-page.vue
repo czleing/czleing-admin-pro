@@ -146,6 +146,7 @@ const pagination = ref<CrudPagination>({
   showSizeChanger: true,
   showTotal: (total: number) => t('crud.totalPage', { value: total }),
   pageSize: props.tableConfig?.props?.pageSize ?? 10,
+  pageSizeOptions: [props.tableConfig?.props?.pageSize ?? 10, 20, 50, 100],
   current: 1,
   total: 0
 })

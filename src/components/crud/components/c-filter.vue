@@ -47,7 +47,7 @@
                           <DeleteOutlined class="text-danger" @click.stop="onDeleteCache(cache.id)" />
                         </div>
                       </a-menu-item>
-                      <a-menu-item v-if="!cacheList || cacheList.length === 0">
+                      <a-menu-item v-if="!cacheList || cacheList.length === 0" key="empty">
                         <span class="text-gray">{{ $t('crud.notLog') }}</span>
                       </a-menu-item>
                     </a-menu>

@@ -10,9 +10,9 @@ body {
   background-color: var(--ant-colorBgLayout);
 }
 a:active { opacity: .7; }
-.ant-menu {
+// 子菜单不需要额外背景色
+.ant-menu-inline .ant-menu-sub.ant-menu-inline {
   background: transparent !important;
-  backdrop-filter: blur(20px) saturate(180%);
 }
 // 隐藏左侧菜单边缘线条
 .ant-menu-inline {
@@ -26,8 +26,12 @@ a:active { opacity: .7; }
 .ant-tabs-card >.ant-tabs-nav .ant-tabs-tab {
   border-bottom: none;
 }
+// tabs 栏图标与文字间距过大，重设为5px
+.ant-tabs .ant-tabs-tab .anticon:not(:last-child) {
+  margin-right: 5px;
+}
 // 解决 antdv-next div.aria-hidden 报错
-div[aria-hidden=true] { display: none !important; }
+// div[aria-hidden=true] { display: none !important; }
 // 顶部菜单间隔太大，从 16px 缩小为 10px
 .ant-menu-horizontal .ant-menu-item {
   padding-inline: 10px;

@@ -1,5 +1,5 @@
 <template>
-  <a-watermark :content="settingStore.useWatermark ? watermark : ''" :rotate="-35" :zIndex="9000">
+  <a-watermark :content="settingStore.useWatermark ? watermark : ''" :rotate="-35">
     <a-layout class="layout" style="height:100vh;">
       <a-layout-header
         v-show="!isFullScreen"

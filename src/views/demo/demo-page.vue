@@ -87,7 +87,7 @@ import { message, Progress } from 'antdv-next'
 type DemoRow = {
   id: number
   nickName: string
-  age: string
+  age: number
   avatar: string
   image: string
   amount: number
@@ -281,7 +281,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
   // initSearch: true, // 默认 true，初始化时查询，如果查询条件中有默认值，则默认 false
   columns: [
     {
-      title: '123', // t('demo.name'), // 姓名
+      title: t('demo.name'), // 姓名
       tooltip: t('demo.userRealName'), // '用户真实姓名',
       dataIndex: 'nickName',
       key: 'nickName',
@@ -298,6 +298,7 @@ const tableConfig = computed<TableConfig<DemoRow>>(() => ({
       width: 80,
       minWidth: 40,
       maxWidth: 200,
+      sorter: (a: any, b: any) => (a.age ?? 0) - (b.age ?? 0)
     },
     {
       title: t('demo.amount'), // 金额
@@ -1003,17 +1004,17 @@ function getMockData (searchParams: SearchParams): ListResult<DemoRow> {
   console.log('searchParams', searchParams)
   return {
     list: [
-      { id: 1, nickName: '张静', age: '24', avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 12345, withUnit: 33, name2: '对对对', dict: '2', status: 1, diy: 'd', color: 'red', isEnabled: true, phonenumber: '13112341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 2, nickName: '顾云绡', age: '22', avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 1357.66, withUnit: 22, name2: '是是是', dict: '2', status: 2, diy: 'u', color: 'green', isEnabled: false, phonenumber: '15512341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 3, nickName: '温桃纾', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 4, nickName: '楚晚棠', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 5, nickName: '沈知绯', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 6, nickName: '顾云绡', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 7, nickName: '谢景珩', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 8, nickName: '傅清晏', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 9, nickName: '陆屿川', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 10, nickName: '萧叙白', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
-      { id: 11, nickName: '江亦澄', age: '23', avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 1, nickName: '张静', age: 24, avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 12345, withUnit: 33, name2: '对对对', dict: '2', status: 1, diy: 'd', color: 'red', isEnabled: true, phonenumber: '13112341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 2, nickName: '顾云绡', age: 22, avatar, image: 'https://gips1.baidu.com/it/u=4056832123,214617935&fm=3074&app=3074&f=PNG?w=2560&h=1440', amount: 1357.66, withUnit: 22, name2: '是是是', dict: '2', status: 2, diy: 'u', color: 'green', isEnabled: false, phonenumber: '15512341234', address: '广州市黄埔区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 3, nickName: '温桃纾', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 4, nickName: '楚晚棠', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 5, nickName: '沈知绯', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '2', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 6, nickName: '顾云绡', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 7, nickName: '谢景珩', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 8, nickName: '傅清晏', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 9, nickName: '陆屿川', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 10, nickName: '萧叙白', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
+      { id: 11, nickName: '江亦澄', age: 23, avatar: '', image: '', amount: 1857.66, withUnit: 12, name2: '是是是', dict: '1', status: 2, diy: 'ee', color: 'green', isEnabled: true, phonenumber: '13313131313', address: '北京市朝阳区xxx', slotField: 'x', createTime: '2026-08-08 12:12:12' },
     ],
     total: 11
   }

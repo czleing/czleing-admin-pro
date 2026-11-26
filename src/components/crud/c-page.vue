@@ -83,6 +83,7 @@
         :after-search="afterSearch"
         :action="onActionHandle"
       />
+      <slot name="footer" />
     </div>
     <!-- 弹窗 -->
     <!-- 新增修改详情弹窗页面，如果想自定义不想要默认的弹窗或行为可以通过自定义操作按钮来实现 -->

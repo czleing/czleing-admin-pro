@@ -55,8 +55,11 @@
     <template #table_slotField="{ text, record, index, column }">
       插槽内容==={{ record.age }}
     </template>
-    <!-- 其他插槽如：header、filter、tools、table -->
+    <!-- 其他插槽如：header、filter、tools、table、footer -->
     <!-- 可以不传对应的配置，通过插槽自定义实现对应部分 -->
+    <template #footer>
+      <div class="bg-layout pa10 radius-ant text-primary">本示例代码地址：src/views/demo/demo-page.vue</div>
+    </template>
   </CPage>
 </template>
 

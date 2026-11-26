@@ -21,11 +21,11 @@
       <template #bodyCell="{ text, record, index, column }">
         <template v-if="getCol(column).field">
           <div class="flex-x x-middle gap2">
-            <span v-if="getFnValue(getCol(column).required, record, modelValue)" class="text-danger">*</span>
+            <span v-if="getFnValue(getCol(column).required as any, record, modelValue)" class="text-danger">*</span>
             <CComponent
               v-model:value="record[getColDataIndex(column)]"
               :field="getFinalField(getCol(column).field, record)"
-              :is-view="getCol(column).isView || disabled"
+              :is-view="getFnValue(getCol(column).isView as any, record, modelValue) || disabled"
               :cellInfo="{ text, record, index, column }"
               class="flex-auto"
               @update:value="(val: unknown) => handleChange(val, record, getCol(column).field)"
@@ -103,9 +103,9 @@ interface DynamicColumn {
   tooltip?: string
   dataIndex?: string
   type?: string
-  required?: unknown
-  disabled?: unknown
-  isView?: boolean
+  required?: MaybeFn<boolean>
+  disabled?: MaybeFn<boolean>
+  isView?: MaybeFn<boolean>
   hidden?: boolean
   ocrIgnore?: boolean
   defaultValue?: unknown
@@ -181,13 +181,15 @@ const currColumns = computed(() => ([
       ...item,
       type: undefined,
       rules: undefined,
-      disabled: undefined,
+      disabled: undefined, // 将属于 field 的字段放入 field 对象
+      isView: undefined,
       // align: item.align ?? 'center', // 默认居左，居中会导致部分控件展示怪异
       field: {
         label: item.title,
         fieldName: item.dataIndex,
         type: item.type,
         disabled: item.disabled,
+        isView: item.isView,
         props: item.props ?? {}
       }
     }
@@ -221,32 +223,30 @@ function setData(val: unknown[]) {
   })
 }
 
-// 获取最终的字段配置，将动态的函数形式的值转成具体值
+// 获取最终的字段配置，将动态的函数形式的值转成具体值（原始的函数需要保留，用于后续动态计算静态值）
 function getFinalField (field: DynamicColumn['field'], record: TableRow): CrudComponentField {
   // 模板中已通过 v-if 保证 field 存在，此处仅做类型收敛
-  const target = field as CrudComponentField
-  const fieldProps = (getFnValue({ ...target.props }, record, modelValue.value) ?? {}) as CrudControlProps
+  const newField = { ...field } as CrudComponentField
+  const fieldProps = (getFnValue(newField.props, record, modelValue.value) ?? {}) as CrudControlProps
+  const newFieldProps = { ...fieldProps }
   const disabled = getFnValue(
-    target.disabled as MaybeFn<boolean, [TableRow, TableRow[]]>,
+    newField.disabled as MaybeFn<boolean, [TableRow, TableRow[]]>,
     record,
     modelValue.value
   )
   const placeholder = getFnValue(
-    fieldProps.placeholder as unknown as MaybeFn<string, [TableRow, TableRow[]]>,
+    newFieldProps.placeholder as unknown as MaybeFn<string, [TableRow, TableRow[]]>,
     record,
     modelValue.value
   )
   if (disabled !== undefined) {
-    fieldProps.disabled = disabled
+    newFieldProps.disabled = disabled
   }
   if (placeholder !== undefined) {
-    fieldProps.placeholder = placeholder
+    newFieldProps.placeholder = placeholder
   }
-  return {
-    ...target,
-    required: getFnValue(target.required, record, modelValue.value),
-    props: fieldProps
-  }
+  newField.props = newFieldProps
+  return newField
 }
 
 function handleChange (val: unknown, record: TableRow, field: DynamicColumn['field']) {

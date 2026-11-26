@@ -910,8 +910,9 @@ const modalConfig = computed<ModalConfig>(() => ({
                 // 静态组件对象会随列配置进入响应式数据，需用 markRaw 跳过代理，避免 Vue 性能告警
                 component: markRaw({
                   render ({ $attrs }: unknown) {
-                    const cellInfo = $attrs.cellInfo as { index: number }
-                    return h('span', cellInfo.index + 1)
+                    // 动态表格下面的表单组件有一个 cellInfo 的属性，能获取到当前单元格全部信息
+                    const { text, record, index, column } = $attrs.cellInfo
+                    return h('span', index + 1)
                   }
                 })
               },
@@ -922,9 +923,9 @@ const modalConfig = computed<ModalConfig>(() => ({
               tooltip: '字段1描述',
               dataIndex: 'field1',
               type: EControlType.eInput,
-              // isView: true, // 查看模式
-              disabled: (record, records) => record.field2 === 2, // Boolean | (record, records) => Boolean
-              required: (record, records) => record.field2 === 1, // Boolean | (record, records) => Boolean
+              // isView: true, // 查看模式 Boolean | (record, records) => Boolean
+              disabled: (record, records) => record.field2 === '2', // Boolean | (record, records) => Boolean
+              required: (record, records) => record.field2 === '1', // Boolean | (record, records) => Boolean
               // defaultValue: 'xxxxxx', // 默认值
               // rules: [], // 不生效，请用 validator
               validator: (index, value, record, records) => { // record: 当前行的数据对象，records: 所有行数据
@@ -944,17 +945,18 @@ const modalConfig = computed<ModalConfig>(() => ({
             {
               title: '隐藏域',
               dataIndex: 'fieldHidden',
-              hidden: true
+              hidden: true, // 是否隐藏该列 Boolean
             },
             {
               title: '字段2',
               dataIndex: 'field2',
               type: EControlType.eSelect,
+              defaultValue: null,
               props: {
                 useAll: true,
                 options: [
-                  { id: '1', name: '1' },
-                  { id: '2', name: '2' }
+                  { id: '1', name: '字段1必填' },
+                  { id: '2', name: '禁用字段1' },
                 ],
                 // dictType: 'xxx_xxx' // 或者使用字典为数据源
                 // remote: {...} // 或者使用远程数据源

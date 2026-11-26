@@ -72,7 +72,7 @@ export function useRender({ ctx, isView, value, dataSource }: UseRenderOptions) 
       return { ...item, value: item.id ?? item.value ?? null, label: label ?? '' }
     })
     if (useAll && result) {
-      result.unshift({ value: null, label: t('crud.all') })
+      result.unshift({ value: '', label: t('crud.all') }) // BUG: antdv-next value 设为 null/undefined 无法选中和显示”全部“
     }
     return result
   }

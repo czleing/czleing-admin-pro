@@ -8,7 +8,12 @@
 ### 技术栈
 Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
 
-该项目为 czleing-admin 的 TS 版本，保留原有功能的同时增强了工程化管理能力，框架代码、公共库已使用 TS 重构，业务代码不强制，可以使用 JS 或 TS，适合企业中多人团队合作开发及长期维护。
+这是一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，常用基础设施齐全，后台管理系统常见的CRUD、表单都可以通过简单配置轻松实现，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，以简单易用为优先原则，给您带来全新的更好的开发体验。
+
+### 分支说明
+- 分支 `ant-design-vue` 组件库使用 ant-design-vue 4.2 版本，由于 ant-design-vue 已停止维护，停止维护期间分支不再更新新功能（ant-design-vue 目前运行比较稳定）
+
+- 分支 `master` 已全量迁移至 `antdv-next` 组件库，也是后续更新的主要分支。
 
 ## 相关项目
 | 项目 | 说明 | 地址 |
@@ -144,7 +149,7 @@ npm run preview
 
 ## 特别鸣谢
 - 部分设置项借鉴：[vben-admin](https://github.com/vbenjs/vue-vben-admin)
-- 部分主题、请求封装借鉴：[Vue3-Antd-Plus](https://gitee.com/Z568_568/vue3-antd-plus)
+- 部分主题借鉴：[Vue3-Antd-Plus](https://gitee.com/Z568_568/vue3-antd-plus)
 
 ## 贡献者
 
@@ -152,9 +157,9 @@ npm run preview
 czleing
 
 ## 感谢支持
-开源不易，如果觉得对您有帮助，可以帮忙点个 Star, 感激不尽！
+本项目为免费开源，若对您有所助益，欢迎点个 Star, 感激不尽！
 
-或者1分钱也是鼓励哦 ^_^
+或者请作者喝杯咖啡 ^_^
 
 | 微信 | 支付宝 |
 | --- | --- |

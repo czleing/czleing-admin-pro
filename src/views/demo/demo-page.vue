@@ -659,7 +659,7 @@ const modalConfig = computed<ModalConfig>(() => ({
         fieldName: 'radio1',
         type: EControlType.eRadio,
         props: {
-          options: [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }],
+          options: [{ value: 1, label: 'name1' }, { value: 2, label: 'name2' }],
           // optionType: '', // option 类型， default | button
           // buttonStyle: '' // optionType 为 button 时，button 的风格样式, outline | solid
         }
@@ -679,7 +679,7 @@ const modalConfig = computed<ModalConfig>(() => ({
         fieldName: 'checkbox',
         type: EControlType.eCheckbox,
         props: {
-          options: [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }]
+          options: [{ value: 1, label: 'name1' }, { value: 2, label: 'name2' }]
         }
       },
       {
@@ -697,7 +697,7 @@ const modalConfig = computed<ModalConfig>(() => ({
         props: {
           useAll: true, // 是否在前面添加全部
           // allowClear: true,
-          options: [{ id: 1, name: 'name1', other: 'other1' }, { id: 2, name: 'name2', other: 'other2' }],
+          options: [{ value: 1, label: 'name1', other: 'other1' }, { value: 2, label: 'name2', other: 'other2' }],
           // mode: '', // 下拉模式 'multiple' | 'tags' | 'combobox'
           // onChange (val, option, formData) {
           //   console.log(val, option, formData)
@@ -955,8 +955,8 @@ const modalConfig = computed<ModalConfig>(() => ({
               props: {
                 useAll: true,
                 options: [
-                  { id: '1', name: '字段1必填' },
-                  { id: '2', name: '禁用字段1' },
+                  { value: '1', label: '字段1必填' },
+                  { value: '2', label: '禁用字段1' },
                 ],
                 // dictType: 'xxx_xxx' // 或者使用字典为数据源
                 // remote: {...} // 或者使用远程数据源

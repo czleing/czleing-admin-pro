@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { theme } from 'antdv-next'
+import { useSettingStore } from '@/stores/setting-store'
+import { App, ConfigProvider, theme } from 'antdv-next'
+import type { Locale } from 'antdv-next/dist/locale'
+import enUs from 'antdv-next/locale/en_US'
 import zhCN from 'antdv-next/locale/zh_CN'
 import zhHK from 'antdv-next/locale/zh_HK'
-import enUs from 'antdv-next/locale/en_US'
-import type { Locale } from 'antdv-next/dist/locale'
-import { useSettingStore } from '@/stores/setting-store'
-import { useCheckUpdate } from './hooks/useCheckUpdate'
 import dayjs from 'dayjs'
-import relativeTime from 'dayjs/plugin/relativeTime'
+import 'dayjs/locale/en'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/zh-hk'
-import 'dayjs/locale/en'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import { h } from 'vue'
+import { useCheckUpdate } from './hooks/useCheckUpdate'
 dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')
 
@@ -42,6 +43,19 @@ const currTheme = computed(() => {
     algorithm: settingStore.isDark ? theme.darkAlgorithm : theme.defaultAlgorithm
   }
 })
+
+// 使 Modal.xxx 等静态方法适配当前主题
+ConfigProvider.config({
+  holderRender: children =>
+    h(ConfigProvider, {
+      locale: locale.value,
+      theme: currTheme.value,
+      componentSize: settingStore.componentSize
+    }, {
+      default: () => h(App, null, () => children),
+    })
+})
+
 // 检测版本更新
 useCheckUpdate()
 </script>

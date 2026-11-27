@@ -50,6 +50,9 @@ src/
 ├── utils/            # 纯工具函数（无副作用、与框架无关）
 └── views/            # 页面模块，每个业务模块独立目录
 ```
+#### 2.1.1 目录、文件命名规范：
+1. 目录命名规则：使用 kebab-case：`/views/modules/personal-center`
+2. 目录和文件命名尽可能简短：如：使用 `order` 代替 `order-management`，使用 `dept` 代替 `department`。
 
 ### 2.2 模块内结构
 
@@ -210,11 +213,12 @@ export interface UserInfo {
 ### 5.2 业务域拆分
 
 ```
-src/api/
+src/api
 ├── index.ts           # axios 实例 + 拦截器
-├── user.ts            # 用户模块接口
-├── role.ts            # 角色模块接口
-└── ...
+├── modules
+    ├── user.ts            # 用户模块接口
+    ├── role.ts            # 角色模块接口
+    └── ...
 ```
 
 ### 5.3 API请求使用风格
@@ -222,14 +226,14 @@ src/api/
 1. 接口方法必须写 JSDoc 注释（参数、返回值、业务含义）
 2. 不强制使用 RESTful 风格，应视后端而定
 3. 允许组件中直接写 `api.post('/xxx')`，无需封装成具名函数
-4. 请求拦截器统一处理 token、401 重授权/登录、业务异常提示
+4. 请求拦截器统一处理 token、401 重授权/登录、业务异常提示，不要在业务代码中通过 try/catch 处理异常
 
 ---
 
 ## 六、Store（Pinia）规范
 
 ### 6.1 Store 模板
-#### Options API 或 Composition API 都可以使用，不强制
+#### Options API 或 Composition API 都可以使用，不强制，建议使用 Composition API
 ```ts
 // src/stores/user-store.ts
 import { defineStore } from 'pinia';

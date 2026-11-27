@@ -8,14 +8,11 @@
 ### 技术栈
 Vue3.5 + TypeScript + Vite8 + Pinia3 + antdv-next + axios + vue-router + pnpm
 
-这是一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，常用基础设施齐全，后台管理系统常见的CRUD、表单都可以通过简单配置轻松实现，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，以简单易用为优先原则，给您带来全新的更好的开发体验。
+这是一套轻量化后台管理系统快速开发框架，使用 `代码生成` + `配置化CRUD` 大大简化后台管理系统开发，常用基础设施齐全，后台管理系统常见的CRUD、表单都可以通过简单配置轻松实现，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，以简单易用为优先原则，给开发者带来全新的更好的开发体验。
 
 ### 分支说明
-- 分支 `ant-design-vue` 由于 UI 库 ant-design-vue 已停止维护，停止维护期间分支不再更新新功能（ant-design-vue 目前运行比较稳定）
-
-- 分支 `antdv-next` 已全量迁移至 [`antdv-next`](https://www.antdv-next.com/)，图标库同步切换为 `@antdv-next/icons`（目前和 antdv-next 可能还存在一些水土不服的bug，后续会逐步修复）。
-
-- 分支 `master` 当前仍为 `ant-design-vue` 版本，后续会根据需求迁移至 `antdv-next` 版本。
+- 分支 `ant-design-vue` 组件库使用 ant-design-vue 4.2 版本，由于 ant-design-vue 已停止维护，停止维护期间分支不再更新新功能（ant-design-vue 目前运行比较稳定）
+- 分支 `master` 组件库已全量迁移至 antdv-next，也是后续更新的主要分支。
 
 ## 相关项目
 | 项目 | 说明 | 地址 |

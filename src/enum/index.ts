@@ -18,7 +18,7 @@ export const EUserType = init({
  * 2. 增加的组件建议是全局组件 (src/components/index.ts 中注册)
  * 3.1. 如果是第三方全局组件，且需要适配新增、编辑、详情模式，在 src/components/crud/hooks/useRender.js 增加对应自定义渲染函数
  * 3.2. 如果是自己写的全局组件：接收和实现 value, disabled, isView 属性即可适配新增、修改、详情场景
- * 非全局组件无需增加类型，通过自定义类型 EControlType.eCustom 使用即可
+ * 非全局组件无需增加类型，通过自定义类型 EControlType.eCustom 使用即可，参考：src/views/modules/example/form/components/base-form.vue 省市区选择器
  */
 export const EControlType = init({
   eInput: Enum('a-input', '文本框', { htmlType: 'eInput', defaultProps: { maxlength: 50 } }),

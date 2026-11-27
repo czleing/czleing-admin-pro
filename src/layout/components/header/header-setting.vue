@@ -200,7 +200,7 @@
           <Field :label="$t('frame.useDynamicPageTitle')">
             <a-switch v-model:checked="settingStore.useDynamicPageTitle" @change="onSwitchPageTitleChange" />
           </Field>
-          <Field :label="$t('frame.useWatermark')">
+          <Field v-if="isDev" :label="$t('frame.useWatermark')">
             <a-switch v-model:checked="settingStore.useWatermark" />
           </Field>
           <Field v-if="settingStore.isCn" :label="$t('frame.useWanSplit')" :tips="numFormat(123456.789)">
@@ -244,6 +244,7 @@ const themeOptions = computed(() => settingStore.themes.map(item => ({
   label: t(item.name),
   value: item.name,
 })))
+const isDev = computed(() => import.meta.env.DEV)
 const bgImageOptions = [
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-1.jpg' },
   { src: import.meta.env.VITE_APP_CONTEXT_PATH + 'assets/page-bg-2.jpg' },

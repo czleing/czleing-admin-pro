@@ -8,11 +8,10 @@
 ### 技术栈
 Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pnpm
 
-这是一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，常用基础设施齐全，后台管理系统常见的CRUD、表单都可以通过简单配置轻松实现，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，以简单易用为优先原则，给您带来全新的更好的开发体验。
+这是一套轻量化后台管理系统快速开发框架，使用`代码生成` + `配置化CRUD`大大简化后台管理系统开发，常用基础设施齐全，后台管理系统常见的CRUD、表单都可以通过简单配置轻松实现，配置可自由扩展，已经预置了很多方便实用的配置属性，部分地方约定大于配置，以简单易用为优先原则，给开发者带来全新的更好的开发体验。
 
 ### 分支说明
 - 分支 `ant-design-vue` 组件库使用 ant-design-vue 4.2 版本，由于 ant-design-vue 已停止维护，停止维护期间分支不再更新新功能（ant-design-vue 目前运行比较稳定）
-
 - 分支 `master` 已全量迁移至 `antdv-next` 组件库，也是后续更新的主要分支。
 
 ## 相关项目
@@ -30,7 +29,7 @@ Vue3.5 + TypeScript + Vite8 + Pinia3 + Ant-design-vue4 + axios + vue-router + pn
 - Vue 3.5+ 开发框架
 - Vite 8+ 打包构建工具
 - [pinia](https://pinia.web3doc.top/) 全局状态管理
-- ant-design-vue 4+ UI库，ant-design-vue 最新版，体验与颜值并存
+- ant-design-vue 4+ UI库，ant-design-vue 最新版
 - vue-router 路由管理
 - [VueUse](https://vueuse.org/) 集成了很多组合式API的库
 - axios 服务请求
